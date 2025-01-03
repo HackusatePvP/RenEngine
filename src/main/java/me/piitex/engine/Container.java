@@ -86,6 +86,23 @@ public abstract class Container {
         return containers;
     }
 
+    public int getOverlaySize() {
+        int ret = overlays.size();
+        for (Layout layout : layouts) {
+            ret += layout.getOverlays().size();
+        }
+
+        for (Container container : containers) {
+            ret += container.getOverlays().size();
+
+            for (Layout layout : container.layouts) {
+                ret += layout.getOverlays().size();
+            }
+        }
+
+        return ret;
+    }
+
     public void addContainer(Container container) {
         this.containers.add(container);
     }
