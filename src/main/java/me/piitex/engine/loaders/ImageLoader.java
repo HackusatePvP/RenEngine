@@ -37,6 +37,10 @@ public class ImageLoader {
         this.file = new File(fileDirectory, name);
     }
 
+    public ImageLoader(File file) {
+        this.file = file;
+    }
+
     public Image build() {
         if (imageCache.containsKey(file.getPath())) {
             return imageCache.get(file.getPath());

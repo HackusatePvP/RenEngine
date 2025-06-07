@@ -1,27 +1,35 @@
 package me.piitex.engine.layouts;
 
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import me.piitex.engine.Container;
-import me.piitex.engine.DisplayOrder;
-import me.piitex.engine.overlays.Overlay;
+import me.piitex.engine.Element;
+import me.piitex.engine.layouts.handles.ILayoutClickEvent;
+import java.util.LinkedHashMap;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public abstract class Layout {
+public abstract class Layout extends Element {
     private final Pane pane;
     private double x, y;
     private final double width, height;
-    private DisplayOrder order = DisplayOrder.LOW;
-    private final LinkedList<Overlay> overlays = new LinkedList<>();
-    private final LinkedList<Layout> childLayouts = new LinkedList<>();
-
+    private final LinkedHashMap<Integer, Element> elements = new LinkedHashMap<>();
+    private Pos alignment;
+    private Color background;
+    private double xOffset = 0, yOffset = 0;
+    private ILayoutClickEvent clickEvent;
 
     protected Layout(Pane pane, double width, double height) {
         this.pane = pane;
         this.width = width;
         this.height = height;
+    }
+
+    public ILayoutClickEvent getClickEvent() {
+        return clickEvent;
+    }
+
+    public void setClickEvent(ILayoutClickEvent clickEvent) {
+        this.clickEvent = clickEvent;
     }
 
     public Pane getPane() {
@@ -52,54 +60,53 @@ public abstract class Layout {
         return height;
     }
 
-    public DisplayOrder getOrder() {
-        return order;
+    public LinkedHashMap<Integer, Element> getElements() {
+        return elements;
     }
 
-    public void setOrder(DisplayOrder order) {
-        this.order = order;
+    public void addElement(Element element) {
+        elements.put(elements.size(), element);
+    }
 
-        // Update order for all overlays
-        for (Overlay overlay : getOverlays()) {
-            overlay.setOrder(order);
+    public void addElement(Element element, int index) {
+        Element current = elements.get(index);
+        if (current != null) {
+            addElement(current, index + 1);
         }
-
-        for (Layout layout : getChildLayouts()) {
-            layout.setOrder(order);
-        }
+        elements.put(index, element);
     }
 
-    public LinkedList<Overlay> getOverlays() {
-        return overlays;
+    public Pos getAlignment() {
+        return alignment;
     }
 
-    public void addOverlay(Overlay overlay) {
-        this.overlays.add(overlay);
+    public void setAlignment(Pos alignment) {
+        this.alignment = alignment;
     }
 
-    public void addOverlays(Overlay... overlays) {
-        this.overlays.addAll(List.of(overlays));
+    public Color getBackground() {
+        return background;
     }
 
-    public void addOverlays(List<Overlay> overlays) {
-        this.overlays.addAll(overlays);
+    public void setBackground(Color background) {
+        this.background = background;
     }
 
-    public LinkedList<Layout> getChildLayouts() {
-        return childLayouts;
+    public double getOffsetX() {
+        return xOffset;
     }
 
-    public void addChildLayout(Layout layout) {
-        this.childLayouts.add(layout);
+    public void setOffsetX(double xOffset) {
+        this.xOffset = xOffset;
     }
 
-    public void addChildLayouts(LinkedList<Layout> layouts) {
-        this.childLayouts.addAll(layouts);
+    public double getOffsetY() {
+        return yOffset;
     }
 
-    public void addChildLayouts(Layout... layouts) {
-        this.childLayouts.addAll(List.of(layouts));
+    public void setOffsetY(double yOffset) {
+        this.yOffset = yOffset;
     }
 
-    public abstract Node render(Container container);
+    public abstract Pane render(Container container);
 }

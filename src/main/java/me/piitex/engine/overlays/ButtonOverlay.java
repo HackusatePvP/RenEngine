@@ -34,6 +34,11 @@ public class ButtonOverlay extends Overlay implements Region {
     private double width, height;
     private double scaleWidth, scaleHeight;
 
+    public ButtonOverlay(String id, String text) {
+        this.id = id;
+        this.text = text;
+    }
+
     public ButtonOverlay(String id, String text, Color textFill) {
         this.id = id;
         this.text = text;
@@ -388,7 +393,7 @@ public class ButtonOverlay extends Overlay implements Region {
             button.setMaxWidth(width);
             button.setPrefWidth(width);
         }
-        String inLine = "";
+        /*String inLine = "";
         if (backgroundColor != null) {
             inLine += "-fx-background-color: " + cssColor(backgroundColor) + "; ";
         } else {
@@ -402,7 +407,7 @@ public class ButtonOverlay extends Overlay implements Region {
         inLine += "-fx-border-width: " + borderWidth + "; ";
         inLine += "-fx-background-radius: " + backgroundRadius + ";";
 
-        button.setStyle(inLine);
+        button.setStyle(inLine);*/
 
         if (getX() != 0 && getY() != 0) {
             button.setTranslateX(getX());

@@ -4,27 +4,76 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.piitex.engine.hanlders.IWindowKey;
-import me.piitex.engine.hanlders.events.WindowKeyPressEvent;
-import me.piitex.engine.hanlders.events.WindowKeyReleaseEvent;
+import me.piitex.engine.hanlders.events.ContainerRenderEvent;
+import me.piitex.engine.hanlders.events.ScrollDownEvent;
+import me.piitex.engine.hanlders.events.ScrollUpEvent;
+import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.Overlay;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Window is the main GUI component which handle the rendering process for the engine. There are three components to windows which are {@link Container}, {@link Overlay}, {@link Layout}.
+ * Window houses and manages these components.
+ * <p>
+ * You can create and render multiple windows at once. The title is used for the process name and label in the top left corner.
+ * The stage style is used to control how the window is displayed. A decorated style will contain a "X", minimize, and maximize button.
+ * An undecorated style will not contain any top bar similar to a full-screen game.
+ * <pre>
+ * {@code
+ * Window window = new Window("Window Title", StageStyle.DECORATED, new ImageLoader("path/to/icon.png"));
+ * }
+ * </pre>
+ * <p>
+ * To display various elements to a window you must create a container first. Once the container is created you simply have to add it the window.
+ * Note, you can add and position multiple containers to a single window.
+ * <pre>
+ * {@code
+ *  Window window = application.getWindow();
+ *  Container container = new EmptyContainer(x, y, width, height);
+ *  window.addContainer(container);
+ * }
+ * </pre>
+ * <p>
+ * All GUI related functions must be called in the JavaFX thread.
+ * <pre>
+ * {@code
+ *  Tasks.runAsync(() -> {
+ *      // Some code to be ran asynchronously
+ *
+ *      // Handle JavaFX in async
+ *      Tasks.runJavaFXThread(() -> {
+ *          // Gui related code
+ *          window.render();
+ *      })
+ *  })
+ * }
+ * </pre>
+ *
+ * @see Container
+ * @see Overlay
+ * @see Layout
+ */
 public class Window {
     private final String title;
     private final ImageLoader icon;
     private final StageStyle stageStyle;
-    private int width, height;
+    private final int width, height;
     private boolean fullscreen = false, maximized = false;
     private Color backgroundColor = Color.BLACK;
     private Stage stage;
@@ -36,13 +85,78 @@ public class Window {
     private Instant firstRun;
     private boolean captureInput = true;
 
-    private LinkedList<Container> containers = new LinkedList<>();
+    private LinkedHashMap<Integer, Container> containers = new LinkedHashMap<>();
 
     private boolean focused = true;
 
-    // Integrated handlers
-    private IWindowKey windowKeyPress;
-    private IWindowKey windowKeyRelease;
+    // Used for window scaling
+    private double currentHeight = 1080, currentWidth = 1920;
+
+    /**
+     * Creates a stylized window with a title, and icon. The stage style changes the style of the window.
+     * You only need to create a window if you want to add a sub-window.
+     * <p>
+     * The common style is {@link StageStyle#DECORATED} which adds the basic buttons like exit, minimize, and maximize.
+     * You can explore with other styles that suit your needs with the deisred window.
+     * </p>
+     * <p>
+     *     Example usage:
+     *     <pre>
+     *         {@code
+     *           Window window = new Window("Window Title", StageStyle.DECORATED, new ImageLoader("gui/window_icon.png"));
+     *
+     *           // Add containers
+     *           window.addContainer(Container container);
+     *           window.render();
+     *         }
+     *     </pre>
+     * </p>
+     * @param title Title of the window.
+     * @param stageStyle Style of the window.
+     * @param icon Image for the icon.
+     */
+    public Window(String title, StageStyle stageStyle, ImageLoader icon) {
+        this.width = 1920;
+        this.height = 1080;
+        this.title = title;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
+        buildStage();
+    }
+
+
+    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean captureInput) {
+        this.width = 1920;
+        this.height = 1080;
+        this.captureInput = captureInput;
+        this.title = title;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
+        buildStage();
+    }
+
+    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean fullscreen, boolean maximized) {
+        this.width = 1920;
+        this.height = 1080;
+        this.title = title;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
+        this.setFullscreen(fullscreen);
+        this.setMaximized(maximized);
+        buildStage();
+    }
+
+    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean fullscreen, boolean maximized, boolean captureInput) {
+        this.width = 1920;
+        this.height = 1080;
+        this.captureInput = captureInput;
+        this.title = title;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
+        this.setFullscreen(fullscreen);
+        this.setMaximized(maximized);
+        buildStage();
+    }
 
     public Window(String title, StageStyle stageStyle, ImageLoader icon, int width, int height) {
         this.title = title;
@@ -59,6 +173,27 @@ public class Window {
         this.icon = icon;
         this.width = width;
         this.height = height;
+        this.captureInput = captureInput;
+        buildStage();
+    }
+
+    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon) {
+        this.width = 1920;
+        this.height = 1080;
+        this.title = title;
+        this.backgroundColor = backgroundColor;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
+        buildStage();
+    }
+
+    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon, boolean captureInput) {
+        this.width = 1920;
+        this.height = 1080;
+        this.title = title;
+        this.backgroundColor = backgroundColor;
+        this.stageStyle = stageStyle;
+        this.icon = icon;
         this.captureInput = captureInput;
         buildStage();
     }
@@ -107,16 +242,6 @@ public class Window {
         buildStage();
     }
 
-    public Window onWindowKeyPress(IWindowKey event) {
-        this.windowKeyPress = event;
-        return this;
-    }
-
-    public Window onWindowKeyRelease(IWindowKey event) {
-        this.windowKeyRelease = event;
-        return this;
-    }
-
     protected void buildStage() {
         stage = new Stage();
 
@@ -133,14 +258,8 @@ public class Window {
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
 
-
         root = new BorderPane();
-
-        root.setBackground(new Background(new BackgroundFill(backgroundColor, CornerRadii.EMPTY, Insets.EMPTY)));
-
         scene = new Scene(root);
-
-        scene.setFill(Color.BLACK);
 
         stage.setScene(scene);
         if (captureInput) {
@@ -165,9 +284,16 @@ public class Window {
     public Scene getScene() {
         return scene;
     }
-
     public Pane getRoot() {
         return root;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public boolean hasCaptureInput() {
@@ -200,20 +326,51 @@ public class Window {
         }
     }
 
+    public void addContainer(Container container, int index) {
+        Container current = containers.get(index);
+        if (current != null) {
+            int i = index + 1;
+            addContainer(getContainers().get(index), i);
+        }
+        containers.put(index, container);
+    }
+
     public void addContainer(Container container) {
-        this.containers.add(container);
+        addContainer(container, container.getIndex());
     }
 
+    @Deprecated
     public void addContainers(Container... containers) {
-        this.containers.addAll(List.of(containers));
+        for (Container container : containers) {
+            int index = this.containers.size();
+            container.setIndex(index);
+            this.containers.put(index, container);
+        }
     }
 
-    public void addContainers(LinkedList<Container> cont) {
-        this.containers.addAll(cont);
+    public void addContainers(LinkedHashMap<Integer, Container> con) {
+        this.containers.putAll(con);
     }
 
-    public void setContainers(LinkedList<Container> containers) {
+    public void setContainers(LinkedHashMap<Integer, Container> containers) {
         this.containers = containers;
+    }
+
+    public void replaceContainer(Container oldContainer, Container newContainer) {
+        if (containers.containsValue(oldContainer)) {
+            containers.replace(oldContainer.getIndex(), newContainer);
+        }
+    }
+
+    public void replaceContainer(int index, Container container) {
+        // Remove current index
+        containers.remove(index);
+        containers.replace(index, container);
+        render();
+    }
+
+    public void removeContainer(Container container) {
+        this.containers.remove(container.getIndex());
     }
 
     public void clearContainers() {
@@ -228,8 +385,14 @@ public class Window {
         render();
     }
 
-    public LinkedList<Container> getContainers() {
+    public LinkedHashMap<Integer, Container> getContainers() {
         return containers;
+    }
+
+    public void clean() {
+        root.getChildren().clear();
+        scene.setRoot(root);
+        stage.show();
     }
 
     // Clears and resets current window.
@@ -252,6 +415,16 @@ public class Window {
             stage.close();
             System.gc(); // Force garbage collection once the window is closed.
         }
+    }
+
+    public void resetStage() {
+        root.getChildren().clear();
+        stage = new Stage();
+        stage.hide();
+    }
+
+    public void hide() {
+        stage.show();
     }
 
     public void buildAndRender() {
@@ -290,7 +463,12 @@ public class Window {
     }
 
     public void build(boolean reset) {
+        if (containers.isEmpty()) {
+            System.err.println("You must add containers to the window before every render call.");
+        }
+
         root.getChildren().clear();
+        root.getStylesheets().clear();
         if (reset) {
             // Causes flickering but needed when capturing scene.
             // Resets the scene.
@@ -299,35 +477,14 @@ public class Window {
             this.stage.setScene(scene);
         }
 
-        // Gather orders
-        LinkedList<Container> lowOrder = new LinkedList<>();
-        LinkedList<Container> normalOrder = new LinkedList<>();
-        LinkedList<Container> highOrder = new LinkedList<>();
-
-        for (Container container : containers) {
-            if (container.getOrder() == DisplayOrder.LOW) {
-                lowOrder.add(container);
-            } else if (container.getOrder() == DisplayOrder.NORMAL) {
-                normalOrder.add(container);
-            } else if (container.getOrder() == DisplayOrder.HIGH) {
-                highOrder.add(container);
-            }
-        }
-
-
-        lowOrder.forEach(this::renderContainer);
-        normalOrder.forEach(this::renderContainer);
-        highOrder.forEach(this::renderContainer);
-
-        // Not sure if this will cause issues but to reduce resource usage the mappings need to be cleared
-        lowOrder.clear();
-        normalOrder.clear();
-        highOrder.clear();
+        containers.values().forEach(this::renderContainer);
     }
 
     // Renders container on top of current window
     public void render(Container container) {
-        containers.add(container);
+        int index = containers.size();
+        container.setIndex(index);
+        containers.put(index, container);
         renderContainer(container);
     }
 
@@ -347,19 +504,50 @@ public class Window {
             // Different pane types
         }
 
+        for (File file : container.getStylesheets()) {
+            try {
+                root.getStylesheets().add(file.toURI().toURL().toExternalForm());
+            } catch (MalformedURLException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+
         getRoot().getChildren().add(node);
+
+        //ContainerRenderEvent renderEvent = new ContainerRenderEvent(container, node);
+        //RenJava.getEventHandler().callEvent(renderEvent);
     }
 
     private void handleStageInput(Stage stage) {
-        stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (windowKeyPress != null) {
-                windowKeyPress.onKeyPress(new WindowKeyPressEvent(this, event));
+        stage.addEventFilter(ScrollEvent.SCROLL, event -> {
+            double y = event.getDeltaY();
+            if (y > 0) {
+                // Scroll up
+                ScrollUpEvent scrollUpEvent = new ScrollUpEvent();
+                //RenJava.getEventHandler().callEvent(scrollUpEvent);
+            } else {
+                ScrollDownEvent downEvent = new ScrollDownEvent();
+                //RenJava.getEventHandler().callEvent(downEvent);
             }
         });
-        stage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (windowKeyRelease != null) {
-                windowKeyRelease.onKeyRelease(new WindowKeyReleaseEvent(this, event));
-            }
+
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            RenConfiguration.setCurrentWindowHeight(newValue.doubleValue());
+
+            double scaleWidth = RenConfiguration.getWidthScale();
+            double scaleHeight = newValue.doubleValue() / RenConfiguration.getHeight();
+
+            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+            root.getTransforms().setAll(scale);
+        });
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            RenConfiguration.setCurrentWindowWidth(newValue.doubleValue());
+
+            double scaleWidth = newValue.doubleValue() / RenConfiguration.getWidth();
+            double scaleHeight = RenConfiguration.getHeightScale();
+
+            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+            root.getTransforms().setAll(scale);
         });
     }
 

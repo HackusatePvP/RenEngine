@@ -1,23 +1,70 @@
 package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
-import me.piitex.engine.DisplayOrder;
-import me.piitex.engine.hanlders.events.MouseClickEvent;
-import me.piitex.engine.hanlders.events.OverlayClickEvent;
+import me.piitex.engine.Container;
+import me.piitex.engine.Element;
+import me.piitex.engine.Window;
+import me.piitex.engine.hanlders.events.*;
 import me.piitex.engine.overlays.events.IOverlayClick;
 import me.piitex.engine.overlays.events.IOverlayClickRelease;
 import me.piitex.engine.overlays.events.IOverlayHover;
 import me.piitex.engine.overlays.events.IOverlayHoverExit;
 
-public abstract class Overlay {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+/**
+ * An overlay is a visual element which can be rendered. The overlay class is the JavaFX equivalent of a {@link Node}.
+ * All overlays have generic events that are fired. For example, the {@link OverlayClickEvent} is fired if the overlay is clicked.
+ *
+ * <p>
+ * To render an overlay you first need to add it to a {@link Container}. The container will have to be managed to a {@link Window}.
+ * The window is used to render the screen.
+ * <pre>
+ *     {@code
+ *       // Create the overlay
+ *       TextOverlay overlay = new TextOverlay("Text");
+ *
+ *       // Create or fetch the container.
+ *       Container container = new EmptyContainer(x, y, width, height, displayOrder);
+ *
+ *       // Add the overlay to the container.
+ *       container.addOverlay(overlay);
+ *
+ *       // Add the container to the window if needed.
+ *       window.addContainer(container);
+ *
+ *       // Render the screen
+ *       window.render();
+ *     }
+ * </pre>
+ *
+ * Handling overlay events are key to creation a functional game. During the rendering process, logical programming must be executed with events.
+ * <pre>
+ *     {@code
+ *       // Create the overlay
+ *       TextOverlay overlay = new TextOverlay("Text");
+ *
+ *       // Handle code when the overlay is clicked.
+ *       overlay.onClick(event -> {
+ *          // Handle logic
+ *          System.out.println("The overlay was clicked!");
+ *       });
+ *     }
+ * </pre>
+ */
+public abstract class Overlay extends Element {
     private double x,y;
     private double scaleX, scaleY;
-    private DisplayOrder order = DisplayOrder.NORMAL;
 
     private IOverlayHover iOverlayHover;
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
+
+    private final List<File> styleSheets = new ArrayList<>();
 
     public double getX() {
         return x;
@@ -49,14 +96,6 @@ public abstract class Overlay {
 
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
-    }
-
-    public DisplayOrder getOrder() {
-        return order;
-    }
-
-    public void setOrder(DisplayOrder order) {
-        this.order = order;
     }
 
     public void onClick(IOverlayClick iOverlayClick) {
@@ -91,18 +130,31 @@ public abstract class Overlay {
         return iOverlayClickRelease;
     }
 
+    public List<File> getStyleSheets() {
+        return styleSheets;
+    }
 
+    public void addStyleSheet(File file) {
+        this.styleSheets.add(file);
+    }
+
+    /**
+     * Converts the overlay into a {@link Node} which is used for the JavaFX API.
+     * @return The converted {@link Node} for the overlay.
+     */
     public abstract Node render();
 
     public void setInputControls(Node node) {
         if (node.getOnDragEntered() == null) {
             node.setOnMouseEntered(event -> {
-
+                //RenJava.getEventHandler().callEvent(new OverlayHoverEvent(this, event));
+                if (getOnHover() != null) {
+                    getOnHover().onHover(new OverlayHoverEvent(this, event));
+                }
             });
         }
         if (node.getOnMouseClicked() == null) {
             node.setOnMouseClicked(event -> {
-                MouseClickEvent clickEvent = new MouseClickEvent(event);
                 OverlayClickEvent overlayClickEvent = new OverlayClickEvent(this, event);
                 if (getOnClick() != null) {
                     getOnClick().onClick(overlayClickEvent);
@@ -111,12 +163,16 @@ public abstract class Overlay {
         }
         if (node.getOnMouseExited() == null) {
             node.setOnMouseExited(event -> {
-
+                if (getOnHoverExit() != null) {
+                    getOnHoverExit().onHoverExit(new OverlayExitEvent(this, event));
+                }
             });
         }
         if (node.getOnMouseReleased() == null) {
             node.setOnMouseReleased(event -> {
-
+                if (getOnRelease() != null) {
+                    getOnRelease().onClickRelease(new OverlayClickReleaseEvent(this, event));
+                }
             });
         }
     }

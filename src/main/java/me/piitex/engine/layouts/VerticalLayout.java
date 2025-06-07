@@ -1,16 +1,18 @@
 package me.piitex.engine.layouts;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import me.piitex.engine.Container;
+import me.piitex.engine.Element;
+import me.piitex.engine.hanlders.events.LayoutClickEvent;
 import me.piitex.engine.overlays.Overlay;
 
 public class VerticalLayout extends Layout {
     private double spacing = 10;
-    private boolean scroll = false;
 
     public VerticalLayout(double width, double height) {
         super(new VBox(), width, height);
@@ -24,42 +26,49 @@ public class VerticalLayout extends Layout {
         this.spacing = spacing;
     }
 
-    public boolean isScroll() {
-        return scroll;
-    }
-
-    public void setScroll(boolean scroll) {
-        this.scroll = scroll;
-    }
-
     @Override
-    public Node render(Container container) {
+    public Pane render(Container container) {
         // Clear
         VBox pane = (VBox) getPane();
-        if (isScroll())
-            pane.setAlignment(Pos.TOP_LEFT);
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
-
-        for (Overlay overlay : getOverlays()) {
-            Node node = overlay.render();
-            pane.getChildren().add(node);
+        pane.setPrefWidth(getWidth());
+        pane.setPrefHeight(getHeight());
+        if (getAlignment() != null) {
+            pane.setAlignment(getAlignment());
+        }
+        if (getBackground() != null) {
+            pane.setBackground(new Background(new BackgroundFill(getBackground(), CornerRadii.EMPTY, Insets.EMPTY)));
         }
 
-        for (Layout layout : getChildLayouts()) {
-            pane.getChildren().add(layout.render(container));
+        if (getClickEvent() != null) {
+            pane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                getClickEvent().onLayoutClick(new LayoutClickEvent(this));
+            });
         }
 
-        if (scroll) {
-            ScrollPane scrollPane = new ScrollPane(pane);
-            scrollPane.setPrefSize(getWidth(), getHeight());
-            scrollPane.setTranslateX(getX());
-            scrollPane.setTranslateY(getY());
-            return scrollPane;
+        for (Element element : getElements().values()) {
+            if (element instanceof Overlay overlay) {
+                Node node = overlay.render();
+                if (getOffsetX() > 0 || getOffsetY() > 0) {
+                    node.setTranslateX(node.getTranslateX() + getOffsetX());
+                    node.setTranslateY(node.getTranslateY() + getOffsetY());
+                }
+                pane.getChildren().add(node);
+            } else if (element instanceof Layout layout) {
+                if ((layout.getOffsetX() == 0 && getOffsetX() != 0) || (layout.getOffsetY() == 0 && getOffsetY() != 0)) {
+                    System.out.println("Updating offsets...");
+                    layout.setOffsetX(getOffsetX());
+                    layout.setOffsetY(getOffsetY());
+                }
+                pane.getChildren().add(layout.render(container));
+            } else {
+                System.out.println("Element type not supported for layouts.");
+            }
         }
 
-        return getPane();
+        return pane;
     }
 }
