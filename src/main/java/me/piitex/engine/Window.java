@@ -4,15 +4,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.piitex.engine.hanlders.events.ContainerRenderEvent;
 import me.piitex.engine.hanlders.events.ScrollDownEvent;
 import me.piitex.engine.hanlders.events.ScrollUpEvent;
 import me.piitex.engine.layouts.Layout;
@@ -22,7 +19,6 @@ import me.piitex.engine.overlays.Overlay;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -36,7 +32,12 @@ import java.util.Map;
  * An undecorated style will not contain any top bar similar to a full-screen game.
  * <pre>
  * {@code
- * Window window = new Window("Window Title", StageStyle.DECORATED, new ImageLoader("path/to/icon.png"));
+ * Window window = new WindowBuild("My Application Window")
+ *     .setStageStyle(StageStyle.UNDECORATED)
+ *     .setDimensions(800, 600)
+ *     .setBackgroundColor(Color.BLACK)
+ *     .setCaptureInput(true)
+ *     .build();
  * }
  * </pre>
  * <p>
@@ -92,18 +93,23 @@ public class Window {
     // Used for window scaling
     private double currentHeight = 1080, currentWidth = 1920;
 
+
     /**
-     * Creates a stylized window with a title, and icon. The stage style changes the style of the window.
-     * You only need to create a window if you want to add a sub-window.
+     * Creates a stylized window using the {@link WindowBuilder} class.
      * <p>
      * The common style is {@link StageStyle#DECORATED} which adds the basic buttons like exit, minimize, and maximize.
-     * You can explore with other styles that suit your needs with the deisred window.
+     * You can explore with other styles that suit your needs with the desired window.
      * </p>
      * <p>
      *     Example usage:
      *     <pre>
      *         {@code
-     *           Window window = new Window("Window Title", StageStyle.DECORATED, new ImageLoader("gui/window_icon.png"));
+     *           WindowBuilder builder = new WindowBuilder()
+     *              .setStageStyle(StageStyle.UNDECORATED)
+     *              .setDimensions(800, 600)
+     *              .setBackgroundColor(Color.BLACK)
+     *              .setCaptureInput(true);
+     *           Window window = new Window(builder);
      *
      *           // Add containers
      *           window.addContainer(Container container);
@@ -111,135 +117,19 @@ public class Window {
      *         }
      *     </pre>
      * </p>
-     * @param title Title of the window.
-     * @param stageStyle Style of the window.
-     * @param icon Image for the icon.
      */
-    public Window(String title, StageStyle stageStyle, ImageLoader icon) {
-        this.width = 1920;
-        this.height = 1080;
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        buildStage();
-    }
-
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean captureInput) {
-        this.width = 1920;
-        this.height = 1080;
-        this.captureInput = captureInput;
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        buildStage();
-    }
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean fullscreen, boolean maximized) {
-        this.width = 1920;
-        this.height = 1080;
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.setFullscreen(fullscreen);
-        this.setMaximized(maximized);
-        buildStage();
-    }
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, boolean fullscreen, boolean maximized, boolean captureInput) {
-        this.width = 1920;
-        this.height = 1080;
-        this.captureInput = captureInput;
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.setFullscreen(fullscreen);
-        this.setMaximized(maximized);
-        buildStage();
-    }
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, int width, int height) {
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        buildStage();
-    }
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, int width, int height, boolean captureInput) {
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        this.captureInput = captureInput;
-        buildStage();
-    }
-
-    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon) {
-        this.width = 1920;
-        this.height = 1080;
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        buildStage();
-    }
-
-    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon, boolean captureInput) {
-        this.width = 1920;
-        this.height = 1080;
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.captureInput = captureInput;
-        buildStage();
-    }
-
-    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon, int width, int height) {
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        buildStage();
-    }
-
-    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon, int width, int height, boolean captureInput) {
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        this.captureInput = captureInput;
-        buildStage();
-    }
-
-    public Window(String title, Color backgroundColor, StageStyle stageStyle, ImageLoader icon, int width, int height, boolean captureInput, boolean focused) {
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        this.captureInput = captureInput;
-        this.focused = focused;
-        buildStage();
-    }
-
-    public Window(String title, StageStyle stageStyle, ImageLoader icon, int width, int height, boolean captureInput, boolean focused) {
-        this.title = title;
-        this.stageStyle = stageStyle;
-        this.icon = icon;
-        this.width = width;
-        this.height = height;
-        this.captureInput = captureInput;
-        this.focused = focused;
-        buildStage();
+    public Window(WindowBuilder builder) { //
+        this.title = builder.getTitle(); //
+        this.stageStyle = builder.getStageStyle(); //
+        this.icon = builder.getIcon(); //
+        this.width = builder.getWidth(); //
+        this.height = builder.getHeight(); //
+        this.backgroundColor = builder.getBackgroundColor(); //
+        this.captureInput = builder.isCaptureInput(); //
+        this.fullscreen = builder.isFullscreen(); //
+        this.maximized = builder.isMaximized(); //
+        this.focused = builder.isFocused(); //
+        buildStage(); //
     }
 
     protected void buildStage() {
@@ -337,15 +227,6 @@ public class Window {
 
     public void addContainer(Container container) {
         addContainer(container, container.getIndex());
-    }
-
-    @Deprecated
-    public void addContainers(Container... containers) {
-        for (Container container : containers) {
-            int index = this.containers.size();
-            container.setIndex(index);
-            this.containers.put(index, container);
-        }
     }
 
     public void addContainers(LinkedHashMap<Integer, Container> con) {
