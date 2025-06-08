@@ -5,6 +5,8 @@ import javafx.scene.image.PixelBuffer;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import me.piitex.engine.LimitedHashMap;
+import org.girod.javafx.svgimage.SVGImage;
+import org.girod.javafx.svgimage.SVGLoader;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -46,6 +48,12 @@ public class ImageLoader {
             return imageCache.get(file.getPath());
         }
         try {
+            System.out.println("File: " + file.getName());
+            if (file.getName().endsWith(".svg")) {
+                System.out.println("SVG is experimental!");
+                SVGImage svgImage = SVGLoader.load(file);
+                return svgImage.toImage();
+            }
             BufferedImage bufferedImage = ImageIO.read(file);
             Image image = getImage(bufferedImage);
             imageCache.put(file.getPath(), image);
