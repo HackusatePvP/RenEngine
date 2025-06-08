@@ -242,7 +242,6 @@ public abstract class Container extends Element {
     /* Generic methods */
     public LinkedList<Node> buildBase() {
         LinkedList<Node> toReturn = new LinkedList<>();
-        int i = 0;
         for (Element element : elements.values()) {
             Node node = null;
             if (element instanceof Overlay overlay) {
@@ -259,7 +258,6 @@ public abstract class Container extends Element {
             if (element instanceof Container container) {
                 toReturn.addAll(container.build().getValue());
             }
-            i++;
         }
 
         return toReturn;
