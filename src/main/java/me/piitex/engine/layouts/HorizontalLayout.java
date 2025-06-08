@@ -33,8 +33,8 @@ public class HorizontalLayout extends Layout {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
-        pane.setPrefWidth(getWidth());
-        pane.setPrefHeight(getHeight());
+        pane.setMinWidth(getWidth());
+        pane.setMinHeight(getHeight());
         if (getAlignment() != null) {
             pane.setAlignment(getAlignment());
         }
