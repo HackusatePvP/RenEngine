@@ -17,7 +17,6 @@ public class FontLoader {
     private Font font;
     private FontWeight weight;
     private FontPosture posture;
-    private static final Map<String, Font> cachedFonts = new HashMap<>();
 
     public FontLoader(FontLoader font, double size) {
         this.name = font.getName();
@@ -73,10 +72,7 @@ public class FontLoader {
         File file = new File(directory, name);
         this.name = name;
         try {
-            if (!cachedFonts.containsKey(name)) {
-                this.font = Font.loadFont(new FileInputStream(file), 24);
-                cachedFonts.put(name, font);
-            }
+            this.font = Font.loadFont(new FileInputStream(file), 24);
         } catch (FileNotFoundException e) {
             URL resource = FontLoader.class.getClassLoader().getResource(name);
             if (resource != null) {
@@ -84,6 +80,35 @@ public class FontLoader {
             }
         }
         this.size = 24;
+    }
+
+    public FontLoader(File file, FontPosture posture, FontWeight weight) {
+        this.name = file.getName();
+        try {
+            this.font = Font.loadFont(new FileInputStream(file), 24);
+        } catch (FileNotFoundException e) {
+            URL resource = FontLoader.class.getClassLoader().getResource(name);
+            if (resource != null) {
+                this.font = Font.loadFont(resource.toExternalForm(), size);
+            }
+        }
+    }
+
+    public FontLoader(File file, FontPosture posture, FontWeight weight, double size) {
+        this.name = file.getName();
+        try {
+            Font f = Font.loadFont(new FileInputStream(file), size);
+            this.font = Font.font(f.getFamily(), weight, posture, size);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+
+            URL resource = FontLoader.class.getClassLoader().getResource(name);
+            if (resource != null) {
+                Font f = Font.loadFont(resource.toExternalForm(), size);
+                this.font = Font.font(f.getFamily(), weight, posture, size);
+            }
+        }
     }
 
     public String getName() {
