@@ -6,6 +6,7 @@ import me.piitex.engine.hanlders.events.ComboBoxSelectEvent;
 import me.piitex.engine.overlays.events.IComboSelect;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ComboBoxOverlay extends Overlay implements Region {
@@ -13,6 +14,9 @@ public class ComboBoxOverlay extends Overlay implements Region {
     private double width, height;
     private double scaleWidth, scaleHeight;
     private IComboSelect comboSelect;
+    private Node node;
+
+    private String defaultItem;
 
     public ComboBoxOverlay(List<String> items) {
         this.items = items;
@@ -24,12 +28,42 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.height = height;
     }
 
+    public ComboBoxOverlay(String[] items, double width, double height) {
+        this.items = List.of(items);
+        this.width = width;
+        this.height = height;
+    }
+
     public ComboBoxOverlay(List<String> items, double width, double height, double x, double y) {
         this.items = items;
         this.width = width;
         this.height = height;
         setX(x);
         setY(y);
+    }
+
+    public String getDefaultItem() {
+        return defaultItem;
+    }
+
+    public void setDefaultItem(String defaultItem) {
+        this.defaultItem = defaultItem;
+    }
+
+    public void setItems(LinkedList<String> items) {
+        this.items = items;
+        if (node != null) {
+            ComboBox<String> comboBox = (ComboBox<String>) node;
+        }
+    }
+
+    public List<String> getItems() {
+        return items;
+    }
+
+
+    public Node getNode() {
+        return node;
     }
 
     @Override
@@ -46,8 +80,9 @@ public class ComboBoxOverlay extends Overlay implements Region {
         }
 
         comboBox.getItems().addAll(items);
-
-        if (!items.isEmpty()) {
+        if (defaultItem != null) {
+            comboBox.getSelectionModel().select(defaultItem);
+        } else if (!items.isEmpty()) {
             comboBox.getSelectionModel().selectFirst();
             if (getComboSelect() != null) {
                 getComboSelect().onItemSelect(new ComboBoxSelectEvent(this, items.getFirst()));
@@ -62,7 +97,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
         });
 
         setInputControls(comboBox);
-
+        this.node = comboBox;
         return comboBox;
     }
 
