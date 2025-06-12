@@ -1,12 +1,17 @@
 package me.piitex.engine.layouts;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.layouts.handles.ILayoutClickEvent;
+import me.piitex.engine.overlays.Overlay;
+
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public abstract class Layout extends Element {
     private final Pane pane;
@@ -71,7 +76,8 @@ public abstract class Layout extends Element {
     public void addElement(Element element, int index) {
         Element current = elements.get(index);
         if (current != null) {
-            addElement(current, index + 1);
+            int i = index + 1;
+            addElement(elements.get(index), i);
         }
         elements.put(index, element);
     }
@@ -109,4 +115,36 @@ public abstract class Layout extends Element {
     }
 
     public abstract Pane render(Container container);
+
+    public LinkedList<Node> buildBase(Container container) {
+        LinkedList<Node> toReturn = new LinkedList<>();
+        for (Element element : elements.values()) {
+            Node node = null;
+            if (element instanceof Overlay overlay) {
+                node = overlay.render();
+            }
+            if (element instanceof Layout layout) {
+                node = layout.render(container);
+            }
+            if (node != null) {
+                updateOffsets(node);
+                toReturn.add(node);
+            }
+
+            // Render sub-containers last
+            if (element instanceof Container c) {
+                Map.Entry<Node, LinkedList<Node>> entry = c.build();
+                toReturn.add(entry.getKey());
+            }
+        }
+
+        return toReturn;
+    }
+
+    private void updateOffsets(Node node) {
+        if (getOffsetX() > 0 || getOffsetY() > 0) {
+            node.setTranslateX(node.getTranslateX() + getOffsetX());
+            node.setTranslateY(node.getTranslateY() + getOffsetY());
+        }
+    }
 }
