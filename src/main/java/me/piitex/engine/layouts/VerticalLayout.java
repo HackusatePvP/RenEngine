@@ -1,15 +1,10 @@
 package me.piitex.engine.layouts;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import me.piitex.engine.Container;
-import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
-import me.piitex.engine.overlays.Overlay;
 
 public class VerticalLayout extends Layout {
     private double spacing = 10;
@@ -49,25 +44,7 @@ public class VerticalLayout extends Layout {
             });
         }
 
-        for (Element element : getElements().values()) {
-            if (element instanceof Overlay overlay) {
-                Node node = overlay.render();
-                if (getOffsetX() > 0 || getOffsetY() > 0) {
-                    node.setTranslateX(node.getTranslateX() + getOffsetX());
-                    node.setTranslateY(node.getTranslateY() + getOffsetY());
-                }
-                pane.getChildren().add(node);
-            } else if (element instanceof Layout layout) {
-                if ((layout.getOffsetX() == 0 && getOffsetX() != 0) || (layout.getOffsetY() == 0 && getOffsetY() != 0)) {
-                    System.out.println("Updating offsets...");
-                    layout.setOffsetX(getOffsetX());
-                    layout.setOffsetY(getOffsetY());
-                }
-                pane.getChildren().add(layout.render(container));
-            } else {
-                System.out.println("Element type not supported for layouts.");
-            }
-        }
+        pane.getChildren().addAll(buildBase(container));
 
         return pane;
     }
