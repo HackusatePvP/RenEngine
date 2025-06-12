@@ -12,7 +12,7 @@ public class TextOverlay extends Overlay implements Region {
     private FontLoader fontLoader;
     private double width, height;
     private double scaleWidth, scaleHeight;
-    private boolean strikeout;
+    private boolean strikeout, underline;
 
     public TextOverlay(String text) {
         this.text = text;
@@ -60,6 +60,7 @@ public class TextOverlay extends Overlay implements Region {
         if (getTextFillColor() != null) {
             text.setFill(getTextFillColor());
         }
+        text.setUnderline(underline);
         text.setTranslateX(getX());
         text.setTranslateY(getY());
         setInputControls(text);
@@ -80,6 +81,14 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setStrikeout(boolean strikeout) {
         this.strikeout = strikeout;
+    }
+
+    public boolean isUnderline() {
+        return underline;
+    }
+
+    public void setUnderline(boolean underline) {
+        this.underline = underline;
     }
 
     public FontLoader getFontLoader() {
