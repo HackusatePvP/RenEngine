@@ -69,12 +69,9 @@ public class InputFieldOverlay extends Overlay implements Region {
         TextField textField = build();
         textField.setPromptText(hintText);
         textField.setText(defaultInput);
-
         if (getiInputSetEvent() != null) {
             getiInputSetEvent().onInputSet(new InputSetEvent(this, defaultInput));
         }
-
-
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
         });
@@ -137,13 +134,6 @@ public class InputFieldOverlay extends Overlay implements Region {
         if (fontLoader != null) {
             textField.setFont(getFontLoader().getFont());
         }
-        String inLine = "";
-        if (!renderBorder) {
-            System.out.println("Not rendering border.");
-            inLine += "-fx-control-inner-background: transparent; -fx-background-color: transparent; ";
-        }
-        inLine += "-fx-text-fill: " + cssColor(textFill) + "; ";
-        textField.setStyle(inLine);
         textField.setPrefSize(width, height);
         return textField;
     }
