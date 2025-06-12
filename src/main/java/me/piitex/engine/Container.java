@@ -256,7 +256,8 @@ public abstract class Container extends Element {
 
             // Render sub-containers last
             if (element instanceof Container container) {
-                toReturn.addAll(container.build().getValue());
+                Map.Entry<Node, LinkedList<Node>> entry = container.build();
+                toReturn.add(entry.getKey());
             }
         }
 
