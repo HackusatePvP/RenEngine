@@ -1,9 +1,10 @@
 package me.piitex.engine;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -172,6 +173,15 @@ public class Renderer extends Element {
             Node node = null;
             if (element instanceof Overlay overlay) {
                 node = overlay.render();
+                if (overlay.getStyleFx() != null) {
+                    node.getStyleClass().add(overlay.getStyleFx());
+                }
+
+                if (overlay.getTooltip() != null) {
+                    Tooltip tooltip = new Tooltip(overlay.getTooltip());
+                    tooltip.setShowDelay(Duration.millis(250));
+                    Tooltip.install(node, tooltip);
+                }
             }
             if (element instanceof Layout layout) {
                 node = layout.render();

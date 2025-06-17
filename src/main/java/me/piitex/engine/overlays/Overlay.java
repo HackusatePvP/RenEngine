@@ -58,13 +58,18 @@ import java.util.List;
 public abstract class Overlay extends Element {
     private double x,y;
     private double scaleX, scaleY;
+    private String tooltip;
 
     private IOverlayHover iOverlayHover;
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
 
+    // Specific style sheet files
     private final List<File> styleSheets = new ArrayList<>();
+
+    // AtlantaFX style strings
+    private String styleFx;
 
     public double getX() {
         return x;
@@ -80,6 +85,14 @@ public abstract class Overlay extends Element {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 
     public double getScaleX() {
@@ -136,6 +149,29 @@ public abstract class Overlay extends Element {
 
     public void addStyleSheet(File file) {
         this.styleSheets.add(file);
+    }
+
+    public String getStyleFx() {
+        return styleFx;
+    }
+
+    /**
+     * Sets an Alantafx style class to the overlay.
+     * <p>
+     *     Example:
+     *     <pre>
+     *         {@code
+     *
+     *         Overlay overlay;
+     *         overlay.setStyleFx(Styles.SUCCESS);
+     *
+     *         }
+     *     </pre>
+     * </p>
+     * @param styleFx The string style class name. Use the {@link atlantafx.base.theme.Styles} class.
+     */
+    public void setStyleFx(String styleFx) {
+        this.styleFx = styleFx;
     }
 
     /**
