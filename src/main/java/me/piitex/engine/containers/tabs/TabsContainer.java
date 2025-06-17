@@ -34,7 +34,7 @@ public class TabsContainer extends Container {
     }
 
     /**
-     * Method does not work with this container.
+     * Method not supported with this container.
      */
     @Override
     public void addElement(Element element) {
@@ -42,7 +42,7 @@ public class TabsContainer extends Container {
     }
 
     /**
-     * Method does not work with this container.
+     * Method not supported with this container.
      */
     @Override
     public void addElements(Element... elements) {
@@ -50,7 +50,7 @@ public class TabsContainer extends Container {
     }
 
     /**
-     * Method does not work with this container.
+     * Method not supported with this container.
      */
     @Override
     public void addElements(LinkedList<Element> elements) {
