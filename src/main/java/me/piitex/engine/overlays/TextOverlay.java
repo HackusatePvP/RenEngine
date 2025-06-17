@@ -5,9 +5,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class TextOverlay extends Overlay implements Region {
-    private String text;
+    private String string;
+    private FontIcon icon;
     private Color textFillColor;
     private FontLoader fontLoader;
     private double width, height;
@@ -15,34 +17,38 @@ public class TextOverlay extends Overlay implements Region {
     private boolean strikeout, underline;
 
     public TextOverlay(String text) {
-        this.text = text;
+        this.string = text;
+    }
+
+    public TextOverlay(FontIcon icon) {
+        this.icon = icon;
     }
 
     public TextOverlay(String text, FontLoader fontLoader) {
-        this.text = text;
+        this.string = text;
         this.fontLoader = fontLoader;
     }
 
     public TextOverlay(String text, Color textFillColor) {
-        this.text = text;
+        this.string = text;
         this.textFillColor = textFillColor;
     }
 
     public TextOverlay(String text, Color textFillColor, FontLoader fontLoader) {
-        this.text = text;
+        this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
     }
 
     public TextOverlay(String text, FontLoader fontLoader, double x, double y) {
-        this.text = text;
+        this.string = text;
         this.fontLoader = fontLoader;
         setX(x);
         setY(y);
     }
 
     public TextOverlay(String text, Color textFillColor, FontLoader fontLoader, int x, int y) {
-        this.text = text;
+        this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
         setX(x);
@@ -51,16 +57,23 @@ public class TextOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Text text = new Text(getText());
-        if (fontLoader != null) {
-            Font font = fontLoader.getFont();
-            text.setFont(font);
+        Text text;
+        if (string != null) {
+            text = new Text(getText());
+            if (fontLoader != null) {
+                Font font = fontLoader.getFont();
+                text.setFont(font);
+            }
+            text.setStrikethrough(strikeout);
+            if (getTextFillColor() != null) {
+                text.setFill(getTextFillColor());
+            }
+            text.setUnderline(underline);
+            return text;
+        } else {
+            text = icon;
         }
-        text.setStrikethrough(strikeout);
-        if (getTextFillColor() != null) {
-            text.setFill(getTextFillColor());
-        }
-        text.setUnderline(underline);
+
         text.setTranslateX(getX());
         text.setTranslateY(getY());
         setInputControls(text);
@@ -68,11 +81,11 @@ public class TextOverlay extends Overlay implements Region {
     }
 
     public String getText() {
-        return text;
+        return string;
     }
 
     public void setText(String text) {
-        this.text = text;
+        this.string = text;
     }
 
     public boolean isStrikeout() {
