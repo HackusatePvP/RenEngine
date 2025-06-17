@@ -22,7 +22,7 @@ public class VerticalLayout extends Layout {
     }
 
     @Override
-    public Pane render(Container container) {
+    public Pane render() {
         // Clear
         VBox pane = (VBox) getPane();
         pane.setSpacing(getSpacing());

@@ -23,7 +23,7 @@ public class HorizontalLayout extends Layout {
     }
 
     @Override
-    public Pane render(Container container) {
+    public Pane render() {
         // Clear
         HBox pane = (HBox) getPane();
         pane.setSpacing(getSpacing());

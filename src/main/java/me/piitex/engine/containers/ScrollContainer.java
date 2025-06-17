@@ -91,7 +91,7 @@ public class ScrollContainer extends Container {
         setStyling(scrollPane);
 
         // Build pane layout for the scroll content
-        Pane pane = layout.render(this);
+        Pane pane = layout.render();
         scrollPane.setContent(pane);
 
         LinkedList<Node> order = buildBase();
