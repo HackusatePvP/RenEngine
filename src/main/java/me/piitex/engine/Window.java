@@ -90,10 +90,6 @@ public class Window {
 
     private boolean focused = true;
 
-    // Used for window scaling
-    private double currentHeight = 1080, currentWidth = 1920;
-
-
     /**
      * Creates a stylized window using the {@link WindowBuilder} class.
      * <p>
@@ -380,6 +376,9 @@ public class Window {
 
         for (Node n : entry.getValue()) {
             if (node instanceof Pane pane) {
+                if (getBackgroundColor() != null) {
+                    pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
                 pane.getChildren().add(n);
             }
             // Different pane types
@@ -394,9 +393,6 @@ public class Window {
         }
 
         getRoot().getChildren().add(node);
-
-        //ContainerRenderEvent renderEvent = new ContainerRenderEvent(container, node);
-        //RenJava.getEventHandler().callEvent(renderEvent);
     }
 
     private void handleStageInput(Stage stage) {

@@ -1,8 +1,8 @@
 package me.piitex.engine;
 
 public class RenConfiguration {
-    private static final int width = 1920;
-    private static final int height = 1080;
+    private static int width = 1920;
+    private static int height = 1080;
     private static double currentWindowWidth;
     private static double currentWindowHeight;
 
@@ -36,5 +36,13 @@ public class RenConfiguration {
 
     public static void setCurrentWindowHeight(double currentWindowHeight) {
         RenConfiguration.currentWindowHeight = currentWindowHeight;
+    }
+
+    public static void setWidth(int width) {
+        RenConfiguration.width = width;
+    }
+
+    public static void setHeight(int height) {
+        RenConfiguration.height = height;
     }
 }
