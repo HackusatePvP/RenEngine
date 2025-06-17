@@ -30,13 +30,13 @@ public class HorizontalLayout extends Layout {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
-        pane.setMinWidth(getWidth());
-        pane.setMinHeight(getHeight());
+        pane.setPrefSize(getWidth(), getHeight());
+        pane.setMinSize(getWidth(), getHeight());
         if (getAlignment() != null) {
             pane.setAlignment(getAlignment());
         }
-        if (getBackground() != null) {
-            pane.setBackground(new Background(new BackgroundFill(getBackground(), CornerRadii.EMPTY, Insets.EMPTY)));
+        if (getBackgroundColor() != null) {
+            pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
         }
 
         if (getClickEvent() != null) {
@@ -47,6 +47,6 @@ public class HorizontalLayout extends Layout {
 
         pane.getChildren().addAll(buildBase());
         setStyling(pane);
-        return getPane();
+        return pane;
     }
 }
