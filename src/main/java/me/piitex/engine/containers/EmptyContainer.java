@@ -51,6 +51,7 @@ public class EmptyContainer extends Container {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.setPrefSize(getWidth(), getHeight());
+        setStyling(pane);
 
         LinkedList<Node> order = buildBase();
 

@@ -45,8 +45,8 @@ public class HorizontalLayout extends Layout {
             });
         }
 
-        pane.getChildren().addAll(buildBase(container));
-
+        pane.getChildren().addAll(buildBase());
+        setStyling(pane);
         return getPane();
     }
 }

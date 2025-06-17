@@ -88,6 +88,8 @@ public class ScrollContainer extends Container {
             scrollPane.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
         }
 
+        setStyling(scrollPane);
+
         // Build pane layout for the scroll content
         Pane pane = layout.render(this);
         scrollPane.setContent(pane);
