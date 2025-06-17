@@ -48,9 +48,7 @@ public class ImageLoader {
             return imageCache.get(file.getPath());
         }
         try {
-            System.out.println("File: " + file.getName());
             if (file.getName().endsWith(".svg")) {
-                System.out.println("SVG is experimental!");
                 SVGImage svgImage = SVGLoader.load(file);
                 return svgImage.toImage();
             }
