@@ -101,8 +101,6 @@ public class FontLoader {
             this.font = Font.font(f.getFamily(), weight, posture, size);
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found!");
-
             URL resource = FontLoader.class.getClassLoader().getResource(name);
             if (resource != null) {
                 Font f = Font.loadFont(resource.toExternalForm(), size);
