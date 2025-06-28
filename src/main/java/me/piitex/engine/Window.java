@@ -147,6 +147,12 @@ public class Window {
 
         root = new Pane();
         root.setPrefSize(width, height);
+        double scaleWidth = (double) width / RenConfiguration.getWidth();
+        double scaleHeight = (double) height / RenConfiguration.getHeight();
+
+        Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+        root.getTransforms().setAll(scale);
+
         scene = new Scene(root);
 
         stage.setScene(scene);
