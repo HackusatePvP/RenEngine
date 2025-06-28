@@ -59,7 +59,7 @@ public class HorizontalLayout extends Layout {
 
         if (getClickEvent() != null) {
             pane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                getClickEvent().onLayoutClick(new LayoutClickEvent(this));
+                getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent,this));
             });
         }
 

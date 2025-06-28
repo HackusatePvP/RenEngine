@@ -56,7 +56,7 @@ public class VerticalLayout extends Layout {
 
         if (getClickEvent() != null) {
             pane.setOnMousePressed(mouseEvent -> {
-                getClickEvent().onLayoutClick(new LayoutClickEvent(this));
+                getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent, this));
             });
         } else {
             pane.setOnMousePressed(null);
