@@ -3,6 +3,7 @@ package me.piitex.engine.containers;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import me.piitex.engine.Container;
 import me.piitex.engine.layouts.Layout;
 
@@ -17,6 +18,7 @@ public class ScrollContainer extends Container {
     private boolean horizontalScroll = true;
     private boolean verticalScroll = true;
     private boolean scrollWhenNeeded = true;
+    private double scrollPosition;
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -63,16 +65,44 @@ public class ScrollContainer extends Container {
         this.scrollWhenNeeded = scrollWhenNeeded;
     }
 
+    public void setScrollPosition(double scrollPosition) {
+        this.scrollPosition = scrollPosition;
+    }
+
     public ScrollPane getScrollPane() {
         return scrollPane;
+    }
+
+    public Layout getLayout() {
+        return layout;
     }
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
         scrollPane = new ScrollPane();
+        scrollPane.setVvalue(scrollPosition);
         scrollPane.setTranslateX(getX());
         scrollPane.setTranslateY(getY());
-        scrollPane.setPrefSize(getWidth(), getHeight());
+        if (getWidth() > 0) {
+            scrollPane.setMinWidth(getWidth());
+        }
+        if (getHeight() > 0) {
+            scrollPane.setMinHeight(getHeight());
+        }
+
+        if (getPrefWidth() > 0) {
+            scrollPane.setPrefWidth(getPrefWidth());
+        }
+        if (getPrefHeight() > 0) {
+            scrollPane.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxWidth() > 0) {
+            scrollPane.setMaxWidth(getMaxWidth());
+        }
+        if (getMaxHeight() > 0) {
+            scrollPane.setMaxHeight(getMaxHeight());
+        }
         if (verticalScroll) {
             scrollPane.vbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.ALWAYS);
         } else if (scrollWhenNeeded) {
@@ -91,7 +121,9 @@ public class ScrollContainer extends Container {
         setStyling(scrollPane);
 
         // Build pane layout for the scroll content
-        Pane pane = layout.render();
+        VBox pane = (VBox) layout.render();
+        pane.setAlignment(layout.getAlignment());
+
         scrollPane.setContent(pane);
 
         LinkedList<Node> order = buildBase();
@@ -104,6 +136,8 @@ public class ScrollContainer extends Container {
                 node.setTranslateY(node.getTranslateX() + yOffset);
             });
         }
+
+        scrollPane.requestFocus();
 
         return new AbstractMap.SimpleEntry<>(scrollPane, order);
     }

@@ -6,10 +6,24 @@ package me.piitex.engine.overlays;
 public interface Region {
     double getWidth();
     double getHeight();
+
     void setWidth(double w);
     void setHeight(double h);
-    double getScaleWidth();
-    void setScaleWidth(double w);
-    double getScaleHeight();
-    void setScaleHeight(double h);
+
+    double getPrefWidth();
+    double getPrefHeight();
+
+    void setPrefWidth(double w);
+    void setPrefHeight(double h);
+
+    double getMaxWidth();
+    double getMaxHeight();
+
+    void setMaxWidth(double w);
+    void setMaxHeight(double h);
+
+    @Deprecated double getScaleWidth();
+    @Deprecated void setScaleWidth(double w);
+    @Deprecated double getScaleHeight();
+    @Deprecated void setScaleHeight(double h);
 }

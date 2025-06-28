@@ -1,7 +1,5 @@
 package me.piitex.engine.hanlders.events;
 
-import me.piitex.renjava.events.Cancellable;
-
 public class ScrollUpEvent extends Event implements Cancellable {
     private boolean displayPreviousScene = true;
     private boolean cancel = false;

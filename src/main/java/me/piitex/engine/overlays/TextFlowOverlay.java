@@ -1,7 +1,10 @@
 package me.piitex.engine.overlays;
 
+import atlantafx.base.util.BBCodeParser;
 import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import me.piitex.engine.loaders.FontLoader;
 
@@ -9,15 +12,16 @@ import java.util.LinkedList;
 
 public class TextFlowOverlay extends Overlay implements Region {
     private LinkedList<Overlay> texts = new LinkedList<>();
-    private Color textFillColor = Color.BLACK;
+    private String text;
+    private Color textFillColor;
     private FontLoader font;
-    private double width, height;
+    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
 
     public TextFlowOverlay(String text, int width, int height) {
         this.width = width;
         this.height = height;
-        texts.add(new TextOverlay(text));
+        this.text = text;
     }
 
     public TextFlowOverlay(String text, FontLoader fontLoader, int width, int height) {
@@ -93,6 +97,46 @@ public class TextFlowOverlay extends Overlay implements Region {
     }
 
     @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+    }
+
+    @Override
     public double getScaleWidth() {
         return scaleWidth;
     }
@@ -112,8 +156,19 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.scaleHeight = h;
     }
 
+
     public TextFlow build() {
+        // Creates text that overflows over the box.
+        //TextFlow textFlow = BBCodeParser.createFormattedText(text);
         TextFlow textFlow = new TextFlow();
+        if (text != null) {
+            // Using a VBox fixes all the spacing issues and weird new line stuff.
+            VBox format = BBCodeParser.createLayout(text);
+            format.setMaxWidth(getMaxWidth());
+            format.setMinWidth(getWidth());
+            textFlow.getChildren().add(format);
+        }
+
         for (Overlay overlay : texts) {
             // Check node type
             switch (overlay) {
@@ -123,7 +178,9 @@ public class TextFlowOverlay extends Overlay implements Region {
                         // Passes
                         text.setFont(font);
                     }
-                    text.setTextFill(textFillColor);
+                    if (textFillColor != null) {
+                        text.setTextFill(textFillColor);
+                    }
                 }
                 case HyperLinkOverlay hyperlink -> {
                     if (font != null) {
@@ -134,7 +191,9 @@ public class TextFlowOverlay extends Overlay implements Region {
                     if (font != null) {
                         button.setFont(font);
                     }
-                    button.setTextFill(textFillColor);
+                    if (textFillColor != null) {
+                        button.setTextFill(textFillColor);
+                    }
                 }
                 case InputFieldOverlay inputField -> {
                     if (font != null) {
@@ -144,13 +203,66 @@ public class TextFlowOverlay extends Overlay implements Region {
                 default -> System.out.println("Unsupported overlay in TextFlow. {}" + overlay.toString());
             }
 
-            textFlow.getChildren().add(overlay.render());
+            Node node = overlay.render();
+            textFlow.getChildren().add(node);
         }
 
-        textFlow.setPrefSize(width, height);
-        textFlow.setTranslateX(getX());
-        textFlow.setTranslateY(getY());
+        textFlow.getStyleClass().addAll(getStyles());
+
+        if (getWidth() > 0) {
+            textFlow.setMinWidth(getWidth());
+        }
+        if (getPrefWidth() > 0) {
+            textFlow.setPrefWidth(getPrefWidth());
+        }
+        if (getMaxWidth() > 0) {
+            textFlow.setMaxWidth(getMaxWidth());
+        }
+
+        if (getHeight() > 0) {
+            textFlow.setMinHeight(getHeight());
+        }
+
+        if (getPrefHeight() > 0) {
+            textFlow.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxHeight() > 0) {
+            textFlow.setMaxHeight(getMaxHeight());
+        }
+
+        //textFlow.setTranslateX(getX());
+        //textFlow.setTranslateY(getY());
         setInputControls(textFlow);
+
+        textFlow.widthProperty().addListener((obs, oldVal, newVal) -> {
+            for (Node node : textFlow.getChildren()) {
+                if (node instanceof TextFlow other) {
+                    if (getWidth() > 0) {
+                        other.setMinWidth(getWidth());
+                    }
+                    if (getPrefWidth() > 0) {
+                        other.setPrefWidth(getPrefWidth());
+                    }
+                    if (getMaxWidth() > 0) {
+                        other.setMaxWidth(getMaxWidth());
+                    }
+
+                    if (getHeight() > 0) {
+                        other.setMinHeight(getHeight());
+                    }
+
+                    if (getPrefHeight() > 0) {
+                        other.setPrefHeight(getPrefHeight());
+                    }
+
+                    if (getMaxHeight() > 0) {
+                        other.setMaxHeight(getMaxHeight());
+                    }
+                }
+            }
+        });
+
         return textFlow;
     }
 }

@@ -2,19 +2,23 @@ package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.javafx.StackedFontIcon;
+
+import java.io.File;
+import java.net.MalformedURLException;
 
 public class TextOverlay extends Overlay implements Region {
     private String string;
     private FontIcon icon;
     private Color textFillColor;
     private FontLoader fontLoader;
-    private double width, height;
+    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private boolean strikeout, underline;
+
 
     public TextOverlay(String text) {
         this.string = text;
@@ -57,27 +61,50 @@ public class TextOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Text text;
-        if (string != null) {
-            text = new Text(getText());
+
+        Node nodeToRender = null;
+
+        if (icon != null) {
+            icon.setTranslateX(getX());
+            icon.setTranslateY(getY());
+            if (textFillColor != null) {
+                icon.setIconColor(textFillColor);
+            }
+
+            nodeToRender = icon;
+        } else if (string != null) {
+            // If text is set, render a Text node.
+            Text textNode = new Text(string);
+            if (textFillColor != null) {
+                textNode.setFill(textFillColor);
+            }
+            // Apply overlay's position (x, y) to the Text node
+            textNode.setTranslateX(getX());
+            textNode.setTranslateX(getY());
+
+            textNode.setWrappingWidth(width);
+
+            // Apply styling from the base Overlay class if you want text to inherit
             if (fontLoader != null) {
-                Font font = fontLoader.getFont();
-                text.setFont(font);
+                textNode.setFont(fontLoader.getFont());
             }
-            text.setStrikethrough(strikeout);
             if (getTextFillColor() != null) {
-                text.setFill(getTextFillColor());
+                textNode.setFill(getTextFillColor());
             }
-            text.setUnderline(underline);
-            return text;
-        } else {
-            text = icon;
+            textNode.setStrikethrough(strikeout);
+            textNode.setUnderline(underline);
+
+            nodeToRender = textNode;
         }
 
-        text.setTranslateX(getX());
-        text.setTranslateY(getY());
-        setInputControls(text);
-        return text;
+        // Apply common overlay properties like scale and styleFx
+        if (nodeToRender != null) {
+            nodeToRender.getStyleClass().addAll(getStyles());
+            // Your existing input controls setup
+            setInputControls(nodeToRender);
+        }
+
+        return nodeToRender;
     }
 
     public String getText() {
@@ -141,6 +168,46 @@ public class TextOverlay extends Overlay implements Region {
     }
 
     @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+    }
+
+    @Override
     public double getScaleWidth() {
         return scaleWidth;
     }
@@ -159,4 +226,5 @@ public class TextOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 }

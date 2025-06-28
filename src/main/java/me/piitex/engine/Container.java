@@ -1,11 +1,15 @@
 package me.piitex.engine;
 
+import javafx.scene.Group;
 import javafx.scene.Node;
 import me.piitex.engine.containers.EmptyContainer;
+import me.piitex.engine.containers.handlers.IContainerClick;
+import me.piitex.engine.containers.handlers.IContainerRender;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.*;
 
 /**
@@ -36,8 +40,12 @@ public abstract class Container extends Renderer {
     // Set container to a debug state. This will output the rendering process.
     public boolean debug = false;
 
-    private final List<File> stylesheets = new ArrayList<>();
+    private final List<String> stylesheets = new ArrayList<>();
 
+    private IContainerClick click;
+    private IContainerRender render;
+
+    private Node view;
 
     public Container(double x, double y, double width, double height) {
         this.x = x;
@@ -53,6 +61,7 @@ public abstract class Container extends Renderer {
         setHeight(height);
         setIndex(index);
     }
+
 
     /**
      * @return The x position of the container in correlation to the window.
@@ -94,6 +103,21 @@ public abstract class Container extends Renderer {
         }
     }
 
+    public IContainerClick getOnClick() {
+        return click;
+    }
+
+    public void onClick(IContainerClick click) {
+        this.click = click;
+    }
+
+    public IContainerRender getOnRender() {
+        return render;
+    }
+
+    public void onRender(IContainerRender render) {
+        this.render = render;
+    }
 
     /**
      * Gets all {@link Overlay}s added to the container.
@@ -135,11 +159,23 @@ public abstract class Container extends Renderer {
     }
 
     public void addStyleSheet(File file) {
-        this.stylesheets.add(file);
+        try {
+            stylesheets.add(file.toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<File> getStylesheets() {
+    public List<String> getStylesheets() {
         return stylesheets;
+    }
+
+    public Node getView() {
+        return view;
+    }
+
+    protected void setView(Node view) {
+        this.view = view;
     }
 
     /**

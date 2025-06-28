@@ -1,14 +1,16 @@
 package me.piitex.engine.overlays;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
+import me.piitex.engine.overlays.events.IOverlaySubmit;
+import me.piitex.engine.overlays.events.OverlaySubmitEvent;
 
-public class InputFieldOverlay extends Overlay implements Region {
+public class TextAreaOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private final String defaultInput;
@@ -20,8 +22,9 @@ public class InputFieldOverlay extends Overlay implements Region {
     private boolean enabled = true;
 
     private IInputSetEvent iInputSetEvent;
+    private IOverlaySubmit iOverlaySubmit;
 
-    public InputFieldOverlay(String defaultInput, double x, double y, double width, double height) {
+    public TextAreaOverlay(String defaultInput, double x, double y, double width, double height) {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
@@ -29,7 +32,7 @@ public class InputFieldOverlay extends Overlay implements Region {
         setY(y);
     }
 
-    public InputFieldOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
+    public TextAreaOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
         this.defaultInput = defaultInput;
         this.hintText = hintText;
         this.width = width;
@@ -84,29 +87,41 @@ public class InputFieldOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        TextField textField = new TextField();
-        textField.setTranslateX(getX());
-        textField.setTranslateY(getY());
+        TextArea textArea = new TextArea(defaultInput);
+        textArea.setTranslateX(getX());
+        textArea.setTranslateY(getY());
         if (fontLoader != null) {
-            textField.setFont(getFontLoader().getFont());
+            textArea.setFont(getFontLoader().getFont());
         }
-        textField.setMinSize(width, height);
-        textField.setPromptText(hintText);
-        textField.setText(defaultInput);
-        textField.setAlignment(Pos.TOP_LEFT);
-
-
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+        textArea.setPrefSize(width, height);
+        textArea.setMaxSize(width, height);
+        textArea.setPromptText(hintText);
+        textArea.setWrapText(true);
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             currentText = newValue;
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
             }
         });
 
-        setInputControls(textField);
+        if (getiOverlaySubmit() != null) {
+            textArea.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    if (event.isShiftDown()) {
+                        textArea.appendText("\n");
+                    } else {
+                        getiOverlaySubmit().onSubmit(new OverlaySubmitEvent(this, event));
+                    }
+                }
+            });
+        }
 
-        textField.setEditable(enabled);
-        return textField;
+
+        textArea.setText(defaultInput);
+        setInputControls(textArea);
+        textArea.setEditable(enabled);
+
+        return textArea;
     }
 
     @Override
@@ -196,5 +211,13 @@ public class InputFieldOverlay extends Overlay implements Region {
 
     public void onInputSetEvent(IInputSetEvent iInputSetEvent) {
         this.iInputSetEvent = iInputSetEvent;
+    }
+
+    public IOverlaySubmit getiOverlaySubmit() {
+        return iOverlaySubmit;
+    }
+
+    public void onSubmit(IOverlaySubmit iOverlaySubmit) {
+        this.iOverlaySubmit = iOverlaySubmit;
     }
 }

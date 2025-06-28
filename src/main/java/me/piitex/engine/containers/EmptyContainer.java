@@ -50,8 +50,28 @@ public class EmptyContainer extends Container {
         Pane pane = new Pane();
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
-        pane.setPrefSize(getWidth(), getHeight());
-        setStyling(pane);
+        if (getWidth() > 0) {
+            pane.setMinWidth(getWidth());
+        }
+        if (getHeight() > 0) {
+            pane.setMinHeight(getHeight());
+        }
+
+        if (getPrefWidth() > 0) {
+            pane.setPrefWidth(getPrefWidth());
+        }
+        if (getPrefHeight() > 0) {
+            pane.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxWidth() > 0) {
+            pane.setMaxWidth(getMaxWidth());
+        }
+        if (getMaxHeight() > 0) {
+            pane.setMaxHeight(getMaxHeight());
+        }
+
+        setStyling(pane); // This is underlined red in the IDEA and will not compile.
 
         LinkedList<Node> order = buildBase();
 

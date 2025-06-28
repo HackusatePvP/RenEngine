@@ -18,7 +18,19 @@ import me.piitex.engine.overlays.Overlay;
  */
 public abstract class Element {
     private int index = 0;
+    private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets an identifier for the element. Used to fetch the compiled {@link javafx.scene.Node} after rendering.
+     * @param id Unique identifier.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Retrieves the rendering index of this element.

@@ -1,6 +1,7 @@
 package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import me.piitex.engine.hanlders.events.ComboBoxSelectEvent;
 import me.piitex.engine.overlays.events.IComboSelect;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ComboBoxOverlay extends Overlay implements Region {
+public class ChoiceBoxOverlay extends Overlay implements Region {
     private List<String> items = new ArrayList<>();
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
@@ -18,23 +19,23 @@ public class ComboBoxOverlay extends Overlay implements Region {
 
     private String defaultItem;
 
-    public ComboBoxOverlay(List<String> items) {
+    public ChoiceBoxOverlay(List<String> items) {
         this.items = items;
     }
 
-    public ComboBoxOverlay(List<String> items, double width, double height) {
+    public ChoiceBoxOverlay(List<String> items, double width, double height) {
         this.items = items;
         this.width = width;
         this.height = height;
     }
 
-    public ComboBoxOverlay(String[] items, double width, double height) {
+    public ChoiceBoxOverlay(String[] items, double width, double height) {
         this.items = List.of(items);
         this.width = width;
         this.height = height;
     }
 
-    public ComboBoxOverlay(List<String> items, double width, double height, double x, double y) {
+    public ChoiceBoxOverlay(List<String> items, double width, double height, double x, double y) {
         this.items = items;
         this.width = width;
         this.height = height;
@@ -50,6 +51,13 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.defaultItem = defaultItem;
     }
 
+    public void setItems(LinkedList<String> items) {
+        this.items = items;
+        if (node != null) {
+            ComboBox<String> comboBox = (ComboBox<String>) node;
+        }
+    }
+
     public List<String> getItems() {
         return items;
     }
@@ -61,36 +69,29 @@ public class ComboBoxOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setTranslateX(getX());
-        comboBox.setTranslateY(getY());
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.setTranslateX(getX());
+        choiceBox.setTranslateY(getY());
 
-        if (width > 0) {
-            comboBox.setPrefWidth(width);
-        }
-        if (height > 0) {
-            comboBox.setPrefHeight(height);
+        if (getWidth() > 0 || getHeight() > 0) {
+            choiceBox.setMinSize(width, height);
         }
 
-        comboBox.getItems().addAll(items);
+        choiceBox.getItems().addAll(items);
         if (defaultItem != null) {
-            comboBox.getSelectionModel().select(defaultItem);
+            choiceBox.getSelectionModel().select(defaultItem);
         } else if (!items.isEmpty()) {
-            comboBox.getSelectionModel().selectFirst();
-            if (getComboSelect() != null) {
-                getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, items.getFirst()));
-            }
+            choiceBox.getSelectionModel().selectFirst();
+        }
+        if (getComboSelect() != null) {
+            choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                getComboSelect().onItemSelect(new ComboBoxSelectEvent(choiceBox,this, newValue));
+            });
         }
 
-        comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (getComboSelect() != null) {
-                getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, newValue));
-            }
-        });
-
-        setInputControls(comboBox);
-        this.node = comboBox;
-        return comboBox;
+        setInputControls(choiceBox);
+        this.node = choiceBox;
+        return choiceBox;
     }
 
     public void onItemSelect(IComboSelect iComboSelect) {

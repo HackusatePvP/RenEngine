@@ -1,47 +1,13 @@
 package me.piitex.engine.overlays;
 
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.control.ProgressBar;
 
-public class BoxOverlay extends Overlay implements Region {
+public class ProgressBarOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-    private Color fillColor;
-    private Color strokeColor = Color.WHITE;
-
-    public BoxOverlay(double width, double height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    public BoxOverlay(double width, double height, double x, double y) {
-        this.width = width;
-        this.height = height;
-        setX(x);
-        setY(y);
-    }
-
-    public BoxOverlay(double width, double height, Color color) {
-        this.width = width;
-        this.height = height;
-        this.fillColor = color;
-    }
-    public BoxOverlay(double width, double height, double x, double y, Color color) {
-        this.width = width;
-        this.height = height;
-        this.strokeColor = color;
-        setX(x);
-        setY(y);
-    }
-
-    public Color getFillColor() {
-        return fillColor;
-    }
-
-    public void setFillColor(Color fillColor) {
-        this.fillColor = fillColor;
-    }
+    private ProgressBar progressBar;
 
     @Override
     public double getWidth() {
@@ -124,17 +90,41 @@ public class BoxOverlay extends Overlay implements Region {
     }
 
 
+
     @Override
     public Node render() {
-        Rectangle rectangle = new Rectangle(width, height);
-        rectangle.setX(getX());
-        rectangle.setY(getY());
-        if (getFillColor() != null) {
-            rectangle.setFill(getFillColor());
-        }
-        rectangle.setStroke(strokeColor);
+        progressBar = new ProgressBar(0);
+        progressBar.progressProperty().bind(Bindings.createDoubleBinding(() -> -1d));
 
-        setInputControls(rectangle);
-        return rectangle;
+        progressBar.setTranslateX(getX());
+        progressBar.setTranslateY(getY());
+
+        if (getWidth() > 0) {
+            progressBar.setMinWidth(getWidth());
+        }
+        if (getPrefWidth() > 0) {
+            progressBar.setPrefWidth(getPrefWidth());
+        }
+        if (getMaxWidth() > 0) {
+            progressBar.setMaxWidth(getMaxWidth());
+        }
+
+        if (getHeight() > 0) {
+            progressBar.setMinHeight(getHeight());
+        }
+        if (getPrefHeight() > 0) {
+            progressBar.setPrefHeight(getPrefHeight());
+        }
+        if (getMaxHeight() > 0) {
+            progressBar.setMaxHeight(getMaxHeight());
+        }
+
+        progressBar.getStyleClass().addAll(getStyles());
+
+        return progressBar;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
     }
 }

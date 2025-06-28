@@ -12,6 +12,8 @@ import java.util.Map;
 public class TabsContainer extends Container {
     private final LinkedList<Tab> tabs = new LinkedList<>();
     private boolean closeTabs = false;
+    private String selectedTab;
+    private TabPane tabPane;
 
     public TabsContainer(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -31,6 +33,18 @@ public class TabsContainer extends Container {
 
     public void setCloseTabs(boolean closeTabs) {
         this.closeTabs = closeTabs;
+    }
+
+    public String getSelectedTab() {
+        return selectedTab;
+    }
+
+    public void setSelectedTab(String selectedTab) {
+        this.selectedTab = selectedTab;
+    }
+
+    public TabPane getTabPane() {
+        return tabPane;
     }
 
     /**
@@ -59,23 +73,47 @@ public class TabsContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        TabPane pane = new TabPane();
+        tabPane = new TabPane();
+        if (getWidth() > 0) {
+            tabPane.setMinWidth(getWidth());
+        }
+        if (getHeight() > 0) {
+            tabPane.setMinHeight(getHeight());
+        }
+
+        if (getPrefWidth() > 0) {
+            tabPane.setPrefWidth(getPrefWidth());
+        }
+        if (getPrefHeight() > 0) {
+            tabPane.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxWidth() > 0) {
+            tabPane.setMaxWidth(getMaxWidth());
+        }
+        if (getMaxHeight() > 0) {
+            tabPane.setMaxHeight(getMaxHeight());
+        }
         if (closeTabs) {
-            pane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+            tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         } else {
-            pane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+            tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         }
 
         for (Tab tab : tabs) {
-            pane.getTabs().add(tab.render());
+            javafx.scene.control.Tab t = tab.render();
+            tabPane.getTabs().add(t);
+            if (tab.getText().equalsIgnoreCase(selectedTab)) {
+                tabPane.getSelectionModel().select(t);
+            }
         }
 
-        pane.setTranslateX(getX());
-        pane.setTranslateY(getY());
-        pane.setPrefSize(getWidth(), getHeight());
-        System.out.println("Tab Size: " + tabs.size());
+        tabPane.setTranslateX(getX());
+        tabPane.setTranslateY(getY());
+        tabPane.setPrefSize(getWidth(), getHeight());
+
         LinkedList<Node> order = buildBase();
 
-        return new AbstractMap.SimpleEntry<>(pane, order);
+        return new AbstractMap.SimpleEntry<>(tabPane, order);
     }
 }

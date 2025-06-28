@@ -1,6 +1,8 @@
 package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Window;
@@ -64,12 +66,13 @@ public abstract class Overlay extends Element {
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
+    private Node node;
 
     // Specific style sheet files
     private final List<File> styleSheets = new ArrayList<>();
 
-    // AtlantaFX style strings
-    private String styleFx;
+    // Style classes.
+    private List<String> styles = new ArrayList<>();
 
     public double getX() {
         return x;
@@ -151,27 +154,20 @@ public abstract class Overlay extends Element {
         this.styleSheets.add(file);
     }
 
-    public String getStyleFx() {
-        return styleFx;
+    public void addStyle(String style) {
+        styles.add(style);
     }
 
-    /**
-     * Sets an Alantafx style class to the overlay.
-     * <p>
-     *     Example:
-     *     <pre>
-     *         {@code
-     *
-     *         Overlay overlay;
-     *         overlay.setStyleFx(Styles.SUCCESS);
-     *
-     *         }
-     *     </pre>
-     * </p>
-     * @param styleFx The string style class name. Use the {@link atlantafx.base.theme.Styles} class.
-     */
-    public void setStyleFx(String styleFx) {
-        this.styleFx = styleFx;
+    public List<String> getStyles() {
+        return styles;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
     }
 
     /**
@@ -210,6 +206,18 @@ public abstract class Overlay extends Element {
                     getOnRelease().onClickRelease(new OverlayClickReleaseEvent(this, event));
                 }
             });
+        }
+
+        if (node instanceof TextArea textArea) {
+            if (node.getOnKeyPressed() == null) {
+                node.setOnKeyPressed(event -> {
+                    if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
+                        textArea.appendText("\n");
+                    } else if (event.getCode() == KeyCode.ENTER) {
+                        //TODO: Handle submit action for the overlay.
+                    }
+                });
+            }
         }
     }
 }

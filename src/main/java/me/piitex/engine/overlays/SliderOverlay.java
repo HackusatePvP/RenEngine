@@ -9,7 +9,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 public class SliderOverlay extends Overlay implements Region {
-    private double width, height;
+    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth = 1, scaleHeight = 1;
     private final double maxValue, minValue, currentValue;
     private double blockIncrement;
@@ -109,6 +109,46 @@ public class SliderOverlay extends Overlay implements Region {
     }
 
     @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+    }
+
+    @Override
     public double getScaleWidth() {
         return scaleWidth;
     }
@@ -127,4 +167,5 @@ public class SliderOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 }

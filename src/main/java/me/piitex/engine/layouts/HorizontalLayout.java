@@ -3,7 +3,6 @@ package me.piitex.engine.layouts;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
 
@@ -26,12 +25,31 @@ public class HorizontalLayout extends Layout {
     public Pane render() {
         // Clear
         HBox pane = (HBox) getPane();
+        VBox.setVgrow(pane, Priority.ALWAYS);
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
-        pane.setPrefSize(getWidth(), getHeight());
-        pane.setMinSize(getWidth(), getHeight());
+        if (getWidth() > 0) {
+            pane.setMinWidth(getWidth());
+        }
+        if (getHeight() > 0) {
+            pane.setMinHeight(getHeight());
+        }
+
+        if (getPrefWidth() > 0) {
+            pane.setPrefWidth(getPrefWidth());
+        }
+        if (getPrefHeight() > 0) {
+            pane.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxWidth() > 0) {
+            pane.setMaxWidth(getMaxWidth());
+        }
+        if (getMaxHeight() > 0) {
+            pane.setMaxHeight(getMaxHeight());
+        }
         if (getAlignment() != null) {
             pane.setAlignment(getAlignment());
         }

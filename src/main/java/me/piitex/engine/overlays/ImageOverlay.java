@@ -8,9 +8,8 @@ import me.piitex.engine.loaders.ImageLoader;
 
 public class ImageOverlay extends Overlay implements Region {
     private Image image;
-    private double scaleX, scaleY, scaleWidth, scaleHeight;
-    private double width;
-    private double height;
+    private double scaleWidth, scaleHeight;
+    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private boolean preserveRatio = true;
     private final String fileName;
     private String path = "Unknown";
@@ -109,13 +108,53 @@ public class ImageOverlay extends Overlay implements Region {
     }
 
     @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+    }
+
+    @Override
     public double getScaleWidth() {
         return scaleWidth;
     }
 
     @Override
-    public void setScaleWidth(double scaleWidth) {
-        this.scaleWidth = scaleWidth;
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
     }
 
     @Override
@@ -127,6 +166,7 @@ public class ImageOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 
     @Override
     public Node render() {

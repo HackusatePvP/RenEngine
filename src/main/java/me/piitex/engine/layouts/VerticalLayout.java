@@ -1,9 +1,7 @@
 package me.piitex.engine.layouts;
 
 import javafx.geometry.Insets;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
 public class VerticalLayout extends Layout {
@@ -29,8 +27,26 @@ public class VerticalLayout extends Layout {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
-        pane.setPrefSize(getWidth(), getHeight());
-        pane.setMinSize(getWidth(), getHeight());
+        if (getWidth() > 0) {
+            pane.setMinWidth(getWidth());
+        }
+        if (getHeight() > 0) {
+            pane.setMinHeight(getHeight());
+        }
+
+        if (getPrefWidth() > 0) {
+            pane.setPrefWidth(getPrefWidth());
+        }
+        if (getPrefHeight() > 0) {
+            pane.setPrefHeight(getPrefHeight());
+        }
+
+        if (getMaxWidth() > 0) {
+            pane.setMaxWidth(getMaxWidth());
+        }
+        if (getMaxHeight() > 0) {
+            pane.setMaxHeight(getMaxHeight());
+        }
         if (getAlignment() != null) {
             pane.setAlignment(getAlignment());
         }
@@ -39,9 +55,11 @@ public class VerticalLayout extends Layout {
         }
 
         if (getClickEvent() != null) {
-            pane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            pane.setOnMousePressed(mouseEvent -> {
                 getClickEvent().onLayoutClick(new LayoutClickEvent(this));
             });
+        } else {
+            pane.setOnMousePressed(null);
         }
 
         pane.getChildren().addAll(buildBase());

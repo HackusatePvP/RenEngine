@@ -1,5 +1,6 @@
 package me.piitex.engine;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
@@ -7,25 +8,38 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.File;
+import java.util.*;
 
 /**
- * An element which acts as a {@link Container}.
+ * An element which handles rendering of {@link Container}, {@link Layout}, and {@link Overlay}
  *
- * @see me.piitex.engine.layouts.Layout
+ * @see Layout
  * @see me.piitex.engine.containers.tabs.Tab
  */
 public class Renderer extends Element {
     private final TreeMap<Integer, Element> elements = new TreeMap<>();
     private double width, height;
+    private double prefWidth, prefHeight;
+    private double maxWidth, maxHeight;
     private double xOffset = 0, yOffset = 0;
     private Color backgroundColor;
     private Color borderColor;
     private double borderWidth = 1;
+    private String style;
+
+    private List<String> styles = new ArrayList<>();
+    private final Map<String, Node> renderedNodes = new HashMap<>();
+
+    public Map<String, Node> getRenderedNodes() {
+        return renderedNodes;
+    }
+
+    public Node getNode(String id) {
+        return renderedNodes.get(id);
+    }
 
     public double getWidth() {
         return width;
@@ -41,6 +55,32 @@ public class Renderer extends Element {
 
     public void setHeight(double height) {
         this.height = height;
+    }
+
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    public void setPrefSize(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    public void setMaxSize(double width, double height) {
+        this.maxWidth = width;
+        this.maxHeight = height;
     }
 
     public Color getBackgroundColor() {
@@ -65,6 +105,14 @@ public class Renderer extends Element {
 
     public void setBorderWidth(double borderWidth) {
         this.borderWidth = borderWidth;
+    }
+
+    public List<String> getStyles() {
+        return styles;
+    }
+
+    public void addStyle(String style) {
+        styles.add(style);
     }
 
     public TreeMap<Integer, Element> getElements() {
@@ -173,15 +221,13 @@ public class Renderer extends Element {
             Node node = null;
             if (element instanceof Overlay overlay) {
                 node = overlay.render();
-                if (overlay.getStyleFx() != null) {
-                    node.getStyleClass().add(overlay.getStyleFx());
-                }
-
+                node.getStyleClass().addAll(overlay.getStyles());
                 if (overlay.getTooltip() != null) {
                     Tooltip tooltip = new Tooltip(overlay.getTooltip());
                     tooltip.setShowDelay(Duration.millis(250));
                     Tooltip.install(node, tooltip);
                 }
+                overlay.setNode(node);
             }
             if (element instanceof Layout layout) {
                 node = layout.render();
@@ -189,19 +235,32 @@ public class Renderer extends Element {
             if (node != null) {
                 updateOffsets(node);
                 toReturn.add(node);
+                if (element.getId() != null && !element.getId().isEmpty()) {
+                    // Add the compiled nodes into the container
+                    getRenderedNodes().put(element.getId(), node);
+
+                }
             }
 
             // Render sub-containers last
             if (element instanceof Container container) {
                 Map.Entry<Node, LinkedList<Node>> entry = container.build();
                 toReturn.add(entry.getKey());
+                container.setView(entry.getKey());
+
+                if (container.getId() != null && !container.getId().isEmpty()) {
+                    getRenderedNodes().put(container.getId(), entry.getKey());
+
+                }
             }
         }
 
         return toReturn;
     }
 
+
     public void setStyling(Node node) {
+        node.getStyleClass().addAll(styles);
         if (node instanceof Region region) {
             StringBuilder inLineCss = new StringBuilder();
             if (backgroundColor != null) {
@@ -209,14 +268,12 @@ public class Renderer extends Element {
             }
 
             if (borderColor != null) {
-                System.out.println("Setting border color...");
                 inLineCss.append("-fx-border-color: ").append(cssColor(borderColor)).append("; ");
                 inLineCss.append("-fx-border-width: ").append(borderWidth).append(" ").append(borderWidth).append(" ").append(borderWidth).append(" ").append(borderWidth).append("; ");
                 inLineCss.append("-fx-border-style: ").append("solid").append("; ");
             }
 
             region.setStyle(inLineCss.toString());
-
         }
     }
 

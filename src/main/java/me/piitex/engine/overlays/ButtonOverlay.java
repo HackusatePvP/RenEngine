@@ -31,8 +31,10 @@ public class ButtonOverlay extends Overlay implements Region {
     private int borderWidth = 0;
     private int backgroundRadius = 0;
 
-    private double width, height;
+    private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
+
+    private boolean enabled = true;
 
     public ButtonOverlay(String id, String text) {
         this.id = id;
@@ -196,6 +198,14 @@ public class ButtonOverlay extends Overlay implements Region {
         this.font = font;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     @Override
     public Node render() {
         Button button = build();
@@ -225,6 +235,46 @@ public class ButtonOverlay extends Overlay implements Region {
     }
 
     @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+    }
+
+    @Override
     public double getScaleWidth() {
         return scaleWidth;
     }
@@ -243,6 +293,7 @@ public class ButtonOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 
     public LinkedList<ImageOverlay> getImages() {
         return images;
@@ -339,7 +390,9 @@ public class ButtonOverlay extends Overlay implements Region {
             return button;
         }
         Button button = new Button();
+        button.setDisable(!enabled);
         button.setId(id);
+        button.getStyleClass().addAll(getStyles());
         for (ImageOverlay image : images) {
             topImage = image;
             if (image != null) {
@@ -393,21 +446,6 @@ public class ButtonOverlay extends Overlay implements Region {
             button.setMaxWidth(width);
             button.setPrefWidth(width);
         }
-        /*String inLine = "";
-        if (backgroundColor != null) {
-            inLine += "-fx-background-color: " + cssColor(backgroundColor) + "; ";
-        } else {
-            inLine += "-fx-background-color: transparent; ";
-        }
-        if (borderColor != null) {
-            inLine += "-fx-border-color: " + cssColor(borderColor) + "; ";
-        } else {
-            inLine += "-fx-border-color: transparent; ";
-        }
-        inLine += "-fx-border-width: " + borderWidth + "; ";
-        inLine += "-fx-background-radius: " + backgroundRadius + ";";
-
-        button.setStyle(inLine);*/
 
         if (getX() != 0 && getY() != 0) {
             button.setTranslateX(getX());

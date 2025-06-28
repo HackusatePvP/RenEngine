@@ -1,46 +1,20 @@
 package me.piitex.engine.overlays;
 
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Separator;
 
-public class BoxOverlay extends Overlay implements Region {
+public class SeparatorOverlay extends Overlay implements Region {
+    private final Orientation orientation;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-    private Color fillColor;
-    private Color strokeColor = Color.WHITE;
 
-    public BoxOverlay(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public SeparatorOverlay(Orientation orientation) {
+        this.orientation = orientation;
     }
 
-    public BoxOverlay(double width, double height, double x, double y) {
-        this.width = width;
-        this.height = height;
-        setX(x);
-        setY(y);
-    }
-
-    public BoxOverlay(double width, double height, Color color) {
-        this.width = width;
-        this.height = height;
-        this.fillColor = color;
-    }
-    public BoxOverlay(double width, double height, double x, double y, Color color) {
-        this.width = width;
-        this.height = height;
-        this.strokeColor = color;
-        setX(x);
-        setY(y);
-    }
-
-    public Color getFillColor() {
-        return fillColor;
-    }
-
-    public void setFillColor(Color fillColor) {
-        this.fillColor = fillColor;
+    public Orientation getOrientation(Orientation orientation) {
+        return orientation;
     }
 
     @Override
@@ -126,15 +100,16 @@ public class BoxOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Rectangle rectangle = new Rectangle(width, height);
-        rectangle.setX(getX());
-        rectangle.setY(getY());
-        if (getFillColor() != null) {
-            rectangle.setFill(getFillColor());
+        Separator separator = new Separator(orientation);
+        separator.getStyleClass().addAll(getStyles());
+        separator.setTranslateX(getX());
+        separator.setTranslateY(getY());
+        if (width != 0) {
+            separator.setPrefWidth(width);
         }
-        rectangle.setStroke(strokeColor);
-
-        setInputControls(rectangle);
-        return rectangle;
+        if (height != 0) {
+            separator.setPrefHeight(height);
+        }
+        return separator;
     }
 }

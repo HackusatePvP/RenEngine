@@ -1,17 +1,24 @@
 package me.piitex.engine.hanlders.events;
 
-import me.piitex.engine.overlays.ComboBoxOverlay;
+import javafx.scene.Node;
+import me.piitex.engine.overlays.Overlay;
 
 public class ComboBoxSelectEvent extends Event {
-    private final ComboBoxOverlay overlay;
+    private final Node node;
+    private final Overlay overlay;
     private final String item;
 
-    public ComboBoxSelectEvent(ComboBoxOverlay overlay, String item) {
+    public ComboBoxSelectEvent(Node node, Overlay overlay, String item) {
+        this.node = node;
         this.overlay = overlay;
         this.item = item;
     }
 
-    public ComboBoxOverlay getOverlay() {
+    public Node getNode() {
+        return node;
+    }
+
+    public Overlay getOverlay() {
         return overlay;
     }
 
