@@ -1,11 +1,167 @@
 # RenEngine
-This is the engine that was yanked out of RenJava. During the process of 'yanking' it out it lost a lot of cool features and functionality. This is what RSDK-GUI uses, but I do not recommend using it for your own applications.
+Simplified JavaFX framework for creating basic applications.
 
-## NOT MAINTAINED
-This will hardly receive updates and when it does it's for RSDK-GUI. The engine will be coded to work for that singular application. Any additions fixes or removals are for the betterment of RSDK-GUI.
+## Warning
+The framework is untested for production. Will not work with mobile devices.
 
-### Issues
-Please do not report issues with this project. It's unfortunately at the bottom of my priority. I know some people would be excited to have a simpler JavaFX engine, but I just don't have the time.
+## Style/Design
+[AtlantaFX](https://github.com/mkpaz/atlantafx) has been integrated into the framework.
+
+## API
+TODO
+
+### Simple Usage
+
+Always create a Main class which EXCLUDES javafx components.
+```java
+public class Main {
+    public static void main(String[] args) {
+        JavaFXLoad.main(args); // Call to your JavaFX main class. I always call it JavaFXLoad.
+    }
+}
+```
+
+Create your JavaFX entry point.
+```java
+import javafx.application.Application;
+
+public class JavaFXLoad extends Application {
+    @Override
+    public void start(Stage s) {
+        // Loads Atlanta css.
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+
+        // RenEngine API. This will create the window.
+        Window window = new WindowBuilder("App").setIcon(new ImageLoader(new File(App.getAppDirectory(), "logo.png"))).setDimensions(1920, 1080).build();
+        
+        // Always store the window as a static singleton. This makes accessing and modifying the window easier.
+        App.window = window;
+
+        // Handle closing the window.
+        Stage stage = window.getStage();
+        stage.setOnCloseRequest(windowEvent -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
+        // Render your first view/container for the application.
+        Container container = new HomeView().getContainer();
+        
+        // Add the container to the window.
+        window.addContainer(container);
+
+        // This will create a system tray icon (Optional)
+        FXTrayIcon icon = new FXTrayIcon(window.getStage(), new File(App.getAppDirectory(), "logo.png"), 128, 128);
+        
+        // Handle exiting from the icon (Optional)
+        icon.addExitItem("Exit", e -> {
+            Platform.exit();
+            System.exit(0);
+        });
+        // Display the icon in the system tray.
+        icon.show();
+
+        // Renders/displays the window.
+        window.render();
+    }
+
+    public static void main(String[] args) {
+        // Always load your backend before calling launch();
+        new App();
+        
+        // This function will call everything above. This is JavaFX API.
+        // Renders GUI components
+        launch();
+    }
+}
+```
+
+Configure Maven to properly build an executable jar file.
+```xml
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running with: mvn clean javafx:run -->
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>me.piitex.app.Main</mainClass>
+                            <launcher>app</launcher>
+                            <jlinkZipName>app</jlinkZipName>
+                            <jlinkImageName>app</jlinkImageName>
+                            <noManPages>true</noManPages>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>character-chat-app</finalName>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>me.piitex.app.Main</mainClass>
+                                </transformer>
+                                <!-- Need for Ikonli fonts to work -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/jasperreports_extension.properties</include>
+                    <include>**/tecsofti-fonts.xml</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+```
+
+
+## Examples
+* [RenJava](https://github.com/HackusatePvP/RenJava) Visual Novel framework.
+* [Chat-App](https://github.com/HackusatePvP/character-chat-app) AI chat interface designed for characters and roleplay.
 
 ## LICENSE
 This is licensed under MIT.
