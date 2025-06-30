@@ -172,7 +172,7 @@ public class ImageOverlay extends Overlay implements Region {
     public Node render() {
         Image image = getImage();
         ImageView imageView = new ImageView(image);
-        imageView.setPreserveRatio(true);
+        imageView.setPreserveRatio(preserveRatio);
         if (width != 0) {
             imageView.setFitWidth(width);
         }
