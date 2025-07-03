@@ -15,6 +15,7 @@ import java.util.Map;
 public class TitledContainer extends Container {
     private final String title;
     private boolean collapse = true;
+    private boolean expanded = true;
     private final VerticalLayout layout;
     private Pos alignment;
     private double spacing = 10;
@@ -33,6 +34,10 @@ public class TitledContainer extends Container {
 
     public void setCollapse(boolean collapse) {
         this.collapse = collapse;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
     }
 
     public void setAlignment(Pos alignment) {
@@ -90,6 +95,7 @@ public class TitledContainer extends Container {
             pane.setMaxHeight(getMaxHeight());
         }
         pane.setCollapsible(collapse);
+        pane.setExpanded(expanded);
 
         setStyling(pane);
 
