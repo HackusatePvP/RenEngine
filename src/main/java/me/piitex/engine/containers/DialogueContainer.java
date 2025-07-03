@@ -95,13 +95,6 @@ public class DialogueContainer extends Container {
         return;
     }
 
-    /**
-     * Method not supported with this container.
-     */
-    @Override
-    public void addOverlays(LinkedList<Overlay> overlays) {
-        return;
-    }
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {

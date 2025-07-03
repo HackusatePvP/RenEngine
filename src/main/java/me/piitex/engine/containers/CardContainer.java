@@ -66,14 +66,6 @@ public class CardContainer extends Container {
         return;
     }
 
-    /**
-     * Method not supported with this container.
-     */
-    @Override
-    public void addOverlays(LinkedList<Overlay> overlays) {
-        return;
-    }
-
     public CardContainer setHeader(Overlay overlay) {
         this.headerOverlay = overlay;
         this.headerLayout = null; // Clear layout if overlay is set

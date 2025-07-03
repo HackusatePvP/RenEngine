@@ -93,16 +93,6 @@ public abstract class Container extends Renderer {
         this.y = y;
     }
 
-    /**
-     * Adds {@link LinkedList<Overlay>} of overlays to the container.
-     * @param overlays The list of {@link Overlay} to be added
-     */
-    public void addOverlays(LinkedList<Overlay> overlays) {
-        for (Overlay overlay : overlays) {
-            addElement(overlay, getElements().size());
-        }
-    }
-
     public IContainerClick getOnClick() {
         return click;
     }
