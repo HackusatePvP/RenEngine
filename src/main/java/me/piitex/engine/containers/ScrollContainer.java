@@ -18,6 +18,7 @@ public class ScrollContainer extends Container {
     private boolean horizontalScroll = true;
     private boolean verticalScroll = true;
     private boolean scrollWhenNeeded = true;
+    private boolean scrollToBottom = false;
     private double scrollPosition;
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
@@ -67,6 +68,10 @@ public class ScrollContainer extends Container {
 
     public void setScrollPosition(double scrollPosition) {
         this.scrollPosition = scrollPosition;
+    }
+
+    public void setScrollToBottom(boolean scrollToBottom) {
+        this.scrollToBottom = scrollToBottom;
     }
 
     public ScrollPane getScrollPane() {
@@ -123,6 +128,12 @@ public class ScrollContainer extends Container {
         // Build pane layout for the scroll content
         VBox pane = (VBox) layout.render();
         pane.setAlignment(layout.getAlignment());
+
+        if (scrollToBottom) {
+            pane.heightProperty().addListener(observable -> {
+                scrollPane.setVvalue(1);
+            });
+        }
 
         scrollPane.setContent(pane);
 
