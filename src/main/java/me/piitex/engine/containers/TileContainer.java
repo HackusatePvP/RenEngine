@@ -15,6 +15,7 @@ public class TileContainer extends Container {
     private Overlay graphic;
     private String title;
     private String description;
+    private Overlay action;
 
     public TileContainer() {
         super(0, 0, 0, 0);
@@ -52,6 +53,10 @@ public class TileContainer extends Container {
         this.description = description;
     }
 
+    public void setAction(Overlay action) {
+        this.action = action;
+    }
+
     @Override
     public void addElements(Element... elements) {
         return;
@@ -73,16 +78,20 @@ public class TileContainer extends Container {
     }
 
     @Override
-    public void addOverlays(LinkedList<Overlay> overlays) {
-        return;
-    }
-
-    @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
         Tile tile = new Tile();
         tile.setTitle(title);
         tile.setDescription(description);
-        tile.setGraphic(graphic.render());
+        if (graphic != null) {
+            Node node = graphic.render();
+            graphic.setNode(node);
+            tile.setGraphic(node);
+        }
+        if (action != null) {
+            Node node = action.render();
+            action.setNode(node);
+            tile.setAction(node);
+        }
         tile.setTranslateX(getX());
         tile.setTranslateY(getY());
 
