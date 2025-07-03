@@ -21,7 +21,7 @@ import me.piitex.engine.loaders.ImageLoader;
  * </pre>
  */
 public class WindowBuilder {
-    private String title;
+    private final String title;
     private StageStyle stageStyle = StageStyle.DECORATED;
     private ImageLoader icon;
     private int width = 1920;
@@ -31,6 +31,7 @@ public class WindowBuilder {
     private boolean fullscreen = false;
     private boolean maximized = false;
     private boolean focused = true;
+    private boolean scale = true;
 
     /**
      * Starts the building process for a new Window with a required title.
@@ -123,6 +124,11 @@ public class WindowBuilder {
         return this;
     }
 
+    public WindowBuilder setScale(boolean scale) {
+        this.scale = scale;
+        return this;
+    }
+
     /**
      * Constructs and returns a new {@link Window} object based on the builder's configurations.
      * @return A new Window instance.
@@ -142,4 +148,8 @@ public class WindowBuilder {
     public boolean isFullscreen() { return fullscreen; }
     public boolean isMaximized() { return maximized; }
     public boolean isFocused() { return focused; }
+
+    public boolean isScale() {
+        return scale;
+    }
 }

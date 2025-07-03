@@ -18,7 +18,6 @@ import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
-import me.piitex.engine.overlays.Region;
 
 import java.time.Instant;
 import java.util.LinkedList;
@@ -73,7 +72,7 @@ public class Window {
     private final String title;
     private final ImageLoader icon;
     private final StageStyle stageStyle;
-    private final int width, height;
+    private int width, height;
     private boolean fullscreen = false, maximized = false;
     private Color backgroundColor = Color.BLACK;
     private Stage stage;
@@ -83,6 +82,7 @@ public class Window {
     private Instant lastRun;
     private Instant firstRun;
     private boolean captureInput = true;
+    private boolean scale;
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
@@ -122,6 +122,7 @@ public class Window {
         this.fullscreen = builder.isFullscreen();
         this.maximized = builder.isMaximized();
         this.focused = builder.isFocused();
+        this.scale = builder.isScale();
         buildStage();
     }
 
@@ -147,18 +148,19 @@ public class Window {
 
         root = new Pane();
         root.setPrefSize(width, height);
-        double scaleWidth = (double) width / RenConfiguration.getWidth();
-        double scaleHeight = (double) height / RenConfiguration.getHeight();
 
-        Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
-        root.getTransforms().setAll(scale);
+        if (scale) {
+            double scaleWidth = (double) width / RenConfiguration.getWidth();
+            double scaleHeight = (double) height / RenConfiguration.getHeight();
+            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+            root.getTransforms().setAll(scale);
+
+            handleWindowScaling(stage);
+        }
 
         scene = new Scene(root);
 
         stage.setScene(scene);
-        if (captureInput) {
-            handleStageInput(stage);
-        }
     }
 
     /**
@@ -208,6 +210,16 @@ public class Window {
      */
     public int getWidth() {
         return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+        stage.setWidth(width);
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+        stage.setHeight(height);
     }
 
     /**
@@ -419,9 +431,7 @@ public class Window {
      * This method essentially resets the visual state of the window without closing it.
      */
     public void resetStage() {
-        root.getChildren().clear();
-        stage = new Stage();
-        stage.hide();
+        buildStage();
     }
 
     /**
@@ -739,8 +749,7 @@ public class Window {
      * This method applies scaling transformations to the root pane based on window resizing.
      * @param stage The JavaFX Stage to handle input for.
      */
-    private void handleStageInput(Stage stage) {
-
+    private void handleWindowScaling(Stage stage) {
         // This scales the application to the desired width and height that it is running at.
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
             RenConfiguration.setCurrentWindowHeight(newValue.doubleValue());
@@ -761,5 +770,4 @@ public class Window {
             root.getTransforms().setAll(scale);
         });
     }
-
 }
