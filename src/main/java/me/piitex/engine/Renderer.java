@@ -181,6 +181,10 @@ public class Renderer extends Element {
         elements.remove(index);
     }
 
+    public void removeElement(Element element) {
+        elements.remove(element.getIndex());
+    }
+
     public void removeAllElement(Element element) {
         LinkedHashMap<Integer, Element> toRemove = new LinkedHashMap<>(elements);
         toRemove.forEach((integer, e) -> {
@@ -231,6 +235,7 @@ public class Renderer extends Element {
             }
             if (element instanceof Layout layout) {
                 node = layout.render();
+                node.getStyleClass().addAll(layout.getStyles());
             }
             if (node != null) {
                 updateOffsets(node);
@@ -247,6 +252,7 @@ public class Renderer extends Element {
                 Map.Entry<Node, LinkedList<Node>> entry = container.build();
                 toReturn.add(entry.getKey());
                 container.setView(entry.getKey());
+                entry.getKey().getStyleClass().addAll(container.getStyles());
 
                 if (container.getId() != null && !container.getId().isEmpty()) {
                     getRenderedNodes().put(container.getId(), entry.getKey());

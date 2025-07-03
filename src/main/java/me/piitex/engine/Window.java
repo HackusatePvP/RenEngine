@@ -515,6 +515,7 @@ public class Window {
     private void renderContainer(Container container) {
         Map.Entry<Node, LinkedList<Node>> entry = container.build();
         Node node = entry.getKey();
+        node.getStyleClass().addAll(container.getStyles());
         container.setView(node);
 
         node.prefHeight(container.getHeight());
