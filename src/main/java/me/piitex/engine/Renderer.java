@@ -1,16 +1,14 @@
 package me.piitex.engine;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import me.piitex.engine.hanlders.events.ContainerRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
-import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -256,7 +254,10 @@ public class Renderer extends Element {
 
                 if (container.getId() != null && !container.getId().isEmpty()) {
                     getRenderedNodes().put(container.getId(), entry.getKey());
+                }
 
+                if (container.getOnRender() != null) {
+                    container.getOnRender().onContainerRender(new ContainerRenderEvent(container, entry.getKey()));
                 }
             }
         }

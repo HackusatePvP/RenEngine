@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import me.piitex.engine.containers.EmptyContainer;
+import me.piitex.engine.hanlders.events.ContainerRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
@@ -548,6 +549,10 @@ public class Window {
         root.getStylesheets().addAll(container.getStylesheets());
 
         getRoot().getChildren().add(node);
+
+        if (container.getOnRender() != null) {
+            container.getOnRender().onContainerRender(new ContainerRenderEvent(container, entry.getKey()));
+        }
     }
 
     /**
