@@ -80,8 +80,6 @@ public class Window {
     private Scene scene;
     private Pane root;
 
-    private Instant lastRun;
-    private Instant firstRun;
     private boolean captureInput = true;
     private boolean scale;
 
@@ -124,6 +122,8 @@ public class Window {
         this.maximized = builder.isMaximized();
         this.focused = builder.isFocused();
         this.scale = builder.isScale();
+        RenConfiguration.setWidth(width);
+        RenConfiguration.setHeight(height);
         buildStage();
     }
 
@@ -215,12 +215,16 @@ public class Window {
 
     public void setWidth(int width) {
         this.width = width;
+        RenConfiguration.setWidth(width);
         stage.setWidth(width);
+        root.getTransforms().clear();
     }
 
     public void setHeight(int height) {
         this.height = height;
+        RenConfiguration.setHeight(height);
         stage.setHeight(height);
+        root.getTransforms().clear();
     }
 
     /**
