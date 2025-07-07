@@ -23,7 +23,8 @@ import java.util.Map;
 public class ImageLoader {
     private final File file;
 
-    private static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
+    public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
+    public static boolean useCache = true;
 
     /**
      * Loads an image via a filename from the base directory.
@@ -44,7 +45,7 @@ public class ImageLoader {
     }
 
     public Image build() {
-        if (imageCache.containsKey(file.getPath())) {
+        if (useCache && imageCache.containsKey(file.getPath())) {
             return imageCache.get(file.getPath());
         }
         try {
