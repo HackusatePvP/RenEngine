@@ -42,6 +42,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private boolean enabled = true;
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
+    private ContextMenu contextMenu;
 
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
@@ -210,6 +211,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
         // Set up context menu for suggestions on right-click
         textArea.setOnMouseClicked(event -> {
+            if (contextMenu != null) {
+                contextMenu.hide();
+            }
             if (event.getButton() == MouseButton.SECONDARY) {
                 int charPos = textArea.hit(event.getX(), event.getY()).getInsertionIndex();
                 String fullText = textArea.getText();
@@ -224,10 +228,10 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                         matches.stream()
                                 .filter(match -> match.getRule().isDictionaryBasedSpellingRule() &&
                                         match.getFromPos() == 0 && match.getToPos() == wordUnderCursor.length())
-                                .limit(5).findFirst()
+                                .findFirst()
                                 .ifPresent(misspelledMatch -> {
                                     if (!misspelledMatch.getSuggestedReplacements().isEmpty()) {
-                                        ContextMenu contextMenu = createSpellCheckContextMenu(
+                                        contextMenu = createSpellCheckContextMenu(
                                                 misspelledMatch.getSuggestedReplacements(),
                                                 wordBounds[0],
                                                 wordBounds[1],
