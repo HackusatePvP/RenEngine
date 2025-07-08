@@ -5,21 +5,20 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 import me.piitex.engine.overlays.events.IOverlaySubmit;
+import me.piitex.engine.overlays.events.OverlaySubmitEvent;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.languagetool.JLanguageTool;
 
-import org.languagetool.Language;
 import org.languagetool.Languages;
-import org.languagetool.language.AmericanEnglish;
-import org.languagetool.language.English;
 import org.languagetool.rules.RuleMatch;
 
 import java.io.IOException;
@@ -264,6 +263,18 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (getiOverlaySubmit() != null) {
+            textArea.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    if (event.isShiftDown()) {
+                        textArea.appendText("\n");
+                    } else {
+                        getiOverlaySubmit().onSubmit(new OverlaySubmitEvent(this, event));
+                    }
+                }
+            });
         }
 
 
