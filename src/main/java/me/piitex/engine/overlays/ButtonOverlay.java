@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import me.piitex.engine.loaders.FontLoader;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.LinkedList;
 
@@ -16,6 +17,7 @@ public class ButtonOverlay extends Overlay implements Region {
     private String text;
     private double scaleX, scaleY;
     private FontLoader font;
+    private FontIcon icon;
 
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
     // Needed for some engine fixes
@@ -39,6 +41,17 @@ public class ButtonOverlay extends Overlay implements Region {
     public ButtonOverlay(String id, String text) {
         this.id = id;
         this.text = text;
+    }
+
+    public ButtonOverlay(String id, FontIcon icon) {
+        this.id = id;
+        this.icon = icon;
+    }
+
+    public ButtonOverlay(String id, String text, FontIcon fontIcon) {
+        this.id = id;
+        this.text = text;
+        this.icon = fontIcon;
     }
 
     public ButtonOverlay(String id, String text, Color textFill) {
@@ -428,6 +441,9 @@ public class ButtonOverlay extends Overlay implements Region {
                 }
             }
         }
+        if (icon != null) {
+            button.setGraphic(icon);
+        }
         if (text != null && !text.isEmpty()) {
             button.setText(text);
         }
@@ -451,10 +467,6 @@ public class ButtonOverlay extends Overlay implements Region {
             button.setTranslateX(getX());
             button.setTranslateY(getY());
         }
-
-        button.setOnAction(actionEvent -> {
-
-        });
 
         this.button = button;
 
