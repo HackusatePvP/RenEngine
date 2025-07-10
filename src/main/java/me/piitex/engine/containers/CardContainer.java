@@ -187,6 +187,7 @@ public class CardContainer extends Container {
 
         if (headerOverlay != null) {
             Node node = headerOverlay.render();
+            headerOverlay.setInputControls(node);
             headerOverlay.setNode(node);
             atlantafxCard.setHeader(node);
             if (headerOverlay.getId() != null && !headerOverlay.getId().isEmpty()) {
@@ -206,6 +207,7 @@ public class CardContainer extends Container {
 
         if (bodyOverlay != null) {
             Node node = bodyOverlay.render();
+            bodyOverlay.setInputControls(node);
             bodyOverlay.setNode(node);
             atlantafxCard.setBody(node);
             if (bodyOverlay.getId() != null && !bodyOverlay.getId().isEmpty()) {
@@ -218,6 +220,7 @@ public class CardContainer extends Container {
 
         if (footerOverlay != null) {
             Node node = footerOverlay.render();
+            footerOverlay.setInputControls(node);
             footerOverlay.setNode(node);
             atlantafxCard.setFooter(node);
             if (footerOverlay.getId() != null && !footerOverlay.getId().isEmpty()) {
