@@ -1,5 +1,6 @@
 package me.piitex.engine.overlays;
 
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -66,6 +67,7 @@ public abstract class Overlay extends Element {
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
+    private Cursor cursor;
     private Node node;
 
     // Specific style sheet files
@@ -170,6 +172,14 @@ public abstract class Overlay extends Element {
         this.node = node;
     }
 
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        this.cursor = cursor;
+    }
+
     /**
      * Converts the overlay into a {@link Node} which is used for the JavaFX API.
      * @return The converted {@link Node} for the overlay.
@@ -177,6 +187,10 @@ public abstract class Overlay extends Element {
     public abstract Node render();
 
     public void setInputControls(Node node) {
+        if (cursor != null) {
+            node.setCursor(cursor);
+        }
+
         if (node.getOnDragEntered() == null) {
             node.setOnMouseEntered(event -> {
                 //RenJava.getEventHandler().callEvent(new OverlayHoverEvent(this, event));
