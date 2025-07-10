@@ -19,6 +19,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.languagetool.JLanguageTool;
 
 import org.languagetool.Languages;
+import org.languagetool.rules.Category;
 import org.languagetool.rules.RuleMatch;
 
 import java.io.IOException;
@@ -155,11 +156,15 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        // The BiConsumer now takes a String as the style type
         BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
             if (styleType != null && styleType.equals("misspelled")) {
                 textExt.setUnderlineColor(Color.RED);
-                textExt.setUnderlineDashArray(new Number[]{2.0, 2.0}); // wavy effect
+                textExt.setUnderlineDashArray(new Number[]{2.0, 2.0});
+                textExt.setUnderlineWidth(1.0);
+                textExt.setUnderlineCap(StrokeLineCap.BUTT);
+            } else if (styleType != null && styleType.equals("grammarError")) {
+                textExt.setUnderlineColor(Color.BLUE);
+                textExt.setUnderlineDashArray(new Number[]{1.0, 1.0});
                 textExt.setUnderlineWidth(1.0);
                 textExt.setUnderlineCap(StrokeLineCap.BUTT);
             } else {
@@ -171,12 +176,11 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             textExt.getStyleClass().addAll(getStyles());
         };
 
-        // StyledTextArea now uses String for its text style
         StyledTextArea<Object, String> textArea = new StyledTextArea<>(
-                null, // No paragraph style
-                (paragraphTextFlow, paragraphStyle) -> {}, // No paragraph style application needed
-                "default", // Default text style is now a string "default"
-                applyTextStyle // Pass our new BiConsumer
+                null,
+                (paragraphTextFlow, paragraphStyle) -> {},
+                "default",
+                applyTextStyle
         );
         textArea.setWrapText(true);
         textArea.setPrefSize(getPrefWidth(), getPrefHeight());
@@ -185,9 +189,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
 
         JLanguageTool langTool = new JLanguageTool(Languages.getLanguageForShortCode("en-US"));
-        langTool.getAllRules().stream()
-                .filter(rule -> !rule.isDictionaryBasedSpellingRule())
-                .forEach(rule -> langTool.disableRule(rule.getId()));
+        for (Category category : langTool.getCategories().values()) {
+            langTool.enableRuleCategory(category.getId());
+        }
 
         // Running this every time the user types can cause lag when typing.
         // This will run every 500ms to check for spell checking
@@ -200,12 +204,11 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             spellCheckScheduler[0].schedule(() -> {
                 try {
                     final List<RuleMatch> matches = langTool.check(newText);
-                    // Pass the correctly typed textArea to applyHighlighting
                     Platform.runLater(() -> applyHighlighting(matches, newText.length(), textArea));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }, 500, TimeUnit.MILLISECONDS); // Debounce delay
+            }, 500, TimeUnit.MILLISECONDS);
         });
 
         // Set up context menu for suggestions on right-click
@@ -216,32 +219,49 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             if (event.getButton() == MouseButton.SECONDARY) {
                 int charPos = textArea.hit(event.getX(), event.getY()).getInsertionIndex();
                 String fullText = textArea.getText();
-                int[] wordBounds = getWordBoundsAtPosition(fullText, charPos);
-
-                if (wordBounds != null) {
-                    String wordUnderCursor = fullText.substring(wordBounds[0], wordBounds[1]);
-
-                    try {
-                        // Check only the word under cursor for suggestions
-                        List<RuleMatch> matches = langTool.check(wordUnderCursor);
-                        matches.stream()
-                                .filter(match -> match.getRule().isDictionaryBasedSpellingRule() &&
-                                        match.getFromPos() == 0 && match.getToPos() == wordUnderCursor.length())
-                                .findFirst()
-                                .ifPresent(misspelledMatch -> {
-                                    if (!misspelledMatch.getSuggestedReplacements().isEmpty()) {
-                                        contextMenu = createSpellCheckContextMenu(
-                                                misspelledMatch.getSuggestedReplacements(),
-                                                wordBounds[0],
-                                                wordBounds[1],
-                                                textArea // Now correctly passes StyledTextArea<Object, String>
-                                        );
-                                        contextMenu.show(textArea, event.getScreenX(), event.getScreenY());
-                                    }
-                                });
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    List<RuleMatch> matches = langTool.check(fullText);
+                    RuleMatch relevantMatch = null;
+                    for (RuleMatch match : matches) {
+                        if (charPos >= match.getFromPos() && charPos <= match.getToPos()) {
+                            relevantMatch = match;
+                            break;
+                        }
                     }
+
+                    if (relevantMatch != null && !relevantMatch.getSuggestedReplacements().isEmpty()) {
+                        contextMenu = createSpellCheckContextMenu(
+                                relevantMatch.getSuggestedReplacements(),
+                                relevantMatch.getFromPos(),
+                                relevantMatch.getToPos(),
+                                textArea
+                        );
+                        contextMenu.show(textArea, event.getScreenX(), event.getScreenY());
+                    } else {
+                        // Fallback to existing word-based spell check context if no general match
+                        int[] wordBounds = getWordBoundsAtPosition(fullText, charPos);
+                        if (wordBounds != null) {
+                            String wordUnderCursor = fullText.substring(wordBounds[0], wordBounds[1]);
+                            List<RuleMatch> wordMatches = langTool.check(wordUnderCursor);
+                            wordMatches.stream()
+                                    .filter(match -> match.getRule().isDictionaryBasedSpellingRule() &&
+                                            match.getFromPos() == 0 && match.getToPos() == wordUnderCursor.length())
+                                    .findFirst()
+                                    .ifPresent(misspelledMatch -> {
+                                        if (!misspelledMatch.getSuggestedReplacements().isEmpty()) {
+                                            contextMenu = createSpellCheckContextMenu(
+                                                    misspelledMatch.getSuggestedReplacements(),
+                                                    wordBounds[0],
+                                                    wordBounds[1],
+                                                    textArea
+                                            );
+                                            contextMenu.show(textArea, event.getScreenX(), event.getScreenY());
+                                        }
+                                    });
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -293,8 +313,13 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             to = Math.min(fullTextLength, to);
             if (from >= to) continue;
 
-            spansBuilder.add("default", from - lastPos); // Text before match
-            spansBuilder.add("misspelled", to - from);   // Misspelled text
+            spansBuilder.add("default", from - lastPos);
+
+            if (match.getRule().isDictionaryBasedSpellingRule()) {
+                spansBuilder.add("misspelled", to - from);
+            } else {
+                spansBuilder.add("grammarError", to - from);
+            }
             lastPos = to;
         }
         spansBuilder.add("default", fullTextLength - lastPos); // Remaining text
