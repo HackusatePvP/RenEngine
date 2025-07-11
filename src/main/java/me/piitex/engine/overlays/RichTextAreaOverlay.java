@@ -183,9 +183,30 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 applyTextStyle
         );
         textArea.setWrapText(true);
-        textArea.setPrefSize(getPrefWidth(), getPrefHeight());
-        textArea.setMaxSize(getMaxWidth(), getMaxHeight());
-        textArea.setMinSize(getWidth(), getHeight());
+
+        if (getWidth() > 0) {
+            textArea.setMinWidth(width);
+        }
+
+        if (getHeight() > 0) {
+            textArea.setMinHeight(height);
+        }
+
+        if (getPrefWidth() > 0) {
+            textArea.setPrefWidth(prefWidth);
+        }
+
+        if (getPrefHeight() > 0) {
+            textArea.setPrefHeight(prefHeight);
+        }
+
+        if (getMaxWidth() > 0) {
+            textArea.setMaxWidth(maxWidth);
+        }
+
+        if (getMaxHeight() > 0) {
+            textArea.setMaxHeight(maxHeight);
+        }
 
 
         JLanguageTool langTool = new JLanguageTool(Languages.getLanguageForShortCode("en-US"));
