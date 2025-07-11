@@ -5,10 +5,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.javafx.StackedFontIcon;
-
-import java.io.File;
-import java.net.MalformedURLException;
 
 public class TextOverlay extends Overlay implements Region {
     private String string;
@@ -78,13 +74,12 @@ public class TextOverlay extends Overlay implements Region {
             if (textFillColor != null) {
                 textNode.setFill(textFillColor);
             }
-            // Apply overlay's position (x, y) to the Text node
+
             textNode.setTranslateX(getX());
             textNode.setTranslateX(getY());
 
             textNode.setWrappingWidth(width);
 
-            // Apply styling from the base Overlay class if you want text to inherit
             if (fontLoader != null) {
                 textNode.setFont(fontLoader.getFont());
             }
@@ -97,10 +92,8 @@ public class TextOverlay extends Overlay implements Region {
             nodeToRender = textNode;
         }
 
-        // Apply common overlay properties like scale and styleFx
         if (nodeToRender != null) {
             nodeToRender.getStyleClass().addAll(getStyles());
-            // Your existing input controls setup
             setInputControls(nodeToRender);
         }
 
