@@ -1,6 +1,8 @@
 package me.piitex.engine.overlays;
 
 import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Theme;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -43,6 +45,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
     private ContextMenu contextMenu;
+    private String backgroundColor;
 
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
@@ -55,6 +58,18 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         this.hintText = hintText;
         this.width = width;
         this.height = height;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public void setTextFill(Color textFill) {
+        this.textFill = textFill;
     }
 
     @Override
@@ -157,6 +172,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     @Override
     public Node render() {
         BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
+            textExt.setFill(textFill);
             if (styleType != null && styleType.equals("misspelled")) {
                 textExt.setUnderlineColor(Color.RED);
                 textExt.setUnderlineDashArray(new Number[]{2.0, 2.0});
@@ -173,7 +189,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 textExt.setUnderlineWidth(0.0);
                 textExt.setUnderlineCap(null);
             }
-            textExt.getStyleClass().addAll(getStyles());
         };
 
         StyledTextArea<Object, String> textArea = new StyledTextArea<>(
@@ -289,7 +304,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
         // Atlanta FX does not work with RichText
         // Could create a custom theme instead of setting the background manually
-        textArea.setStyle("-fx-background-color: #161b22;");
+        if (backgroundColor != null) {
+            textArea.setStyle("-fx-background-color: " + backgroundColor + ";");
+        }
 
         // Initial content setting and highlighting
         if (defaultInput != null && !defaultInput.isEmpty()) {
