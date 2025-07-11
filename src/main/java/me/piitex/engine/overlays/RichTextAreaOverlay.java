@@ -46,6 +46,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private IOverlaySubmit iOverlaySubmit;
     private ContextMenu contextMenu;
     private String backgroundColor;
+    private String borderColor;
 
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
@@ -66,6 +67,10 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
     public void setBackgroundColor(String backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
     }
 
     public void setTextFill(Color textFill) {
@@ -304,8 +309,19 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
         // Atlanta FX does not work with RichText
         // Could create a custom theme instead of setting the background manually
+        StringBuilder appender = new StringBuilder();
+
         if (backgroundColor != null) {
-            textArea.setStyle("-fx-background-color: " + backgroundColor + ";");
+            appender.append("-fx-background-color: ").append(backgroundColor).append(";");
+        }
+        if (borderColor != null) {
+            appender.append("-fx-border-color: ").append(borderColor).append(" ;");
+            appender.append("-fx-border-width: 1px;");
+            appender.append("-fx-border-radius: 4px;");
+        }
+
+        if (!appender.isEmpty()) {
+            textArea.setStyle(appender.toString());
         }
 
         // Initial content setting and highlighting
