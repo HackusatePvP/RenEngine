@@ -1,11 +1,10 @@
 package me.piitex.engine;
 
 import javafx.scene.Node;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import me.piitex.engine.hanlders.events.ContainerRenderEvent;
+import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -224,15 +223,14 @@ public class Renderer extends Element {
             if (element instanceof Overlay overlay) {
                 node = overlay.render();
                 node.getStyleClass().addAll(overlay.getStyles());
-                if (overlay.getTooltip() != null) {
-                    Tooltip tooltip = new Tooltip(overlay.getTooltip());
-                    tooltip.setShowDelay(Duration.millis(250));
-                    Tooltip.install(node, tooltip);
-                }
+                overlay.setInputControls(node);
                 overlay.setNode(node);
             }
             if (element instanceof Layout layout) {
                 node = layout.render();
+                if (layout.getRenderEvent() != null) {
+                    layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(layout.getPane(), layout));
+                }
                 node.getStyleClass().addAll(layout.getStyles());
             }
             if (node != null) {
@@ -259,6 +257,7 @@ public class Renderer extends Element {
                 if (container.getOnRender() != null) {
                     container.getOnRender().onContainerRender(new ContainerRenderEvent(container, entry.getKey()));
                 }
+
             }
         }
 

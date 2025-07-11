@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import me.piitex.engine.Renderer;
 import me.piitex.engine.layouts.handles.ILayoutClickEvent;
+import me.piitex.engine.layouts.handles.ILayoutRender;
 
 public abstract class Layout extends Renderer {
     private final Pane pane;
@@ -12,6 +13,7 @@ public abstract class Layout extends Renderer {
     private Insets padding;
     private Pos alignment;
     private ILayoutClickEvent clickEvent;
+    private ILayoutRender renderEvent;
 
     protected Layout(Pane pane, double width, double height) {
         this.pane = pane;
@@ -25,6 +27,14 @@ public abstract class Layout extends Renderer {
 
     public void setClickEvent(ILayoutClickEvent clickEvent) {
         this.clickEvent = clickEvent;
+    }
+
+    public ILayoutRender getRenderEvent() {
+        return renderEvent;
+    }
+
+    public void onRender(ILayoutRender renderEvent) {
+        this.renderEvent = renderEvent;
     }
 
     public Pane getPane() {

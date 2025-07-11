@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
+import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -69,79 +70,42 @@ public class CardContainer extends Container {
     public CardContainer setHeader(Overlay overlay) {
         this.headerOverlay = overlay;
         this.headerLayout = null; // Clear layout if overlay is set
-        if (overlay != null) {
-            atlantafxCard.setHeader(overlay.render());
-        } else {
-            atlantafxCard.setHeader(null);
-        }
         return this;
     }
 
     public CardContainer setHeader(Layout layout) {
         this.headerLayout = layout;
         this.headerOverlay = null; // Clear overlay if layout is set
-        if (layout != null) {
-            // Layouts need to be rendered within a Container context.
-            // Assuming layout.render(this) produces the appropriate Node (Pane).
-            atlantafxCard.setHeader(layout.render());
-        } else {
-            atlantafxCard.setHeader(null);
-        }
         return this;
     }
 
     public CardContainer setSubHeader(Overlay overlay) {
         this.subHeaderOverlay = overlay;
         this.subHeaderLayout = null; // Clear layout if overlay is set
-        if (overlay != null) {
-            atlantafxCard.setSubHeader(overlay.render());
-        } else {
-            atlantafxCard.setSubHeader(null);
-        }
         return this;
     }
 
     public CardContainer setSubHeader(Layout layout) {
         this.subHeaderLayout = layout;
         this.subHeaderOverlay = null; // Clear overlay if layout is set
-        if (layout != null) {
-            atlantafxCard.setSubHeader(layout.render());
-        } else {
-            atlantafxCard.setSubHeader(null);
-        }
         return this;
     }
 
     public CardContainer setBody(Overlay overlay) {
         this.bodyOverlay = overlay;
         this.bodyLayout = null;
-        if (overlay != null) {
-            atlantafxCard.setBody(overlay.render());
-        } else {
-            atlantafxCard.setBody(null);
-        }
         return this;
     }
 
     public CardContainer setBody(Layout layout) {
         this.bodyLayout = layout;
         this.bodyOverlay = null;
-        if (layout != null) {
-            atlantafxCard.setBody(layout.render());
-        } else {
-            atlantafxCard.setBody(null);
-        }
         return this;
     }
 
     public CardContainer setFooter(Overlay overlay) {
         this.footerOverlay = overlay;
         this.footerLayout = null;
-        if (overlay != null) {
-            atlantafxCard.setFooter(overlay.render());
-        } else {
-            atlantafxCard.setFooter(null);
-        }
 
         return this;
     }
@@ -149,11 +113,6 @@ public class CardContainer extends Container {
     public CardContainer setFooter(Layout layout) {
         this.footerLayout = layout;
         this.footerOverlay = null;
-        if (layout != null) {
-            atlantafxCard.setFooter(layout.render());
-        } else {
-            atlantafxCard.setFooter(null);
-        }
 
         return this;
     }
@@ -193,16 +152,22 @@ public class CardContainer extends Container {
             if (headerOverlay.getId() != null && !headerOverlay.getId().isEmpty()) {
                 getRenderedNodes().put(headerOverlay.getId(), node);
             }
-        }
-        else if (headerLayout != null) {
-            atlantafxCard.setHeader(headerLayout.render());
+        } else if (headerLayout != null) {
+            Node node = headerLayout.render();
+            if (headerLayout.getRenderEvent() != null) {
+                headerLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(headerLayout.getPane(), headerLayout));
+            }
+            atlantafxCard.setHeader(node);
         }
 
         if (subHeaderOverlay != null) {
             atlantafxCard.setSubHeader(subHeaderOverlay.render());
-        }
-        else if (subHeaderLayout != null) {
-            atlantafxCard.setSubHeader(subHeaderLayout.render());
+        } else if (subHeaderLayout != null) {
+            Node node = subHeaderLayout.render();
+            if (subHeaderLayout.getRenderEvent() != null) {
+                subHeaderLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(subHeaderLayout.getPane(), subHeaderLayout));
+            }
+            atlantafxCard.setSubHeader(node);
         }
 
         if (bodyOverlay != null) {
@@ -213,9 +178,12 @@ public class CardContainer extends Container {
             if (bodyOverlay.getId() != null && !bodyOverlay.getId().isEmpty()) {
                 getRenderedNodes().put(bodyOverlay.getId(), node);
             }
-        }
-        else if (bodyLayout != null) {
-            atlantafxCard.setBody(bodyLayout.render());
+        } else if (bodyLayout != null) {
+            Node node = bodyLayout.render();
+            if (bodyLayout.getRenderEvent() != null) {
+                bodyLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(bodyLayout.getPane(), bodyLayout));
+            }
+            atlantafxCard.setBody(node);
         }
 
         if (footerOverlay != null) {
@@ -226,9 +194,12 @@ public class CardContainer extends Container {
             if (footerOverlay.getId() != null && !footerOverlay.getId().isEmpty()) {
                 getRenderedNodes().put(footerOverlay.getId(), node);
             }
-        }
-        else if (footerLayout != null) {
-            atlantafxCard.setFooter(footerLayout.render());
+        } else if (footerLayout != null) {
+            Node node = footerLayout.render();
+            if (footerLayout.getRenderEvent() != null) {
+                footerLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(bodyLayout.getPane(), footerLayout));
+            }
+            atlantafxCard.setFooter(node);
         }
 
         if (getOnClick() != null) {

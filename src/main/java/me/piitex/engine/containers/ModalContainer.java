@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
+import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -75,6 +76,9 @@ public class ModalContainer extends Container {
             }
             if (content instanceof Layout layout) {
                 node = layout.render();
+                if (layout.getRenderEvent() != null) {
+                    layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(layout.getPane(), layout));
+                }
                 if (node instanceof VBox vBox) {
                     vBox.setPadding(new Insets(16));
                 }

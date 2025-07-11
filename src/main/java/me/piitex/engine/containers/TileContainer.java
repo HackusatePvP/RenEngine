@@ -84,11 +84,13 @@ public class TileContainer extends Container {
         tile.setDescription(description);
         if (graphic != null) {
             Node node = graphic.render();
+            graphic.setInputControls(node);
             graphic.setNode(node);
             tile.setGraphic(node);
         }
         if (action != null) {
             Node node = action.render();
+            action.setInputControls(node);
             action.setNode(node);
             tile.setAction(node);
         }

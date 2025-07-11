@@ -6,6 +6,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
+import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.VerticalLayout;
 
 import java.util.AbstractMap;
@@ -104,6 +105,9 @@ public class TitledContainer extends Container {
         }
         layout.setSpacing(spacing);
         Pane vBox = layout.render();
+        if (layout.getRenderEvent() != null) {
+            layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(vBox, layout));
+        }
         pane.setContent(vBox);
 
         LinkedList<Node> order = buildBase();

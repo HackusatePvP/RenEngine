@@ -2,9 +2,9 @@ package me.piitex.engine.containers;
 
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import me.piitex.engine.Container;
+import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 
 import java.util.AbstractMap;
@@ -127,6 +127,9 @@ public class ScrollContainer extends Container {
 
         // Build pane layout for the scroll content
         VBox pane = (VBox) layout.render();
+        if (layout.getRenderEvent() != null) {
+            layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(pane, layout));
+        }
         pane.setAlignment(layout.getAlignment());
 
         if (scrollToBottom) {
