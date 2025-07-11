@@ -3,7 +3,9 @@ package me.piitex.engine.overlays;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Window;
@@ -15,7 +17,6 @@ import me.piitex.engine.overlays.events.IOverlayHoverExit;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -189,6 +190,12 @@ public abstract class Overlay extends Element {
     public void setInputControls(Node node) {
         if (cursor != null) {
             node.setCursor(cursor);
+        }
+
+        if (tooltip != null && !tooltip.isEmpty()) {
+            Tooltip tooltip = new Tooltip(getTooltip());
+            tooltip.setShowDelay(Duration.millis(250));
+            Tooltip.install(node, tooltip);
         }
 
         if (node.getOnDragEntered() == null) {
