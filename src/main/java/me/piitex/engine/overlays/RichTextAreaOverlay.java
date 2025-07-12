@@ -1,9 +1,8 @@
 package me.piitex.engine.overlays;
 
 import atlantafx.base.theme.Styles;
-import atlantafx.base.theme.Theme;
-import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -319,6 +318,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             appender.append("-fx-border-width: 1px;");
             appender.append("-fx-border-radius: 4px;");
         }
+        appender.append("fx-caret-color: ").append(cssColor(textFill)).append(" ;"); // Doesn't work sadly
+
+        textArea.setPadding(new Insets(5));
 
         if (!appender.isEmpty()) {
             textArea.setStyle(appender.toString());
@@ -328,6 +330,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         if (defaultInput != null && !defaultInput.isEmpty()) {
             textArea.replaceText(defaultInput);
         }
+
 
         // Apply initial highlighting if there's text
         if (!textArea.getText().isEmpty()) {
@@ -424,5 +427,12 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         return contextMenu;
     }
 
+    private String cssColor(Color color) {
+        return String.format("rgba(%d, %d, %d, %f)",
+                (int) (255 * color.getRed()),
+                (int) (255 * color.getGreen()),
+                (int) (255 * color.getBlue()),
+                color.getOpacity());
+    }
 
 }
