@@ -208,7 +208,7 @@ public abstract class Overlay extends Element {
         }
         if (node.getOnMouseClicked() == null) {
             node.setOnMouseClicked(event -> {
-                OverlayClickEvent overlayClickEvent = new OverlayClickEvent(this, event);
+                OverlayClickEvent overlayClickEvent = new OverlayClickEvent(this, event, event.getSceneX(), event.getSceneY());
                 if (getOnClick() != null) {
                     getOnClick().onClick(overlayClickEvent);
                 }
