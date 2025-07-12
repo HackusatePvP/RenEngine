@@ -20,7 +20,6 @@ import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
 
-import java.time.Instant;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -740,6 +739,9 @@ public class Window {
 
         double currentScaleX = RenConfiguration.getWidthScale();
         double currentScaleY = RenConfiguration.getHeightScale();
+
+        if (currentScaleX == 0) currentScaleX = 1.0;
+        if (currentScaleY == 0) currentScaleY = 1.0;
 
         calculatedX /= currentScaleX;
         calculatedY /= currentScaleY;
