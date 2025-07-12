@@ -696,6 +696,19 @@ public class Window {
         renderPopupContainer(container);
     }
 
+    public void renderPopup(Container container, double x, double y, double width, double height) {
+        container.setX(x);
+        container.setY(y);
+        container.setPrefSize(width, height);
+        container.setMaxSize(width, height);
+
+        int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
+        container.setIndex(index);
+
+        containers.put(index, container);
+        renderPopupContainer(container);
+    }
+
     public void renderPopup(Container container, PopupPosition position, double width, double height) {
         double windowWidth = this.width;
         double windowHeight = this.height;
@@ -728,20 +741,11 @@ public class Window {
         double currentScaleX = RenConfiguration.getWidthScale();
         double currentScaleY = RenConfiguration.getHeightScale();
 
-        if (currentScaleX == 0) currentScaleX = 1.0;
-        if (currentScaleY == 0) currentScaleY = 1.0;
-
         calculatedX /= currentScaleX;
         calculatedY /= currentScaleY;
 
-        container.setX(calculatedX);
-        container.setY(calculatedY);
+        renderPopup(container, calculatedX, calculatedY, width, height);
 
-        int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
-        container.setIndex(index);
-
-        containers.put(index, container);
-        renderPopupContainer(container);
     }
 
     public void renderAlert(AlertOverlay alertOverlay) {
