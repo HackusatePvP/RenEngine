@@ -199,6 +199,10 @@ public class Renderer extends Element {
         }
     }
 
+    public void removeAllElements() {
+        elements.clear();
+    }
+
     public double getOffsetX() {
         return xOffset;
     }
