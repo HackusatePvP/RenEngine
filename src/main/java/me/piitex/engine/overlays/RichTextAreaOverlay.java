@@ -28,6 +28,7 @@ import java.text.BreakIterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -47,10 +48,14 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private String backgroundColor;
     private String borderColor;
 
+    private final ScheduledExecutorService spellCheckExecutor;
+    private ScheduledFuture<?> spellCheckFuture;
+
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
+        this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
     }
 
     public RichTextAreaOverlay(String defaultInput, String hintText, double width, double height) {
@@ -58,6 +63,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         this.hintText = hintText;
         this.width = width;
         this.height = height;
+        this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
     }
 
     public String getBackgroundColor() {
@@ -235,20 +241,24 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
         // Running this every time the user types can cause lag when typing.
         // This will run every 500ms to check for spell checking
-        // If the user types during the scheduler it will shut down and re-run in 500ms
-        final ScheduledExecutorService[] spellCheckScheduler = {Executors.newSingleThreadScheduledExecutor()};
+        // If the user types during the scheduler it will shut down and re-run in 500ms.
+        // This is also a very intensive task.
         textArea.textProperty().addListener((obs, oldText, newText) -> {
-            spellCheckScheduler[0].shutdownNow(); // Cancel previous task
-            spellCheckScheduler[0] = Executors.newSingleThreadScheduledExecutor(); // New scheduler
+            if (spellCheckFuture != null && !spellCheckFuture.isDone()) {
+                spellCheckFuture.cancel(true); // Interrupt if running, remove from queue
+            }
 
-            spellCheckScheduler[0].schedule(() -> {
+            // Schedule the spell-check to run after a delay
+            spellCheckFuture = spellCheckExecutor.schedule(() -> {
                 try {
-                    final List<RuleMatch> matches = langTool.check(newText);
+                    List<RuleMatch> matches = langTool.check(newText);
+                    // Apply highlighting on the JavaFX Application Thread
                     Platform.runLater(() -> applyHighlighting(matches, newText.length(), textArea));
                 } catch (IOException e) {
                     e.printStackTrace();
+                    // Handle specific exception, e.g., logging
                 }
-            }, 500, TimeUnit.MILLISECONDS);
+            }, 200, TimeUnit.MILLISECONDS); // 500ms debounce
         });
 
         // Set up context menu for suggestions on right-click
