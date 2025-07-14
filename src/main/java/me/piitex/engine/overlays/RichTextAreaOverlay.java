@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 import me.piitex.engine.overlays.events.IOverlaySubmit;
@@ -244,6 +245,10 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         // If the user types during the scheduler it will shut down and re-run in 500ms.
         // This is also a very intensive task.
         textArea.textProperty().addListener((obs, oldText, newText) -> {
+            if (getiInputSetEvent() != null) {
+                getiInputSetEvent().onInputSet(new InputSetEvent(this, newText));
+            }
+
             if (spellCheckFuture != null && !spellCheckFuture.isDone()) {
                 spellCheckFuture.cancel(true); // Interrupt if running, remove from queue
             }
@@ -259,6 +264,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                     // Handle specific exception, e.g., logging
                 }
             }, 200, TimeUnit.MILLISECONDS); // 500ms debounce
+
         });
 
         // Set up context menu for suggestions on right-click
