@@ -72,6 +72,7 @@ public class TitledContainer extends Container {
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
         TitledPane pane = new TitledPane();
+        setView(pane);
         pane.setText(title);
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
