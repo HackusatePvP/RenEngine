@@ -127,9 +127,8 @@ public class ScrollContainer extends Container {
 
         // Build pane layout for the scroll content
         VBox pane = (VBox) layout.render();
-        if (layout.getRenderEvent() != null) {
-            layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(pane, layout));
-        }
+        LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+        layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         pane.setAlignment(layout.getAlignment());
 
         if (scrollToBottom) {

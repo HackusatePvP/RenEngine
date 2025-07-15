@@ -468,12 +468,6 @@ public class Window {
             stage.requestFocus();
         }
         stage.show();
-        // The System.gc() call is commented out but left for reference.
-        // It provides a hint to the JVM to run the garbage collector.
-        // While not generally recommended for performance-critical applications due to JVM's
-        // optimized automatic garbage collection, it was noted in original comments to
-        // potentially help with resource usage in specific scenarios involving large assets.
-        // It's important to understand that explicit GC calls are not a solution for memory leaks.
         System.gc();
     }
 
@@ -652,11 +646,6 @@ public class Window {
         container.setPrefSize(width, height);
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
         container.setIndex(index);
-
-//        if (overlay instanceof Region region) {
-//            region.setMaxWidth(width);
-//            region.setMaxHeight(height);
-//        }
 
         if (overlay instanceof MessageOverlay messageOverlay) {
             messageOverlay.onClose(event -> {

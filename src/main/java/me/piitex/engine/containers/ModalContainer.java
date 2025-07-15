@@ -76,9 +76,8 @@ public class ModalContainer extends Container {
             }
             if (content instanceof Layout layout) {
                 node = layout.render();
-                if (layout.getRenderEvent() != null) {
-                    layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(layout.getPane(), layout));
-                }
+                LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+                layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
                 if (node instanceof VBox vBox) {
                     vBox.setPadding(new Insets(16));
                 }

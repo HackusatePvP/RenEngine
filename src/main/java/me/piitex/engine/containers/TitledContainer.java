@@ -106,9 +106,8 @@ public class TitledContainer extends Container {
         }
         layout.setSpacing(spacing);
         Pane vBox = layout.render();
-        if (layout.getRenderEvent() != null) {
-            layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(vBox, layout));
-        }
+        LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+        layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         pane.setContent(vBox);
 
         LinkedList<Node> order = buildBase();

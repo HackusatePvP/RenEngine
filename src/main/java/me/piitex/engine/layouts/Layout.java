@@ -7,18 +7,22 @@ import me.piitex.engine.Renderer;
 import me.piitex.engine.layouts.handles.ILayoutClickEvent;
 import me.piitex.engine.layouts.handles.ILayoutRender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Layout extends Renderer {
     private final Pane pane;
     private double x, y;
     private Insets padding;
     private Pos alignment;
     private ILayoutClickEvent clickEvent;
-    private ILayoutRender renderEvent;
+    private final List<ILayoutRender> renderEvents;
 
     protected Layout(Pane pane, double width, double height) {
         this.pane = pane;
         setWidth(width);
         setHeight(height);
+        this.renderEvents = new ArrayList<>();
     }
 
     public ILayoutClickEvent getClickEvent() {
@@ -29,12 +33,20 @@ public abstract class Layout extends Renderer {
         this.clickEvent = clickEvent;
     }
 
-    public ILayoutRender getRenderEvent() {
-        return renderEvent;
+    public void addRenderEvent(ILayoutRender renderEvent) {
+        if (renderEvent != null) {
+            this.renderEvents.add(renderEvent);
+        }
     }
 
-    public void onRender(ILayoutRender renderEvent) {
-        this.renderEvent = renderEvent;
+    public void removeRenderEvent(ILayoutRender renderEvent) {
+        if (renderEvent != null) {
+            this.renderEvents.remove(renderEvent);
+        }
+    }
+
+    public List<ILayoutRender> getRenderEvents() {
+        return renderEvents;
     }
 
     public Pane getPane() {

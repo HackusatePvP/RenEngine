@@ -232,9 +232,8 @@ public class Renderer extends Element {
             }
             if (element instanceof Layout layout) {
                 node = layout.render();
-                if (layout.getRenderEvent() != null) {
-                    layout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(layout.getPane(), layout));
-                }
+                LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+                layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
                 node.getStyleClass().addAll(layout.getStyles());
             }
             if (node != null) {

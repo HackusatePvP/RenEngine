@@ -154,9 +154,8 @@ public class CardContainer extends Container {
             }
         } else if (headerLayout != null) {
             Node node = headerLayout.render();
-            if (headerLayout.getRenderEvent() != null) {
-                headerLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(headerLayout.getPane(), headerLayout));
-            }
+            LayoutRenderEvent event = new LayoutRenderEvent(headerLayout.getPane(), headerLayout);
+            headerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setHeader(node);
         }
 
@@ -164,9 +163,8 @@ public class CardContainer extends Container {
             atlantafxCard.setSubHeader(subHeaderOverlay.render());
         } else if (subHeaderLayout != null) {
             Node node = subHeaderLayout.render();
-            if (subHeaderLayout.getRenderEvent() != null) {
-                subHeaderLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(subHeaderLayout.getPane(), subHeaderLayout));
-            }
+            LayoutRenderEvent event = new LayoutRenderEvent(subHeaderLayout.getPane(), subHeaderLayout);
+            subHeaderLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setSubHeader(node);
         }
 
@@ -180,9 +178,8 @@ public class CardContainer extends Container {
             }
         } else if (bodyLayout != null) {
             Node node = bodyLayout.render();
-            if (bodyLayout.getRenderEvent() != null) {
-                bodyLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(bodyLayout.getPane(), bodyLayout));
-            }
+            LayoutRenderEvent event = new LayoutRenderEvent(bodyLayout.getPane(), bodyLayout);
+            bodyLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setBody(node);
         }
 
@@ -196,9 +193,8 @@ public class CardContainer extends Container {
             }
         } else if (footerLayout != null) {
             Node node = footerLayout.render();
-            if (footerLayout.getRenderEvent() != null) {
-                footerLayout.getRenderEvent().onLayoutRender(new LayoutRenderEvent(bodyLayout.getPane(), footerLayout));
-            }
+            LayoutRenderEvent event = new LayoutRenderEvent(footerLayout.getPane(), footerLayout);
+            footerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setFooter(node);
         }
 
