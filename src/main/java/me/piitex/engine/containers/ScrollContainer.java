@@ -19,6 +19,7 @@ public class ScrollContainer extends Container {
     private boolean verticalScroll = true;
     private boolean scrollWhenNeeded = true;
     private boolean scrollToBottom = false;
+    private boolean pannable = false;
     private double scrollPosition;
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
@@ -74,6 +75,10 @@ public class ScrollContainer extends Container {
         this.scrollToBottom = scrollToBottom;
     }
 
+    public void setPannable(boolean pannable) {
+        this.pannable = pannable;
+    }
+
     public ScrollPane getScrollPane() {
         return scrollPane;
     }
@@ -88,6 +93,7 @@ public class ScrollContainer extends Container {
         scrollPane.setVvalue(scrollPosition);
         scrollPane.setTranslateX(getX());
         scrollPane.setTranslateY(getY());
+        scrollPane.setPannable(pannable);
         if (getWidth() > 0) {
             scrollPane.setMinWidth(getWidth());
         }
