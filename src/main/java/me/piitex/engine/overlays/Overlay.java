@@ -17,6 +17,7 @@ import me.piitex.engine.overlays.events.IOverlayHoverExit;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public abstract class Overlay extends Element {
     private final List<File> styleSheets = new ArrayList<>();
 
     // Style classes.
-    private List<String> styles = new ArrayList<>();
+    private List<String> styles = new LinkedList<>();
 
     public double getX() {
         return x;
