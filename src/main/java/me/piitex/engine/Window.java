@@ -154,7 +154,6 @@ public class Window {
             double scaleHeight = (double) height / RenConfiguration.getHeight();
             Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
             root.getTransforms().setAll(scale);
-
             handleWindowScaling(stage);
         }
 
@@ -547,9 +546,8 @@ public class Window {
 
         getRoot().getChildren().add(node);
 
-        if (container.getOnRender() != null) {
-            container.getOnRender().onContainerRender(new ContainerRenderEvent(container, entry.getKey()));
-        }
+        ContainerRenderEvent event = new ContainerRenderEvent(container, entry.getKey());
+        container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
     }
 
     /**

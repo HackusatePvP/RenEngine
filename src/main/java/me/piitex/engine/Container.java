@@ -1,6 +1,5 @@
 package me.piitex.engine;
 
-import javafx.scene.Group;
 import javafx.scene.Node;
 import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.containers.handlers.IContainerClick;
@@ -43,7 +42,7 @@ public abstract class Container extends Renderer {
     private final List<String> stylesheets = new ArrayList<>();
 
     private IContainerClick click;
-    private IContainerRender render;
+    private List<IContainerRender> renderEvents = new LinkedList<>();
 
     private Node view;
 
@@ -101,12 +100,20 @@ public abstract class Container extends Renderer {
         this.click = click;
     }
 
-    public IContainerRender getOnRender() {
-        return render;
+    public void addRenderEvent(IContainerRender renderEvent) {
+        if (renderEvent != null) {
+            this.renderEvents.add(renderEvent);
+        }
     }
 
-    public void onRender(IContainerRender render) {
-        this.render = render;
+    public void removeRenderEvent(IContainerRender renderEvent) {
+        if (renderEvent != null) {
+            this.renderEvents.remove(renderEvent);
+        }
+    }
+
+    public List<IContainerRender> getRenderEvents() {
+        return renderEvents;
     }
 
     /**

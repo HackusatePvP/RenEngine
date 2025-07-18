@@ -257,9 +257,8 @@ public class Renderer extends Element {
                     getRenderedNodes().put(container.getId(), entry.getKey());
                 }
 
-                if (container.getOnRender() != null) {
-                    container.getOnRender().onContainerRender(new ContainerRenderEvent(container, entry.getKey()));
-                }
+                ContainerRenderEvent event = new ContainerRenderEvent(container, entry.getKey());
+                container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
 
             }
         }
