@@ -362,7 +362,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             textArea.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
                     if (event.isShiftDown()) {
-                        textArea.appendText("\n");
+                        textArea.insertText(textArea.getCaretPosition(), "\n");
                     } else {
                         getiOverlaySubmit().onSubmit(new OverlaySubmitEvent(this, event));
                     }
