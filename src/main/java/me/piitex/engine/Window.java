@@ -42,7 +42,8 @@ import java.util.TreeMap;
  * .build();
  * }</pre>
  *
- * <p>To display elements within a window, a {@link Container} must first be created and added to the window.
+ * <p>
+ * To display elements within a window, a {@link Container} must first be created and added to the window.
  * Multiple containers can be added and positioned within a single window.</p>
  * <pre>{@code
  * Window window = application.getWindow();
@@ -50,18 +51,19 @@ import java.util.TreeMap;
  * window.addContainer(container);
  * }</pre>
  *
- * <p>All GUI-related functions, especially those involving scene graph modifications,
+ * <p>
+ * All GUI-related functions, especially those involving scene graph modifications,
  * must be executed on the JavaFX Application Thread.</p>
  * <pre>{@code
- * Tasks.runAsync(() -> {
- * // Some code to be ran asynchronously
+ *     new Thread( () -> {
+ *         // Code to be ran asynchronously
+ *         loadBackend();
  *
- * // Handle JavaFX updates on the JavaFX thread
- * Tasks.runJavaFXThread(() -> {
- * // GUI-related code
- * window.render();
- * })
- * })
+ *         Platform.runLater( () -> {
+ *             // Any gui related code.
+ *             initializeProgressIndicator();
+ *         })
+ *     })
  * }</pre>
  *
  * @see Container
@@ -73,19 +75,18 @@ public class Window {
     private final ImageLoader icon;
     private final StageStyle stageStyle;
     private int width, height;
-    private boolean fullscreen = false, maximized = false;
-    private Color backgroundColor = Color.BLACK;
+    private boolean fullscreen, maximized ;
+    private Color backgroundColor;
     private Stage stage;
     private Scene scene;
     private Pane root;
 
-    private boolean captureInput = true;
     private boolean scale;
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
 
-    private boolean focused = true;
+    private boolean focused;
 
     /**
      * Constructs a Window instance using properties defined in a {@link WindowBuilder}.
@@ -100,7 +101,6 @@ public class Window {
      * .setStageStyle(StageStyle.UNDECORATED)
      * .setDimensions(800, 600)
      * .setBackgroundColor(Color.BLACK)
-     * .setCaptureInput(true);
      * Window window = new Window(builder);
      *
      * // Add containers
@@ -112,11 +112,11 @@ public class Window {
     public Window(WindowBuilder builder) {
         this.title = builder.getTitle();
         this.stageStyle = builder.getStageStyle();
+        this.root = builder.getRoot();
         this.icon = builder.getIcon();
         this.width = builder.getWidth();
         this.height = builder.getHeight();
         this.backgroundColor = builder.getBackgroundColor();
-        this.captureInput = builder.isCaptureInput();
         this.fullscreen = builder.isFullscreen();
         this.maximized = builder.isMaximized();
         this.focused = builder.isFocused();
@@ -146,7 +146,6 @@ public class Window {
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
 
-        root = new Pane();
         root.setPrefSize(width, height);
 
         if (scale) {
@@ -231,14 +230,6 @@ public class Window {
      */
     public int getHeight() {
         return height;
-    }
-
-    /**
-     * Checks if the window is configured to capture input events.
-     * @return true if input capture is enabled, false otherwise.
-     */
-    public boolean hasCaptureInput() {
-        return captureInput;
     }
 
     /**

@@ -1,5 +1,6 @@
 package me.piitex.engine;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import me.piitex.engine.loaders.ImageLoader;
@@ -12,9 +13,9 @@ import me.piitex.engine.loaders.ImageLoader;
  * {@code
  * Window window = new WindowBuild("My Game")
  * .setStageStyle(StageStyle.UNDECORATED)
+ * setRoot(new Pane())
  * .setDimensions(1280, 720)
  * .setBackgroundColor(Color.DARKBLUE)
- * .setCaptureInput(true)
  * .setFullscreen(true)
  * .build();
  * }
@@ -23,11 +24,11 @@ import me.piitex.engine.loaders.ImageLoader;
 public class WindowBuilder {
     private final String title;
     private StageStyle stageStyle = StageStyle.DECORATED;
+    private Pane root = new Pane();
     private ImageLoader icon;
     private int width = 1920;
     private int height = 1080;
     private Color backgroundColor = Color.BLACK;
-    private boolean captureInput = true;
     private boolean fullscreen = false;
     private boolean maximized = false;
     private boolean focused = true;
@@ -49,6 +50,16 @@ public class WindowBuilder {
      */
     public WindowBuilder setStageStyle(StageStyle stageStyle) {
         this.stageStyle = stageStyle;
+        return this;
+    }
+
+    /**
+     * Sets the scene root pane.
+     * @param root The pane type for the root.
+     * @return The current WindowBuild instance for chaining.
+     */
+    public WindowBuilder setRoot(Pane root) {
+        this.root = root;
         return this;
     }
 
@@ -81,16 +92,6 @@ public class WindowBuilder {
      */
     public WindowBuilder setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
-        return this;
-    }
-
-    /**
-     * Determines if the window should capture user input (e.g., mouse clicks, key presses).
-     * @param captureInput True to capture input, false otherwise.
-     * @return The current WindowBuild instance for chaining.
-     */
-    public WindowBuilder setCaptureInput(boolean captureInput) {
-        this.captureInput = captureInput;
         return this;
     }
 
@@ -137,17 +138,45 @@ public class WindowBuilder {
         return new Window(this); // Calls the private constructor in the Window class
     }
 
-    // Getters for the Window class to access these properties
-    public String getTitle() { return title; }
-    public StageStyle getStageStyle() { return stageStyle; }
-    public ImageLoader getIcon() { return icon; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public Color getBackgroundColor() { return backgroundColor; }
-    public boolean isCaptureInput() { return captureInput; }
-    public boolean isFullscreen() { return fullscreen; }
-    public boolean isMaximized() { return maximized; }
-    public boolean isFocused() { return focused; }
+    public String getTitle() {
+        return title;
+    }
+
+    public StageStyle getStageStyle() {
+        return stageStyle;
+    }
+
+    public Pane getRoot() {
+        return root;
+    }
+
+    public ImageLoader getIcon() {
+        return icon;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    public boolean isFocused() {
+        return focused;
+    }
 
     public boolean isScale() {
         return scale;
