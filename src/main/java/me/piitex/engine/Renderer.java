@@ -14,7 +14,7 @@ import java.util.*;
  * An element which handles rendering of {@link Container}, {@link Layout}, and {@link Overlay}
  *
  * @see Layout
- * @see me.piitex.engine.containers.tabs.Tab
+ * @see Container
  */
 public class Renderer extends Element {
     private final TreeMap<Integer, Element> elements = new TreeMap<>();
@@ -133,6 +133,7 @@ public class Renderer extends Element {
         int index = element.getIndex();
         if (index == 0) {
             index = elements.size();
+            element.setIndex(index);
         }
 
         addElement(element, index);
