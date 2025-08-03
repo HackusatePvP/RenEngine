@@ -18,6 +18,7 @@ import java.util.*;
  */
 public class Renderer extends Element {
     private final TreeMap<Integer, Element> elements = new TreeMap<>();
+    private Node view;
     private double width, height;
     private double prefWidth, prefHeight;
     private double maxWidth, maxHeight;
@@ -32,6 +33,14 @@ public class Renderer extends Element {
 
     public Map<String, Node> getRenderedNodes() {
         return renderedNodes;
+    }
+
+    public Node getView() {
+        return view;
+    }
+
+    public void setView(Node view) {
+        this.view = view;
     }
 
     public Node getNode(String id) {
@@ -133,7 +142,6 @@ public class Renderer extends Element {
         int index = element.getIndex();
         if (index == 0) {
             index = elements.size();
-            element.setIndex(index);
         }
 
         addElement(element, index);
@@ -151,7 +159,10 @@ public class Renderer extends Element {
             int i = index + 1;
             addElement(getElementAt(index), i);
         }
+        element.setIndex(index);
         elements.put(index, element);
+
+        addToView(element.assemble());
     }
 
     /**
@@ -176,11 +187,12 @@ public class Renderer extends Element {
     }
 
     public void removeElement(int index) {
+        removeFromView(getElementAt(index).assemble());
         elements.remove(index);
     }
 
     public void removeElement(Element element) {
-        elements.remove(element.getIndex());
+        removeElement(element.getIndex());
     }
 
     public void removeAllElement(Element element) {
@@ -202,6 +214,20 @@ public class Renderer extends Element {
 
     public void removeAllElements() {
         elements.clear();
+    }
+
+    public void addToView(Node node) {
+        if (view instanceof Pane pane) {
+            pane.getChildren().add(node);
+        } else {
+            System.err.println("View is not a pane!");
+        }
+    }
+
+    public void removeFromView(Node node) {
+        if (view instanceof Pane pane) {
+            pane.getChildren().remove(node);
+        }
     }
 
     public double getOffsetX() {
@@ -233,7 +259,7 @@ public class Renderer extends Element {
             }
             if (element instanceof Layout layout) {
                 node = layout.render();
-                LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+                LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
                 layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
                 node.getStyleClass().addAll(layout.getStyles());
             }
@@ -243,7 +269,6 @@ public class Renderer extends Element {
                 if (element.getId() != null && !element.getId().isEmpty()) {
                     // Add the compiled nodes into the container
                     getRenderedNodes().put(element.getId(), node);
-
                 }
             }
 
@@ -251,7 +276,6 @@ public class Renderer extends Element {
             if (element instanceof Container container) {
                 Map.Entry<Node, LinkedList<Node>> entry = container.build();
                 toReturn.add(entry.getKey());
-                container.setView(entry.getKey());
                 entry.getKey().getStyleClass().addAll(container.getStyles());
 
                 if (container.getId() != null && !container.getId().isEmpty()) {
@@ -303,4 +327,17 @@ public class Renderer extends Element {
     }
 
 
+    @Override
+    public Node assemble() {
+        if (this instanceof Container container) {
+            return container.build().getKey();
+        }
+        if (this instanceof Layout layout) {
+            return layout.render();
+        }
+
+        System.err.println("Could not assemble renderer...");
+
+        return null;
+    }
 }

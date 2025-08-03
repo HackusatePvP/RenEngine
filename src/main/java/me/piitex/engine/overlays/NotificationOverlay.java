@@ -10,9 +10,8 @@ import javafx.collections.ObservableList;
 import me.piitex.engine.hanlders.events.OverlayCloseEvent;
 import me.piitex.engine.overlays.events.IOverlayClose;
 
-
-
 public class NotificationOverlay extends Overlay implements Region {
+    private final Notification notification;
     private String message;
     private Node graphic;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
@@ -27,14 +26,23 @@ public class NotificationOverlay extends Overlay implements Region {
     public NotificationOverlay(String message, Node graphic) {
         this.message = message;
         this.graphic = graphic;
+        this.notification = new Notification(message, graphic);
     }
 
     @Override
     public Node render() {
-        Notification notification = new Notification(message, graphic);
         notification.setTranslateX(getX());
         notification.setTranslateY(getY());
-        notification.setPrefSize(width, height);
+
+        if (getWidth() > 0 || getHeight() > 0) {
+            notification.setMinSize(width, height);
+        }
+        if (getPrefWidth() > 0 || getPrefHeight() > 0) {
+            notification.setPrefSize(getPrefWidth(), getPrefHeight());
+        }
+        if (getMaxWidth() > 0 || getMaxHeight() > 0) {
+            notification.setMaxSize(getMaxWidth(), getMaxHeight());
+        }
 
         notification.setOnClose(event -> {
             if (overlayClose != null) {
@@ -49,6 +57,7 @@ public class NotificationOverlay extends Overlay implements Region {
 
     public void setMessage(String message) {
         this.message = message;
+        notification.setMessage(message);
     }
 
     public String getMessage() {
@@ -57,6 +66,7 @@ public class NotificationOverlay extends Overlay implements Region {
 
     public void setGraphic(Node graphic) {
         this.graphic = graphic;
+        notification.setGraphic(graphic);
     }
 
     public Node getGraphic() {
@@ -80,11 +90,13 @@ public class NotificationOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        notification.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        notification.setMinHeight(h);
     }
 
     @Override
@@ -100,11 +112,13 @@ public class NotificationOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        notification.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        notification.setPrefHeight(h);
     }
 
     @Override
@@ -120,11 +134,13 @@ public class NotificationOverlay extends Overlay implements Region {
     @Override
     public void setMaxWidth(double w) {
         this.maxWidth = w;
+        notification.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        notification.setMaxHeight(h);
     }
 
     @Override

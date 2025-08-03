@@ -2,12 +2,14 @@ package me.piitex.engine.containers;
 
 import atlantafx.base.controls.Card;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.AbstractMap;
 import java.util.LinkedList;
@@ -26,13 +28,13 @@ public class CardContainer extends Container {
     private Layout footerLayout;
 
     public CardContainer(double x, double y, double width, double height) {
-        super(x, y, width, height);
-        this.atlantafxCard = new Card();
+        super(new Card(), x, y, width, height);
+        this.atlantafxCard = (Card) getView();
     }
 
     public CardContainer(double width, double height) {
-        super(0, 0, width, height);
-        this.atlantafxCard = new Card();
+        super(new Card(), 0, 0, width, height);
+        this.atlantafxCard = (Card) getView();
     }
 
     /**
@@ -154,7 +156,7 @@ public class CardContainer extends Container {
             }
         } else if (headerLayout != null) {
             Node node = headerLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent(headerLayout.getPane(), headerLayout);
+            LayoutRenderEvent event = new LayoutRenderEvent((Pane) headerLayout.getView(), headerLayout);
             headerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setHeader(node);
         }
@@ -163,7 +165,7 @@ public class CardContainer extends Container {
             atlantafxCard.setSubHeader(subHeaderOverlay.render());
         } else if (subHeaderLayout != null) {
             Node node = subHeaderLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent(subHeaderLayout.getPane(), subHeaderLayout);
+            LayoutRenderEvent event = new LayoutRenderEvent((Pane) subHeaderLayout.getView(), subHeaderLayout);
             subHeaderLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setSubHeader(node);
         }
@@ -178,7 +180,7 @@ public class CardContainer extends Container {
             }
         } else if (bodyLayout != null) {
             Node node = bodyLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent(bodyLayout.getPane(), bodyLayout);
+            LayoutRenderEvent event = new LayoutRenderEvent((Pane) bodyLayout.getView(), bodyLayout);
             bodyLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setBody(node);
         }
@@ -193,7 +195,7 @@ public class CardContainer extends Container {
             }
         } else if (footerLayout != null) {
             Node node = footerLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent(footerLayout.getPane(), footerLayout);
+            LayoutRenderEvent event = new LayoutRenderEvent((Pane) footerLayout.getView(), footerLayout);
             footerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
             atlantafxCard.setFooter(node);
         }

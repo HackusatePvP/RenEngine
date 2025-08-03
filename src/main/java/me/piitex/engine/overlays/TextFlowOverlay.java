@@ -11,6 +11,7 @@ import me.piitex.engine.loaders.FontLoader;
 import java.util.LinkedList;
 
 public class TextFlowOverlay extends Overlay implements Region {
+    private final TextFlow textFlow;
     private LinkedList<Overlay> texts = new LinkedList<>();
     private String text;
     private Color textFillColor;
@@ -19,12 +20,14 @@ public class TextFlowOverlay extends Overlay implements Region {
     private double scaleWidth, scaleHeight;
 
     public TextFlowOverlay(String text, int width, int height) {
+        this.textFlow = new TextFlow();
         this.width = width;
         this.height = height;
         this.text = text;
     }
 
     public TextFlowOverlay(String text, FontLoader fontLoader, int width, int height) {
+        this.textFlow = new TextFlow();
         this.texts.add(new TextOverlay(text));
         this.font = fontLoader;
         this.width = width;
@@ -32,12 +35,14 @@ public class TextFlowOverlay extends Overlay implements Region {
     }
 
     public TextFlowOverlay(TextOverlay text, int width, int height) {
+        this.textFlow = new TextFlow();
         this.width = width;
         this.height = height;
         texts.add(text);
     }
 
     public TextFlowOverlay(LinkedList<Overlay> texts, int width, int height) {
+        this.textFlow = new TextFlow();
         this.width = width;
         this.height = height;
         this.texts = texts;
@@ -49,10 +54,21 @@ public class TextFlowOverlay extends Overlay implements Region {
 
     public void setTexts(LinkedList<Overlay> texts) {
         this.texts = texts;
+        textFlow.getChildren().clear();
+        texts.forEach(overlay -> textFlow.getChildren().add(overlay.assemble()));
     }
 
     public Color getTextFillColor() {
         return textFillColor;
+    }
+
+    public void setTextFillColor(Color textFillColor) {
+        this.textFillColor = textFillColor;
+        for (Node node : textFlow.getChildren()) {
+            if (node instanceof Text textNode) {
+                textNode.setFill(textFillColor);
+            }
+        }
     }
 
     public FontLoader getFontLoader() {
@@ -61,106 +77,23 @@ public class TextFlowOverlay extends Overlay implements Region {
 
     public void setFont(FontLoader font) {
         this.font = font;
-    }
-
-    public void setTextFillColor(Color textFillColor) {
-        this.textFillColor = textFillColor;
+        for (Node node : textFlow.getChildren()) {
+            if (node instanceof Text textNode) {
+                textNode.setFont(font.getFont());
+            }
+        }
     }
 
     public void add(Overlay overlay) {
         texts.add(overlay);
+        textFlow.getChildren().add(overlay.assemble());
     }
+
+
 
     @Override
     public Node render() {
-        return build();
-    }
-
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
-    public TextFlow build() {
         // Creates text that overflows over the box.
-        //TextFlow textFlow = BBCodeParser.createFormattedText(text);
-        TextFlow textFlow = new TextFlow();
         if (text != null) {
             // Using a VBox fixes all the spacing issues and weird new line stuff.
             VBox format = BBCodeParser.createLayout(text);
@@ -231,8 +164,8 @@ public class TextFlowOverlay extends Overlay implements Region {
             textFlow.setMaxHeight(getMaxHeight());
         }
 
-        //textFlow.setTranslateX(getX());
-        //textFlow.setTranslateY(getY());
+        textFlow.setTranslateX(getX());
+        textFlow.setTranslateY(getY());
         setInputControls(textFlow);
 
         textFlow.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -265,4 +198,90 @@ public class TextFlowOverlay extends Overlay implements Region {
 
         return textFlow;
     }
+
+    @Override
+    public double getWidth() {
+        return width;
+    }
+
+    @Override
+    public double getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setWidth(double w) {
+        this.width = w;
+        textFlow.setMinWidth(w);
+    }
+
+    @Override
+    public void setHeight(double h) {
+        this.height = h;
+        textFlow.setMinHeight(h);
+    }
+
+    @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+        textFlow.setPrefWidth(w);
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+        textFlow.setPrefHeight(h);
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        textFlow.setMaxWidth(w);
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+        textFlow.setMaxHeight(h);
+    }
+
+    @Override
+    public double getScaleWidth() {
+        return scaleWidth;
+    }
+
+    @Override
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
+    }
+
+    @Override
+    public double getScaleHeight() {
+        return scaleHeight;
+    }
+
+    @Override
+    public void setScaleHeight(double h) {
+        this.scaleHeight = h;
+    }
+
 }

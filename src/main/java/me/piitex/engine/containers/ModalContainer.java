@@ -18,21 +18,25 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class ModalContainer extends Container {
+    private final ModalBox modalBox;
     private Element content;
 
     public ModalContainer(Element content, double width, double height) {
-        super(0, 0, width, height);
+        super(new ModalBox(), 0, 0, width, height);
+        this.modalBox = (ModalBox) getView();
         this.content = content;
     }
 
 
     public ModalContainer(Element content, double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(new ModalBox(), x, y, width, height);
+        this.modalBox = (ModalBox) getView();
         this.content = content;
     }
 
     public ModalContainer(Element content, double x, double y, double width, double height, int index) {
-        super(x, y, width, height, index);
+        super(new ModalBox(), x, y, width, height, index);
+        this.modalBox = (ModalBox) getView();
         this.content = content;
     }
 
@@ -46,7 +50,6 @@ public class ModalContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        ModalBox modalBox = new ModalBox();
         modalBox.setTranslateX(getX());
         modalBox.setTranslateY(getY());
         if (getWidth() > 0) {
@@ -76,7 +79,7 @@ public class ModalContainer extends Container {
             }
             if (content instanceof Layout layout) {
                 node = layout.render();
-                LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+                LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
                 layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
                 if (node instanceof VBox vBox) {
                     vBox.setPadding(new Insets(16));

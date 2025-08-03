@@ -28,26 +28,30 @@ import java.util.Map;
  * @see Window
  */
 public class EmptyContainer extends Container {
+    private final Pane pane;
 
     public EmptyContainer(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(new Pane(), x, y, width, height);
+        this.pane = (Pane) getView();
     }
 
     public EmptyContainer(double x, double y, double width, double height, int index) {
-        super(x, y, width, height, index);
+        super(new Pane(), x, y, width, height, index);
+        this.pane = (Pane) getView();
     }
 
     public EmptyContainer(double width, double height) {
-        super(0, 0, width, height);
+        super(new Pane(), 0, 0, width, height);
+        this.pane = (Pane) getView();
     }
 
     public EmptyContainer(double width, double height, int index) {
-        super(0, 0, width, height, index);
+        super(new Pane(), 0, 0, width, height, index);
+        this.pane = (Pane) getView();
     }
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        Pane pane = new Pane();
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         if (getWidth() > 0) {

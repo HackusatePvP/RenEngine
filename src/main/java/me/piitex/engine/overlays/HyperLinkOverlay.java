@@ -7,15 +7,18 @@ import javafx.scene.layout.Border;
 import me.piitex.engine.loaders.FontLoader;
 
 public class HyperLinkOverlay extends Overlay {
+    private final Hyperlink hyperlink;
     private final String link;
     private String text;
     private FontLoader font;
 
     public HyperLinkOverlay(String link) {
+        this.hyperlink = new Hyperlink(link);
         this.link = link;
     }
 
     public HyperLinkOverlay(String link, String text) {
+        this.hyperlink = new Hyperlink(text);
         this.link = link;
         this.text = text;
     }
@@ -38,16 +41,11 @@ public class HyperLinkOverlay extends Overlay {
 
     public void setText(String text) {
         this.text = text;
+        hyperlink.setText(text);
     }
 
     @Override
     public Node render() {
-        Hyperlink hyperlink;
-        if (text == null || text.isEmpty()) {
-            hyperlink = new Hyperlink(link);
-        } else {
-            hyperlink = new Hyperlink(text);
-        }
         if (font != null) {
             hyperlink.setFont(font.getFont());
         }

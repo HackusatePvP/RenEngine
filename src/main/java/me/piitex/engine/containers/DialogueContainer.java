@@ -20,14 +20,17 @@ public class DialogueContainer extends Container {
     private String body;
     private ButtonOverlay confirmButton;
     private ButtonOverlay cancelButton;
+    private final Pane pane;
 
     public DialogueContainer(String header, double width, double height) {
-        super(0, 0, width, height);
+        super(new Pane(), 0, 0, width, height);
+        this.pane = (Pane) getView();
         this.header = header;
     }
 
     public DialogueContainer(String header, double x, double y, double width, double height) {
-        super(0, 0, width, height);
+        super(new Pane(), 0, 0, width, height);
+        this.pane = (Pane) getView();
         this.header = header;
     }
 

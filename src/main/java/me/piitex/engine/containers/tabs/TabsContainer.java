@@ -10,17 +10,19 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class TabsContainer extends Container {
+    private final TabPane tabPane;
     private final LinkedList<Tab> tabs = new LinkedList<>();
     private boolean closeTabs = false;
     private String selectedTab;
-    private TabPane tabPane;
 
     public TabsContainer(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(new TabPane(), x, y, width, height);
+        this.tabPane = (TabPane) getView();
     }
 
     public TabsContainer(double x, double y, double width, double height, int index) {
-        super(x, y, width, height, index);
+        super(new TabPane(), x, y, width, height, index);
+        this.tabPane = (TabPane) getView();
     }
 
     public LinkedList<Tab> getTabs() {
@@ -73,7 +75,6 @@ public class TabsContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        tabPane = new TabPane();
         if (getWidth() > 0) {
             tabPane.setMinWidth(getWidth());
         }

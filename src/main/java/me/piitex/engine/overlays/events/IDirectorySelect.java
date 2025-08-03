@@ -1,6 +1,6 @@
 package me.piitex.engine.overlays.events;
 
-import me.piitex.engine.overlays.DirectorySelectEvent;
+import me.piitex.engine.hanlders.events.DirectorySelectEvent;
 
 public interface IDirectorySelect {
 

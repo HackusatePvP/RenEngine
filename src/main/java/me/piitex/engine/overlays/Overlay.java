@@ -188,6 +188,11 @@ public abstract class Overlay extends Element {
      */
     public abstract Node render();
 
+    @Override
+    public Node assemble() {
+        return render();
+    }
+
     public void setInputControls(Node node) {
         if (cursor != null) {
             node.setCursor(cursor);

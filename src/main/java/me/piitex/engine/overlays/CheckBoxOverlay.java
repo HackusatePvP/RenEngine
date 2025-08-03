@@ -6,12 +6,14 @@ import me.piitex.engine.hanlders.events.CheckBoxSetEvent;
 import me.piitex.engine.overlays.events.ICheckBoxSet;
 
 public class CheckBoxOverlay extends Overlay {
+    private final CheckBox checkBox;
     private boolean defaultValue = false;
     private String label;
 
     private ICheckBoxSet checkBoxSet;
 
     public CheckBoxOverlay(boolean check, String label) {
+        this.checkBox = new CheckBox(label);
         this.defaultValue = check;
         this.label = label;
     }
@@ -22,6 +24,7 @@ public class CheckBoxOverlay extends Overlay {
 
     public void setDefaultValue(boolean defaultValue) {
         this.defaultValue = defaultValue;
+        checkBox.setSelected(defaultValue);
     }
 
     public String getLabel() {
@@ -30,6 +33,7 @@ public class CheckBoxOverlay extends Overlay {
 
     public void setLabel(String label) {
         this.label = label;
+        checkBox.setText(label);
     }
 
     public ICheckBoxSet getCheckBoxSet() {
@@ -42,14 +46,10 @@ public class CheckBoxOverlay extends Overlay {
 
     @Override
     public Node render() {
-        CheckBox checkBox = new CheckBox(label);
         checkBox.setSelected(defaultValue);
-
         checkBox.setTranslateX(getX());
         checkBox.setTranslateY(getY());
-
         checkBox.getStyleClass().addAll(getStyles());
-
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (getCheckBoxSet() != null) {
                 getCheckBoxSet().onSet(new CheckBoxSetEvent(this, checkBox, oldValue, newValue));

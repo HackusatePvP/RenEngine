@@ -2,6 +2,7 @@ package me.piitex.engine.containers;
 
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
@@ -12,8 +13,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class ScrollContainer extends Container {
+    private final ScrollPane scrollPane;
     private final Layout layout;
-    private ScrollPane scrollPane;
     private double xOffset, yOffset;
     private boolean horizontalScroll = true;
     private boolean verticalScroll = true;
@@ -23,7 +24,8 @@ public class ScrollContainer extends Container {
     private double scrollPosition;
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(new ScrollPane(), x, y, width, height);
+        this.scrollPane = (ScrollPane) getView();
         this.layout = layout;
     }
 
@@ -89,7 +91,6 @@ public class ScrollContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        scrollPane = new ScrollPane();
         scrollPane.setVvalue(scrollPosition);
         scrollPane.setTranslateX(getX());
         scrollPane.setTranslateY(getY());
@@ -133,7 +134,7 @@ public class ScrollContainer extends Container {
 
         // Build pane layout for the scroll content
         VBox pane = (VBox) layout.render();
-        LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+        LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
         layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         pane.setAlignment(layout.getAlignment());
 

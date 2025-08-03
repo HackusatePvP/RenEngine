@@ -6,33 +6,36 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import me.piitex.engine.loaders.ImageLoader;
 
-public class ImageOverlay extends Overlay implements Region {
+public class ImageOverlay extends Overlay {
+    private final ImageView imageView;
     private Image image;
-    private double scaleWidth, scaleHeight;
-    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
+    private double fitWidth, fitHeight;
     private boolean preserveRatio = true;
     private final String fileName;
     private String path = "Unknown";
 
     public ImageOverlay(Image image) {
         this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
         this.fileName = "Unknown";
+        this.imageView = new ImageView();
     }
 
     public ImageOverlay(WritableImage image) {
         this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
         this.fileName = "Unknown";
+        this.imageView = new ImageView();
     }
 
     public ImageOverlay(ImageLoader imageLoader) {
         this.image = imageLoader.build();
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
         this.fileName = imageLoader.getFile().getName();
+        this.imageView = new ImageView();
     }
 
     public ImageOverlay(String imagePath) {
@@ -40,32 +43,36 @@ public class ImageOverlay extends Overlay implements Region {
         this.image = loader.build();
         this.fileName = loader.getFile().getName();
         this.path = imagePath;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
+        this.imageView = new ImageView();
     }
 
     public ImageOverlay(String directory, String imagePath) {
         ImageLoader loader = new ImageLoader(directory, imagePath);
         this.image = loader.build();
         this.fileName = loader.getFile().getName();
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
+        this.imageView = new ImageView();
     }
 
     public ImageOverlay(Image image, double x, double y) {
         this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
+        this.fileName = "Unknown";
+        this.imageView = new ImageView();
         setX(x);
         setY(y);
-        this.fileName = "Unknown";
     }
 
     public ImageOverlay(ImageLoader imageLoader, double x, double y) {
         this.image = imageLoader.build();
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.fitWidth = image.getWidth();
+        this.fitHeight = image.getHeight();
         this.fileName = imageLoader.getFile().getName();
+        this.imageView = new ImageView();
         setX(x);
         setY(y);
     }
@@ -74,10 +81,14 @@ public class ImageOverlay extends Overlay implements Region {
         return image;
     }
 
+    public void setImage(ImageLoader loader) {
+        this.image = loader.build();
+        imageView.setImage(image);
+    }
+
     public String getFileName() {
         return fileName;
     }
-
 
     public boolean isPreserveRatio() {
         return preserveRatio;
@@ -85,99 +96,37 @@ public class ImageOverlay extends Overlay implements Region {
 
     public void setPreserveRatio(boolean preserveRatio) {
         this.preserveRatio = preserveRatio;
+        imageView.setPreserveRatio(preserveRatio);
     }
 
-    @Override
-    public double getWidth() {
-        return width;
+    public double getFitWidth() {
+        return fitWidth;
     }
 
-    @Override
-    public double getHeight() {
-        return height;
+    public void setFitWidth(double fitWidth) {
+        this.fitWidth = fitWidth;
+        imageView.setFitWidth(fitWidth);
     }
 
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
+    public double getFitHeight() {
+        return fitHeight;
     }
 
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
+    public void setFitHeight(double fitHeight) {
+        this.fitHeight = fitHeight;
+        imageView.setFitHeight(getFitHeight());
     }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
 
     @Override
     public Node render() {
         Image image = getImage();
-        ImageView imageView = new ImageView(image);
+        imageView.setImage(image);
         imageView.setPreserveRatio(preserveRatio);
-        if (width != 0) {
-            imageView.setFitWidth(width);
+        if (fitWidth != 0) {
+            imageView.setFitWidth(fitWidth);
         }
-        if (height != 0) {
-            imageView.setFitHeight(height);
+        if (fitHeight != 0) {
+            imageView.setFitHeight(fitHeight);
         }
         imageView.setTranslateX(getX());
         imageView.setTranslateY(getY());

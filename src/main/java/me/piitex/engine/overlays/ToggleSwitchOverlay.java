@@ -6,14 +6,16 @@ import me.piitex.engine.hanlders.events.ToggleSwitchEvent;
 import me.piitex.engine.overlays.events.IToggleSwitch;
 
 public class ToggleSwitchOverlay extends Overlay {
+    private final ToggleSwitch toggleSwitch;
     private final boolean defaultValue;
     private boolean currentValue = true;
 
     private IToggleSwitch event;
 
     public ToggleSwitchOverlay(boolean defaultValue) {
+        this.toggleSwitch = new ToggleSwitch();
         this.defaultValue = defaultValue;
-        currentValue = defaultValue;
+        this.currentValue = defaultValue;
     }
 
     public boolean getDefaultValue() {
@@ -22,6 +24,11 @@ public class ToggleSwitchOverlay extends Overlay {
 
     public boolean getCurrentValue() {
         return currentValue;
+    }
+
+    public void setCurrentValue(boolean currentValue) {
+        this.currentValue = currentValue;
+        toggleSwitch.selectedProperty().set(currentValue);
     }
 
     public IToggleSwitch getOnToggle() {
@@ -34,7 +41,6 @@ public class ToggleSwitchOverlay extends Overlay {
 
     @Override
     public Node render() {
-        ToggleSwitch toggleSwitch = new ToggleSwitch();
         toggleSwitch.setTranslateX(getX());
         toggleSwitch.setTranslateY(getY());
         toggleSwitch.getStyleClass().addAll(getStyles());

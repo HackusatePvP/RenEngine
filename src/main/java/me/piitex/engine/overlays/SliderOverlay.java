@@ -9,9 +9,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 public class SliderOverlay extends Overlay implements Region {
+    private final Slider slider;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth = 1, scaleHeight = 1;
-    private final double maxValue, minValue, currentValue;
+    private double maxValue, minValue, currentValue;
     private double blockIncrement;
 
     private ISliderChange sliderChange;
@@ -20,12 +21,14 @@ public class SliderOverlay extends Overlay implements Region {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.currentValue = currentValue;
+        this.slider = new Slider(minValue, maxValue, currentValue);
     }
 
     public SliderOverlay(double minValue, double maxValue, double currentValue, double x, double y, double width, double height) {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.currentValue = currentValue;
+        this.slider = new Slider(minValue, maxValue, currentValue);
         setX(x);
         setY(y);
     }
@@ -34,12 +37,27 @@ public class SliderOverlay extends Overlay implements Region {
         return maxValue;
     }
 
+    public void setMaxValue(double maxValue) {
+        this.maxValue = maxValue;
+        slider.setMax(maxValue);
+    }
+
     public double getMinValue() {
         return minValue;
     }
 
+    public void setMinValue(double minValue) {
+        this.minValue = minValue;
+        slider.setMin(minValue);
+    }
+
     public double getCurrentValue() {
         return currentValue;
+    }
+
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
+        slider.setValue(currentValue);
     }
 
     public double getBlockIncrement() {
@@ -48,6 +66,7 @@ public class SliderOverlay extends Overlay implements Region {
 
     public void setBlockIncrement(double blockIncrement) {
         this.blockIncrement = blockIncrement;
+        slider.setBlockIncrement(blockIncrement);
     }
 
     public ISliderChange getSliderChange() {
@@ -60,8 +79,29 @@ public class SliderOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Slider slider = new Slider(minValue, maxValue, currentValue);
-        slider.setPrefSize(width * scaleWidth, height * scaleHeight);
+        if (getWidth() > 0) {
+            slider.setMinWidth(width);
+        }
+
+        if (getHeight() > 0) {
+            slider.setMinHeight(height);
+        }
+
+        if (getPrefWidth() > 0) {
+            slider.setPrefWidth(prefWidth);
+        }
+
+        if (getPrefHeight() > 0) {
+            slider.setPrefHeight(prefHeight);
+        }
+
+        if (getMaxWidth() > 0) {
+            slider.setMaxWidth(maxWidth);
+        }
+
+        if (getMaxHeight() > 0) {
+            slider.setMaxHeight(maxHeight);
+        }
         slider.setTranslateX(getX());
         slider.setTranslateY(getY());
         slider.setBlockIncrement(blockIncrement);
@@ -101,11 +141,13 @@ public class SliderOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        slider.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        slider.setMinHeight(h);
     }
 
     @Override
@@ -121,11 +163,13 @@ public class SliderOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        slider.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        slider.setPrefHeight(h);
     }
 
     @Override
@@ -140,12 +184,13 @@ public class SliderOverlay extends Overlay implements Region {
 
     @Override
     public void setMaxWidth(double w) {
-        this.maxWidth = w;
+        slider.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        slider.setMaxHeight(h);
     }
 
     @Override

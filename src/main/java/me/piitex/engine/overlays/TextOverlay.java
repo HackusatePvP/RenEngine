@@ -2,47 +2,51 @@ package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class TextOverlay extends Overlay implements Region {
+public class TextOverlay extends Overlay {
+    private final Node node;
     private String string;
-    private FontIcon icon;
     private Color textFillColor;
     private FontLoader fontLoader;
-    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
     private boolean strikeout, underline;
 
 
     public TextOverlay(String text) {
         this.string = text;
+        this.node = new Text();
     }
 
     public TextOverlay(FontIcon icon) {
-        this.icon = icon;
+        this.node = icon;
     }
 
     public TextOverlay(String text, FontLoader fontLoader) {
         this.string = text;
         this.fontLoader = fontLoader;
+        this.node = new Text();
     }
 
     public TextOverlay(String text, Color textFillColor) {
         this.string = text;
         this.textFillColor = textFillColor;
+        this.node = new Text();
     }
 
     public TextOverlay(String text, Color textFillColor, FontLoader fontLoader) {
         this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
+        this.node = new Text();
     }
 
     public TextOverlay(String text, FontLoader fontLoader, double x, double y) {
         this.string = text;
         this.fontLoader = fontLoader;
+        this.node = new Text();
         setX(x);
         setY(y);
     }
@@ -51,53 +55,45 @@ public class TextOverlay extends Overlay implements Region {
         this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
+        this.node = new Text();
         setX(x);
         setY(y);
     }
 
     @Override
     public Node render() {
-
-        Node nodeToRender = null;
-
-        if (icon != null) {
+        if (node instanceof FontIcon icon) {
             icon.setTranslateX(getX());
             icon.setTranslateY(getY());
             if (textFillColor != null) {
                 icon.setIconColor(textFillColor);
             }
-
-            nodeToRender = icon;
-        } else if (string != null) {
+        } else if (node instanceof Text text) {
             // If text is set, render a Text node.
-            Text textNode = new Text(string);
+            text.setText(string);
             if (textFillColor != null) {
-                textNode.setFill(textFillColor);
+                text.setFill(textFillColor);
             }
 
-            textNode.setTranslateX(getX());
-            textNode.setTranslateX(getY());
-
-            textNode.setWrappingWidth(width);
+            text.setTranslateX(getX());
+            text.setTranslateX(getY());
 
             if (fontLoader != null) {
-                textNode.setFont(fontLoader.getFont());
+                text.setFont(fontLoader.getFont());
             }
             if (getTextFillColor() != null) {
-                textNode.setFill(getTextFillColor());
+                text.setFill(getTextFillColor());
             }
-            textNode.setStrikethrough(strikeout);
-            textNode.setUnderline(underline);
-
-            nodeToRender = textNode;
+            text.setStrikethrough(strikeout);
+            text.setUnderline(underline);
         }
 
-        if (nodeToRender != null) {
-            nodeToRender.getStyleClass().addAll(getStyles());
-            setInputControls(nodeToRender);
+        if (node != null) {
+            node.getStyleClass().addAll(getStyles());
+            setInputControls(node);
         }
 
-        return nodeToRender;
+        return node;
     }
 
     public String getText() {
@@ -106,6 +102,10 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setText(String text) {
         this.string = text;
+
+        if (node instanceof Text t) {
+            t.setText(text);
+        }
     }
 
     public boolean isStrikeout() {
@@ -114,6 +114,10 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setStrikeout(boolean strikeout) {
         this.strikeout = strikeout;
+
+        if (node instanceof Text t) {
+            t.setStrikethrough(strikeout);
+        }
     }
 
     public boolean isUnderline() {
@@ -122,6 +126,10 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setUnderline(boolean underline) {
         this.underline = underline;
+
+        if (node instanceof Text t) {
+            t.setUnderline(strikeout);
+        }
     }
 
     public FontLoader getFontLoader() {
@@ -130,6 +138,10 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setFont(FontLoader fontLoader) {
         this.fontLoader = fontLoader;
+
+        if (node instanceof Text t) {
+            t.setFont(fontLoader.getFont());
+        }
     }
 
     public Color getTextFillColor() {
@@ -138,86 +150,10 @@ public class TextOverlay extends Overlay implements Region {
 
     public void setTextFill(Color textFillColor) {
         this.textFillColor = textFillColor;
-    }
 
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
+        if (node instanceof Text t) {
+            t.setFill(textFillColor);
+        }
     }
 
 }

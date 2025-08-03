@@ -5,16 +5,23 @@ import javafx.scene.Node;
 import javafx.scene.control.Separator;
 
 public class SeparatorOverlay extends Overlay implements Region {
-    private final Orientation orientation;
+    private final Separator separator;
+    private Orientation orientation;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
 
     public SeparatorOverlay(Orientation orientation) {
+        this.separator = new Separator(orientation);
         this.orientation = orientation;
     }
 
     public Orientation getOrientation(Orientation orientation) {
         return orientation;
+    }
+
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+        separator.setOrientation(orientation);
     }
 
     @Override
@@ -30,11 +37,13 @@ public class SeparatorOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        separator.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        separator.setMinHeight(h);
     }
 
     @Override
@@ -50,11 +59,13 @@ public class SeparatorOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        separator.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        separator.setPrefHeight(h);
     }
 
     @Override
@@ -69,12 +80,13 @@ public class SeparatorOverlay extends Overlay implements Region {
 
     @Override
     public void setMaxWidth(double w) {
-        this.maxWidth = w;
+        separator.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        separator.setMaxHeight(h);
     }
 
     @Override
@@ -100,15 +112,31 @@ public class SeparatorOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Separator separator = new Separator(orientation);
         separator.getStyleClass().addAll(getStyles());
         separator.setTranslateX(getX());
         separator.setTranslateY(getY());
-        if (width != 0) {
-            separator.setPrefWidth(width);
+        if (getWidth() > 0) {
+            separator.setMinWidth(width);
         }
-        if (height != 0) {
-            separator.setPrefHeight(height);
+
+        if (getHeight() > 0) {
+            separator.setMinHeight(height);
+        }
+
+        if (getPrefWidth() > 0) {
+            separator.setPrefWidth(prefWidth);
+        }
+
+        if (getPrefHeight() > 0) {
+            separator.setPrefHeight(prefHeight);
+        }
+
+        if (getMaxWidth() > 0) {
+            separator.setMaxWidth(maxWidth);
+        }
+
+        if (getMaxHeight() > 0) {
+            separator.setMaxHeight(maxHeight);
         }
         return separator;
     }

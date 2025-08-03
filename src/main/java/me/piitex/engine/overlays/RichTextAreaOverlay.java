@@ -14,7 +14,7 @@ import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 import me.piitex.engine.overlays.events.IOverlaySubmit;
-import me.piitex.engine.overlays.events.OverlaySubmitEvent;
+import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class RichTextAreaOverlay extends Overlay implements Region {
+    private final StyledTextArea<Object, String> textArea;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private final String defaultInput;
@@ -57,131 +58,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
-    }
 
-    public RichTextAreaOverlay(String defaultInput, String hintText, double width, double height) {
-        this.defaultInput = defaultInput;
-        this.hintText = hintText;
-        this.width = width;
-        this.height = height;
-        this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
-    }
-
-    public String getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public void setBorderColor(String borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public void setTextFill(Color textFill) {
-        this.textFill = textFill;
-    }
-
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
-    public IInputSetEvent getiInputSetEvent() {
-        return iInputSetEvent;
-    }
-
-    public void onInputSetEvent(IInputSetEvent iInputSetEvent) {
-        this.iInputSetEvent = iInputSetEvent;
-    }
-
-    public IOverlaySubmit getiOverlaySubmit() {
-        return iOverlaySubmit;
-    }
-
-    public void onSubmit(IOverlaySubmit iOverlaySubmit) {
-        this.iOverlaySubmit = iOverlaySubmit;
-    }
-
-    @Override
-    public Node render() {
         BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
             textExt.setFill(textFill);
             if (styleType != null && styleType.equals("misspelled")) {
@@ -202,12 +79,82 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             }
         };
 
-        StyledTextArea<Object, String> textArea = new StyledTextArea<>(
+        textArea = new StyledTextArea<>(
                 null,
                 (paragraphTextFlow, paragraphStyle) -> {},
                 "default",
                 applyTextStyle
         );
+    }
+
+    public RichTextAreaOverlay(String defaultInput, String hintText, double width, double height) {
+        this.defaultInput = defaultInput;
+        this.hintText = hintText;
+        this.width = width;
+        this.height = height;
+        this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
+
+        BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
+            textExt.setFill(textFill);
+            if (styleType != null && styleType.equals("misspelled")) {
+                textExt.setUnderlineColor(Color.RED);
+                textExt.setUnderlineDashArray(new Number[]{2.0, 2.0});
+                textExt.setUnderlineWidth(1.0);
+                textExt.setUnderlineCap(StrokeLineCap.BUTT);
+            } else if (styleType != null && styleType.equals("grammarError")) {
+                textExt.setUnderlineColor(Color.BLUE);
+                textExt.setUnderlineDashArray(new Number[]{1.0, 1.0});
+                textExt.setUnderlineWidth(1.0);
+                textExt.setUnderlineCap(StrokeLineCap.BUTT);
+            } else {
+                textExt.setUnderlineColor(null);
+                textExt.setUnderlineDashArray(null);
+                textExt.setUnderlineWidth(0.0);
+                textExt.setUnderlineCap(null);
+            }
+        };
+
+        textArea = new StyledTextArea<>(
+                null,
+                (paragraphTextFlow, paragraphStyle) -> {},
+                "default",
+                applyTextStyle
+        );
+    }
+
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+        updateColoring();
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
+        updateColoring();
+    }
+
+    public IInputSetEvent getiInputSetEvent() {
+        return iInputSetEvent;
+    }
+
+    public void onInputSetEvent(IInputSetEvent iInputSetEvent) {
+        this.iInputSetEvent = iInputSetEvent;
+    }
+
+    public IOverlaySubmit getiOverlaySubmit() {
+        return iOverlaySubmit;
+    }
+
+    public void onSubmit(IOverlaySubmit iOverlaySubmit) {
+        this.iOverlaySubmit = iOverlaySubmit;
+    }
+
+    @Override
+    public Node render() {
         textArea.setWrapText(true);
 
         if (getWidth() > 0) {
@@ -322,25 +269,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             }
         });
 
-        // Atlanta FX does not work with RichText
-        // Could create a custom theme instead of setting the background manually
-        StringBuilder appender = new StringBuilder();
-
-        if (backgroundColor != null) {
-            appender.append("-fx-background-color: ").append(backgroundColor).append(";");
-        }
-        if (borderColor != null) {
-            appender.append("-fx-border-color: ").append(borderColor).append(" ;");
-            appender.append("-fx-border-width: 1px;");
-            appender.append("-fx-border-radius: 4px;");
-        }
-        appender.append("fx-caret-color: ").append(cssColor(textFill)).append(" ;"); // Doesn't work sadly
+        updateColoring();
 
         textArea.setPadding(new Insets(5));
-
-        if (!appender.isEmpty()) {
-            textArea.setStyle(appender.toString());
-        }
 
         // Initial content setting and highlighting
         if (defaultInput != null && !defaultInput.isEmpty()) {
@@ -449,6 +380,108 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 (int) (255 * color.getGreen()),
                 (int) (255 * color.getBlue()),
                 color.getOpacity());
+    }
+
+    private void updateColoring() {
+        StringBuilder appender = new StringBuilder();
+
+        if (backgroundColor != null && !backgroundColor.isEmpty()) {
+            appender.append("-fx-background-color: ").append(backgroundColor).append(";");
+        }
+        if (borderColor != null && !borderColor.isEmpty()) {
+            appender.append("-fx-border-color: ").append(borderColor).append(" ;");
+            appender.append("-fx-border-width: 1px;");
+            appender.append("-fx-border-radius: 4px;");
+        }
+
+        if (!appender.isEmpty()) {
+            textArea.setStyle(appender.toString());
+        }
+    }
+
+    @Override
+    public double getWidth() {
+        return width;
+    }
+
+    @Override
+    public double getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setWidth(double w) {
+        this.width = w;
+        textArea.setMinWidth(w);
+    }
+
+    @Override
+    public void setHeight(double h) {
+        this.height = h;
+        textArea.setMinHeight(h);
+    }
+
+    @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+        textArea.setPrefWidth(w);
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+        textArea.setPrefHeight(h);
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        textArea.setMaxWidth(w);
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+        textArea.setMaxHeight(h);
+    }
+
+    @Override
+    public double getScaleWidth() {
+        return scaleWidth;
+    }
+
+    @Override
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
+    }
+
+    @Override
+    public double getScaleHeight() {
+        return scaleHeight;
+    }
+
+    @Override
+    public void setScaleHeight(double h) {
+        this.scaleHeight = h;
     }
 
 }

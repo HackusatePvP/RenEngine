@@ -1,6 +1,7 @@
 package me.piitex.engine;
 
 
+import javafx.scene.Node;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -53,4 +54,20 @@ public abstract class Element {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    /**
+     * Assembles the element into its JavaFX {@link Node}.
+     *
+     * <p>
+     *     For {@link Overlay}'s it will return the {@link Overlay#render()} result.
+     * </p>
+     * <p>
+     *     For {@link Layout}'s it will return the {@link Layout#render()} result.
+     * </p>
+     * <p>
+     *     For {@link Container}'s it will return the key value of {@link Container#build()}.
+     * </p>
+     * @return The constructed node.
+     */
+    public abstract Node assemble();
 }

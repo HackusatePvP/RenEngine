@@ -12,21 +12,25 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class TileContainer extends Container {
+    private final Tile tile;
     private Overlay graphic;
     private String title;
     private String description;
     private Overlay action;
 
     public TileContainer() {
-        super(0, 0, 0, 0);
+        super(new Tile(), 0, 0, 0, 0);
+        this.tile = (Tile) getView();
     }
 
     public TileContainer(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(new Tile(), x, y, width, height);
+        this.tile = (Tile) getView();
     }
 
     public TileContainer(double width, double height) {
-        super(0, 0, width, height);
+        super(new Tile(), 0, 0, width, height);
+        this.tile = (Tile) getView();
     }
 
     public Overlay getGraphic() {
@@ -35,6 +39,7 @@ public class TileContainer extends Container {
 
     public void setGraphic(Overlay graphic) {
         this.graphic = graphic;
+        tile.setGraphic(graphic.assemble());
     }
 
     public String getTitle() {
@@ -43,6 +48,7 @@ public class TileContainer extends Container {
 
     public void setTitle(String title) {
         this.title = title;
+        tile.setTitle(title);
     }
 
     public String getDescription() {
@@ -51,10 +57,16 @@ public class TileContainer extends Container {
 
     public void setDescription(String description) {
         this.description = description;
+        tile.setDescription(description);
     }
 
     public void setAction(Overlay action) {
         this.action = action;
+        tile.setAction(action.assemble());
+    }
+
+    public Overlay getAction() {
+        return action;
     }
 
     @Override
@@ -79,7 +91,6 @@ public class TileContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        Tile tile = new Tile();
         tile.setTitle(title);
         tile.setDescription(description);
         if (graphic != null) {

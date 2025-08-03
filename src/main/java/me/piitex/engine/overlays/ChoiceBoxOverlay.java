@@ -11,7 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ChoiceBoxOverlay extends Overlay implements Region {
-    private List<String> items = new ArrayList<>();
+    private final ChoiceBox<String> choiceBox;
+    private List<String> items;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private IComboSelect comboSelect;
@@ -20,22 +21,26 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     private String defaultItem;
 
     public ChoiceBoxOverlay(List<String> items) {
+        this.choiceBox = new ChoiceBox<>();
         this.items = items;
     }
 
     public ChoiceBoxOverlay(List<String> items, double width, double height) {
+        this.choiceBox = new ChoiceBox<>();
         this.items = items;
         this.width = width;
         this.height = height;
     }
 
     public ChoiceBoxOverlay(String[] items, double width, double height) {
+        this.choiceBox = new ChoiceBox<>();
         this.items = List.of(items);
         this.width = width;
         this.height = height;
     }
 
     public ChoiceBoxOverlay(List<String> items, double width, double height, double x, double y) {
+        this.choiceBox = new ChoiceBox<>();
         this.items = items;
         this.width = width;
         this.height = height;
@@ -49,6 +54,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
 
     public void setDefaultItem(String defaultItem) {
         this.defaultItem = defaultItem;
+        choiceBox.getSelectionModel().select(defaultItem);
     }
 
     public void setItems(LinkedList<String> items) {
@@ -56,6 +62,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         if (node != null) {
             ComboBox<String> comboBox = (ComboBox<String>) node;
         }
+        choiceBox.getItems().setAll(items);
     }
 
     public List<String> getItems() {
@@ -69,12 +76,17 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setTranslateX(getX());
         choiceBox.setTranslateY(getY());
 
         if (getWidth() > 0 || getHeight() > 0) {
             choiceBox.setMinSize(width, height);
+        }
+        if (getPrefWidth() > 0 || getPrefHeight() > 0) {
+            choiceBox.setPrefSize(getPrefWidth(), getPrefHeight());
+        }
+        if (getMaxWidth() > 0 || getMaxHeight() > 0) {
+            choiceBox.setMaxSize(getMaxWidth(), getMaxHeight());
         }
 
         choiceBox.getItems().addAll(items);
@@ -115,11 +127,13 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        choiceBox.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        choiceBox.setMinHeight(h);
     }
 
     @Override
@@ -135,11 +149,13 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        choiceBox.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        choiceBox.setPrefHeight(h);
     }
 
     @Override
@@ -155,11 +171,13 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     @Override
     public void setMaxWidth(double w) {
         this.maxWidth = w;
+        choiceBox.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        choiceBox.setMaxHeight(h);
     }
 
     @Override
@@ -181,5 +199,6 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 
 }

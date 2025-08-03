@@ -10,7 +10,8 @@ import me.piitex.engine.overlays.events.IAlertConfirm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlertOverlay extends Overlay implements Region {
+public class AlertOverlay extends Overlay {
+    private final Alert alert;
     private final String title;
     private final Alert.AlertType alertType;
     private String header;
@@ -24,6 +25,7 @@ public class AlertOverlay extends Overlay implements Region {
     private IAlertConfirm alertConfirm;
 
     public AlertOverlay(String title, Alert.AlertType alertType) {
+        this.alert = new Alert(alertType);
         this.title = title;
         this.alertType = alertType;
     }
@@ -42,6 +44,7 @@ public class AlertOverlay extends Overlay implements Region {
 
     public void setHeader(String header) {
         this.header = header;
+        alert.setHeaderText(header);
     }
 
     public String getContent() {
@@ -50,6 +53,7 @@ public class AlertOverlay extends Overlay implements Region {
 
     public void setContent(String content) {
         this.content = content;
+        alert.setContentText(content);
     }
 
     public Window getModal() {
@@ -58,90 +62,30 @@ public class AlertOverlay extends Overlay implements Region {
 
     public void setModal(Window modal) {
         this.modal = modal;
+        alert.initOwner(modal.getStage());
     }
 
     public void addButton(ButtonType buttonType) {
         actionButtons.add(buttonType);
+        alert.getButtonTypes().add(buttonType);
     }
 
-    @Override
     public double getWidth() {
         return width;
     }
 
-    @Override
     public double getHeight() {
         return height;
     }
 
-    @Override
     public void setWidth(double w) {
         this.width = w;
+        alert.setWidth(w);
     }
 
-    @Override
     public void setHeight(double h) {
         this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
+        alert.setHeight(h);
     }
 
     public IAlertConfirm getAlertConfirm() {
@@ -153,7 +97,6 @@ public class AlertOverlay extends Overlay implements Region {
     }
 
     public Alert build() {
-        Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);

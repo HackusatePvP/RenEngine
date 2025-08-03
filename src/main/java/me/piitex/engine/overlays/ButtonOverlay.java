@@ -12,181 +12,43 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.LinkedList;
 
 public class ButtonOverlay extends Overlay implements Region {
-    private Button button;
+    private final Button button;
     private final String id;
     private String text;
-    private double scaleX, scaleY;
     private FontLoader font;
     private FontIcon icon;
-
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
-    // Needed for some engine fixes
-    private ImageOverlay topImage;
     private boolean alignGraphicToBox = true;
-
     private Paint textFill;
-    private Color backgroundColor;
-    private Color borderColor;
-    private Color hoverColor;
-    private ImageOverlay hoverImage;
-    private boolean hover = true;
-    private int borderWidth = 0;
-    private int backgroundRadius = 0;
 
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-
-    private boolean enabled = true;
-
-    public ButtonOverlay(String id, String text) {
-        this.id = id;
-        this.text = text;
-    }
-
-    public ButtonOverlay(String id, FontIcon icon) {
-        this.id = id;
-        this.icon = icon;
-    }
-
-    public ButtonOverlay(String id, String text, FontIcon fontIcon) {
-        this.id = id;
-        this.text = text;
-        this.icon = fontIcon;
-    }
-
-    public ButtonOverlay(String id, String text, Color textFill) {
-        this.id = id;
-        this.text = text;
-        this.textFill = textFill;
-    }
+    private boolean enabled;
 
     /**
-     * Create a button with only text.
-     *
-     * @param id     Identifier for the button.
-     * @param text   Text that will be displayed inside the button.
-     * @param textFill  Color of the text.
-     * @param x      X-Axis position of the button.
-     * @param y      Y-Axis position of the button.
+     * Private constructor used by the {@link ButtonBuilder}.
+     * @param builder The builder instance with all the properties set.
      */
-    public ButtonOverlay(String id, String text, Color textFill, double x, double y) {
-        this.id = id;
-        this.text = text;
-        this.textFill = textFill;
-        setX(x);
-        setY(y);
+    protected ButtonOverlay(ButtonBuilder builder) {
+        this.id = builder.getId();
+        this.text = builder.getText();
+        this.icon = builder.getIcon();
+        this.font = builder.getFont();
+        this.textFill = builder.getTextFill();
+        this.width = builder.getWidth();
+        this.height = builder.getHeight();
+        this.prefHeight = builder.getPrefHeight();
+        this.prefWidth = builder.getPrefWidth();
+        this.maxWidth = builder.getMaxWidth();
+        this.maxHeight = builder.getMaxHeight();
+        this.scaleWidth = builder.getScaleWidth();
+        this.scaleHeight = builder.getScaleHeight();
+        this.images.addAll(builder.getImages());
+        this.enabled = builder.isEnabled();
+        setX(builder.getX());
+        setY(builder.getY());
+        this.button = new Button();
     }
-
-    /**
-     * Create a button with only text with a specific font.
-     *
-     * @param id     Identifier for the button.
-     * @param text   Text that will be displayed inside the button.
-     * @param font   Font to be used for the text.
-     * @param textFill  Color of the text.
-     * @param x      X-Axis position of the button.
-     * @param y      Y-Axis position of the button.
-     */
-    public ButtonOverlay(String id, String text, Color textFill, FontLoader font, double x, double y) {
-        this.id = id;
-        this.text = text;
-        this.font = font;
-        this.textFill = textFill;
-        setX(x);
-        setY(y);
-    }
-
-    /**
-     * Create a button with only text with a specific font.
-     *
-     * @param id     Identifier for the button.
-     * @param text   Text that will be displayed inside the button.
-     * @param font   Font to be used for the text.
-     * @param textFill  Color of the text.
-     */
-    public ButtonOverlay(String id, String text, Color textFill, FontLoader font) {
-        this.id = id;
-        this.text = text;
-        this.font = font;
-        this.textFill = textFill;
-    }
-
-    public ButtonOverlay(String id, String text, Color textFill, FontLoader font, Color backgroundColor, Color borderColor) {
-        this.id = id;
-        this.text = text;
-        this.font = font;
-        this.textFill = textFill;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
-    }
-
-    public ButtonOverlay(String id, String text, Color textFill, FontLoader font, Color backgroundColor, Color borderColor, boolean hover) {
-        this.id = id;
-        this.text = text;
-        this.font = font;
-        this.textFill = textFill;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
-        this.hover = hover;
-    }
-
-    public ButtonOverlay(String id, String text, Color textFill, FontLoader font, Color backgroundColor, Color borderColor, Color hoverColor) {
-        this.id = id;
-        this.text = text;
-        this.font = font;
-        this.textFill = textFill;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
-        this.hoverColor = hoverColor;
-    }
-
-    /**
-     * Create a button with only an image.
-     *
-     * @param id          Identifier for the button.
-     * @param imageLoader Image to be displayed inside the button.
-     * @param x           X-Axis position of the button.
-     * @param y           Y-Axis position of the button.
-     */
-    public ButtonOverlay(String id, ImageOverlay imageLoader, double x, double y) {
-        this.id = id;
-        this.images.add(imageLoader);
-        setX(x);
-        setY(y);
-    }
-
-    public ButtonOverlay(String id, ImageOverlay imageLoader, double x, double y, int width, int height) {
-        this.id = id;
-        this.images.add(imageLoader);
-        setX(x);
-        setY(y);
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
-     * Create a button with image and text
-     *
-     * @param id          Identifier for the button.
-     * @param imageLoader Image to be displayed inside the button.
-     * @param text        Text to be displayed inside the button.
-     * @param x           X-Axis position of the button.
-     * @param y           Y-Axis position of the button.
-     */
-    public ButtonOverlay(String id, ImageOverlay imageLoader, String text, double x, double y) {
-        this.id = id;
-        this.images.add(imageLoader);
-        this.text = text;
-        setX(x);
-        setY(y);
-        this.button = build();
-    }
-
-    public ButtonOverlay(Button button) {
-        this.button = button;
-        this.id = button.getId();
-    }
-
     public Button getButton() {
         return button;
     }
@@ -201,6 +63,7 @@ public class ButtonOverlay extends Overlay implements Region {
 
     public void setText(String text) {
         this.text = text;
+        button.setText(text);
     }
 
     public FontLoader getFontLoader() {
@@ -209,10 +72,12 @@ public class ButtonOverlay extends Overlay implements Region {
 
     public void setFont(FontLoader font) {
         this.font = font;
+        button.setFont(font.getFont());
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        button.setDisable(!enabled);
     }
 
     public boolean isEnabled() {
@@ -221,193 +86,10 @@ public class ButtonOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        Button button = build();
-        button.setTranslateX(getX());
-        button.setTranslateY(getY());
-        return button;
-    }
-
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
-    public LinkedList<ImageOverlay> getImages() {
-        return images;
-    }
-
-    public void addImage(ImageOverlay imageOverlay) {
-        this.images.add(imageOverlay);
-    }
-
-    public Paint getTextFill() {
-        return textFill;
-    }
-
-    public void setTextFill(Paint color) {
-        this.textFill = color;
-    }
-
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(Color backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public Color getBorderColor() {
-        return borderColor;
-    }
-
-    public void setBorderColor(Color borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public Color getHoverColor() {
-        return hoverColor;
-    }
-
-    public void setHoverColor(Color hoverColor) {
-        this.hoverColor = hoverColor;
-        this.hover = true;
-    }
-
-    public ImageOverlay getHoverImage() {
-        return hoverImage;
-    }
-
-    public void setHoverImage(ImageOverlay hoverImage) {
-        this.hoverImage = hoverImage;
-        this.hover = true;
-    }
-
-    public ImageOverlay getTopImage() {
-        return topImage;
-    }
-
-    public void setTopImage(ImageOverlay topImage) {
-        this.topImage = topImage;
-    }
-
-    public boolean isAlignGraphicToBox() {
-        return alignGraphicToBox;
-    }
-
-    public void setAlignGraphicToBox(boolean alignGraphicToBox) {
-        this.alignGraphicToBox = alignGraphicToBox;
-    }
-
-    public boolean isHover() {
-        return hover;
-    }
-
-    public void setHover(boolean hover) {
-        this.hover = hover;
-    }
-
-    public int getBorderWidth() {
-        return borderWidth;
-    }
-
-    public void setBorderWidth(int borderWidth) {
-        this.borderWidth = borderWidth;
-    }
-
-    public int getBackgroundRadius() {
-        return backgroundRadius;
-    }
-
-    public void setBackgroundRadius(int backgroundRadius) {
-        this.backgroundRadius = backgroundRadius;
-    }
-
-    public Button build() {
-        if (button != null) {
-            return button;
-        }
-        Button button = new Button();
         button.setDisable(!enabled);
         button.setId(id);
         button.getStyleClass().addAll(getStyles());
         for (ImageOverlay image : images) {
-            topImage = image;
             if (image != null) {
                 ImageView imageView = new ImageView(image.getImage());
                 if (alignGraphicToBox) {
@@ -418,8 +100,8 @@ public class ButtonOverlay extends Overlay implements Region {
                         imageView.setFitHeight(height);
                     }
                 } else {
-                    imageView.setFitWidth(image.getWidth());
-                    imageView.setFitHeight(image.getHeight());
+                    imageView.setFitWidth(image.getFitWidth());
+                    imageView.setFitHeight(image.getFitHeight());
                 }
                 if (image.getX() > 0) {
                     imageView.setX(image.getX());
@@ -468,11 +150,116 @@ public class ButtonOverlay extends Overlay implements Region {
             button.setTranslateY(getY());
         }
 
-        this.button = button;
-
         setInputControls(button);
-
+        button.setTranslateX(getX());
+        button.setTranslateY(getY());
         return button;
+    }
+
+    @Override
+    public double getWidth() {
+        return width;
+    }
+
+    @Override
+    public double getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setWidth(double w) {
+        this.width = w;
+        button.setMinWidth(w);
+    }
+
+    @Override
+    public void setHeight(double h) {
+        this.height = h;
+        button.setMinHeight(h);
+    }
+
+    @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+        button.setPrefWidth(w);
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+        button.setPrefHeight(h);
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+        button.setMaxWidth(w);
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+        button.setMaxHeight(h);
+    }
+
+    @Override
+    public double getScaleWidth() {
+        return scaleWidth;
+    }
+
+    @Override
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
+    }
+
+    @Override
+    public double getScaleHeight() {
+        return scaleHeight;
+    }
+
+    @Override
+    public void setScaleHeight(double h) {
+        this.scaleHeight = h;
+    }
+
+
+    public LinkedList<ImageOverlay> getImages() {
+        return images;
+    }
+
+    public void addImage(ImageOverlay imageOverlay) {
+        this.images.add(imageOverlay);
+        button.setGraphic(imageOverlay.assemble());
+
+    }
+
+    public Paint getTextFill() {
+        return textFill;
+    }
+
+    public void setTextFill(Paint color) {
+        this.textFill = color;
+        button.setTextFill(color);
     }
 
     // Helper css function

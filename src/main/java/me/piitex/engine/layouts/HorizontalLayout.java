@@ -1,6 +1,7 @@
 package me.piitex.engine.layouts;
 
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
@@ -22,9 +23,9 @@ public class HorizontalLayout extends Layout {
     }
 
     @Override
-    public Pane render() {
+    public Node render() {
         // Clear
-        HBox pane = (HBox) getPane();
+        HBox pane = (HBox) getView();
         VBox.setVgrow(pane, Priority.ALWAYS);
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());

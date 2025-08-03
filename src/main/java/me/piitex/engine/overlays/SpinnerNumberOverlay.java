@@ -1,13 +1,13 @@
 package me.piitex.engine.overlays;
 
-import atlantafx.base.util.DoubleStringConverter;
 import javafx.scene.Node;
 import javafx.scene.control.Spinner;
 import me.piitex.engine.hanlders.events.ValueChangeEvent;
 import me.piitex.engine.overlays.events.IValueChange;
 
-public class SpinnerNumberOverlay extends Overlay implements Region {
-    private final double min, max, def;
+public class SpinnerNumberOverlay<T> extends Overlay implements Region {
+    private final Spinner<T> spinner;
+    private double min, max, def;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth = 1, scaleHeight = 1;
     private IValueChange change;
@@ -16,6 +16,19 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         this.min = min;
         this.max = max;
         this.def = def;
+        this.spinner = new Spinner<>(min, max, def);
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getInitial() {
+        return def;
     }
 
     public IValueChange getOnValueChange() {
@@ -27,92 +40,11 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
     }
 
     @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-    @Override
     public Node render() {
-        Spinner<Double> spinner = new Spinner<>(min, max, def);
         spinner.setTranslateX(getX());
         spinner.setTranslateY(getY());
         spinner.getStyleClass().addAll(getStyles());
-        DoubleStringConverter.createFor(spinner);
+        //DoubleStringConverter.createFor(spinner);
         spinner.setEditable(true);
 
         if (getWidth() > 0) {
@@ -145,5 +77,90 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         }
 
         return spinner;
+    }
+
+    @Override
+    public double getWidth() {
+        return width;
+    }
+
+    @Override
+    public double getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setWidth(double w) {
+        this.width = w;
+        spinner.setMinWidth(w);
+    }
+
+    @Override
+    public void setHeight(double h) {
+        this.height = h;
+        spinner.setMinHeight(h);
+    }
+
+    @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+        spinner.setPrefWidth(w);
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+        spinner.setPrefHeight(h);
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        spinner.setMaxWidth(w);
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+        spinner.setMaxHeight(h);
+    }
+
+    @Override
+    public double getScaleWidth() {
+        return scaleWidth;
+    }
+
+    @Override
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
+    }
+
+    @Override
+    public double getScaleHeight() {
+        return scaleHeight;
+    }
+
+    @Override
+    public void setScaleHeight(double h) {
+        this.scaleHeight = h;
     }
 }

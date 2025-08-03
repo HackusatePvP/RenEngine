@@ -44,16 +44,16 @@ public abstract class Container extends Renderer {
     private IContainerClick click;
     private List<IContainerRender> renderEvents = new LinkedList<>();
 
-    private Node view;
-
-    public Container(double x, double y, double width, double height) {
+    public Container(Node view, double x, double y, double width, double height) {
+        setView(view);
         this.x = x;
         this.y = y;
         setWidth(width);
         setHeight(height);
     }
 
-    public Container(double x, double y, double width, double height, int index) {
+    public Container(Node view, double x, double y, double width, double height, int index) {
+        setView(view);
         this.x = x;
         this.y = y;
         setWidth(width);
@@ -165,14 +165,6 @@ public abstract class Container extends Renderer {
 
     public List<String> getStylesheets() {
         return stylesheets;
-    }
-
-    public Node getView() {
-        return view;
-    }
-
-    protected void setView(Node view) {
-        this.view = view;
     }
 
     /**

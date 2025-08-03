@@ -7,7 +7,37 @@ import javafx.scene.control.ProgressBar;
 public class ProgressBarOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-    private ProgressBar progressBar;
+    private final ProgressBar progressBar;
+
+    public ProgressBarOverlay() {
+        this.progressBar = new ProgressBar();
+    }
+
+    @Override
+    public Node render() {
+        progressBar.progressProperty().bind(Bindings.createDoubleBinding(() -> -1d));
+
+        progressBar.setTranslateX(getX());
+        progressBar.setTranslateY(getY());
+
+        if (getWidth() > 0 || getHeight() > 0) {
+            progressBar.setMinSize(width, height);
+        }
+        if (getPrefWidth() > 0 || getPrefHeight() > 0) {
+            progressBar.setPrefSize(getPrefWidth(), getPrefHeight());
+        }
+        if (getMaxWidth() > 0 || getMaxHeight() > 0) {
+            progressBar.setMaxSize(getMaxWidth(), getMaxHeight());
+        }
+
+        progressBar.getStyleClass().addAll(getStyles());
+
+        return progressBar;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
 
     @Override
     public double getWidth() {
@@ -22,11 +52,13 @@ public class ProgressBarOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        progressBar.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        progressBar.setMinHeight(h);
     }
 
     @Override
@@ -42,11 +74,13 @@ public class ProgressBarOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        progressBar.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        progressBar.setPrefHeight(h);
     }
 
     @Override
@@ -62,11 +96,13 @@ public class ProgressBarOverlay extends Overlay implements Region {
     @Override
     public void setMaxWidth(double w) {
         this.maxWidth = w;
+        progressBar.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        progressBar.setMaxHeight(h);
     }
 
     @Override
@@ -87,44 +123,5 @@ public class ProgressBarOverlay extends Overlay implements Region {
     @Override
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
-    }
-
-
-
-    @Override
-    public Node render() {
-        progressBar = new ProgressBar(0);
-        progressBar.progressProperty().bind(Bindings.createDoubleBinding(() -> -1d));
-
-        progressBar.setTranslateX(getX());
-        progressBar.setTranslateY(getY());
-
-        if (getWidth() > 0) {
-            progressBar.setMinWidth(getWidth());
-        }
-        if (getPrefWidth() > 0) {
-            progressBar.setPrefWidth(getPrefWidth());
-        }
-        if (getMaxWidth() > 0) {
-            progressBar.setMaxWidth(getMaxWidth());
-        }
-
-        if (getHeight() > 0) {
-            progressBar.setMinHeight(getHeight());
-        }
-        if (getPrefHeight() > 0) {
-            progressBar.setPrefHeight(getPrefHeight());
-        }
-        if (getMaxHeight() > 0) {
-            progressBar.setMaxHeight(getMaxHeight());
-        }
-
-        progressBar.getStyleClass().addAll(getStyles());
-
-        return progressBar;
-    }
-
-    public ProgressBar getProgressBar() {
-        return progressBar;
     }
 }

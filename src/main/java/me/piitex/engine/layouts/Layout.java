@@ -2,6 +2,7 @@ package me.piitex.engine.layouts;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import me.piitex.engine.Renderer;
 import me.piitex.engine.layouts.handles.ILayoutClickEvent;
@@ -20,6 +21,7 @@ public abstract class Layout extends Renderer {
 
     protected Layout(Pane pane, double width, double height) {
         this.pane = pane;
+        setView(pane);
         setWidth(width);
         setHeight(height);
         this.renderEvents = new ArrayList<>();
@@ -49,7 +51,8 @@ public abstract class Layout extends Renderer {
         return renderEvents;
     }
 
-    public Pane getPane() {
+    @Override
+    public Node getView() {
         return pane;
     }
 
@@ -85,5 +88,5 @@ public abstract class Layout extends Renderer {
         return padding;
     }
 
-    public abstract Pane render();
+    public abstract Node render();
 }

@@ -8,23 +8,23 @@ import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 import me.piitex.engine.overlays.events.IOverlaySubmit;
-import me.piitex.engine.overlays.events.OverlaySubmitEvent;
+import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 
 public class TextAreaOverlay extends Overlay implements Region {
+    private final TextArea textArea;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private final String defaultInput;
     private FontLoader fontLoader;
     private String hintText = "";
     private String currentText;
-    private Color textFill = Color.BLACK;
-    private boolean renderBorder = true;
     private boolean enabled = true;
 
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
 
     public TextAreaOverlay(String defaultInput, double x, double y, double width, double height) {
+        this.textArea = new TextArea(defaultInput);
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
@@ -33,6 +33,7 @@ public class TextAreaOverlay extends Overlay implements Region {
     }
 
     public TextAreaOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
+        this.textArea = new TextArea(defaultInput);
         this.defaultInput = defaultInput;
         this.hintText = hintText;
         this.width = width;
@@ -47,26 +48,16 @@ public class TextAreaOverlay extends Overlay implements Region {
 
     public void setFont(FontLoader fontLoader) {
         this.fontLoader = fontLoader;
+        textArea.setFont(fontLoader.getFont());
     }
 
     public String getCurrentText() {
         return currentText;
     }
 
-    public Color getTextFill() {
-        return textFill;
-    }
-
-    public void setTextFill(Color textFill) {
-        this.textFill = textFill;
-    }
-
-    public boolean isRenderBorder() {
-        return renderBorder;
-    }
-
-    public void setRenderBorder(boolean renderBorder) {
-        this.renderBorder = renderBorder;
+    public void setCurrentText(String currentText) {
+        this.currentText = currentText;
+        textArea.setText(currentText);
     }
 
     public boolean isEnabled() {
@@ -75,6 +66,7 @@ public class TextAreaOverlay extends Overlay implements Region {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        textArea.setDisable(!enabled);
     }
 
     public String getHintText() {
@@ -83,11 +75,11 @@ public class TextAreaOverlay extends Overlay implements Region {
 
     public void setHintText(String hintText) {
         this.hintText = hintText;
+        textArea.setPromptText(hintText);
     }
 
     @Override
     public Node render() {
-        TextArea textArea = new TextArea(defaultInput);
         textArea.setTranslateX(getX());
         textArea.setTranslateY(getY());
         if (fontLoader != null) {
@@ -137,11 +129,13 @@ public class TextAreaOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        textArea.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        textArea.setMinHeight(h);
     }
 
     @Override
@@ -157,11 +151,13 @@ public class TextAreaOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        textArea.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        textArea.setPrefHeight(h);
     }
 
     @Override
@@ -176,12 +172,13 @@ public class TextAreaOverlay extends Overlay implements Region {
 
     @Override
     public void setMaxWidth(double w) {
-        this.maxWidth = w;
+        textArea.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        textArea.setMaxHeight(h);
     }
 
     @Override

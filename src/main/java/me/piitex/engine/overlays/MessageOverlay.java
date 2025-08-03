@@ -20,17 +20,14 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
     private String description;
     private FontIcon icon;
     private Overlay graphicOverlay;
-
-    // Region properties, now explicitly defined in MessageOverlay
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth = 1.0; // Default to 1.0 (no scaling)
-    private double scaleHeight = 1.0; // Default to 1.0 (no scaling)
+    private double scaleWidth, scaleHeight;
+
 
     public MessageOverlay(String title, String description) {
         this.title = title;
         this.description = description;
         this.atlantafxMessage = new Message(title, description);
-        initMessageNode();
     }
 
 
@@ -45,17 +42,16 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
      * @param description The description or body text of the message.
      */
     public MessageOverlay(double x, double y, double width, double height, String title, String description) {
-        super(); // Call Overlay's default constructor
-        setX(x); // Set X position inherited from Overlay
-        setY(y); // Set Y position inherited from Overlay
+        super();
+        setX(x);
+        setY(y);
 
-        this.width = width; // Initialize MessageOverlay's own width
-        this.height = height; // Initialize MessageOverlay's own height
+        this.width = width;
+        this.height = height;
 
         this.title = title;
         this.description = description;
         this.atlantafxMessage = new Message(title, description);
-        initMessageNode();
     }
 
     /**
@@ -80,24 +76,27 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         this.description = description;
         this.graphicOverlay = graphicOverlay;
 
-        // Render the ImageOverlay to get a JavaFX Node for the graphic
         Node graphicNode = (graphicOverlay != null) ? graphicOverlay.render() : null;
         this.atlantafxMessage = new Message(title, description, graphicNode);
-        initMessageNode();
     }
 
-    private void initMessageNode() {
-        atlantafxMessage.setLayoutX(getX()); // getX() is from Overlay
-        atlantafxMessage.setLayoutY(getY()); // getY() is from Overlay
-        atlantafxMessage.setMinSize(width, height);
-    }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+        atlantafxMessage.setTitle(title);
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        atlantafxMessage.setDescription(description);
     }
 
     public FontIcon getIcon() {
@@ -106,87 +105,9 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
 
     public void setIcon(FontIcon icon) {
         this.icon = icon;
+        atlantafxMessage.setGraphic(icon);
     }
 
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setWidth(double w) {
-        this.width = w;
-    }
-
-    @Override
-    public void setHeight(double h) {
-        this.height = h;
-    }
-
-    @Override
-    public double getPrefWidth() {
-        return prefWidth;
-    }
-
-    @Override
-    public double getPrefHeight() {
-        return prefHeight;
-    }
-
-    @Override
-    public void setPrefWidth(double w) {
-        this.prefWidth = w;
-    }
-
-    @Override
-    public void setPrefHeight(double h) {
-        this.prefHeight = h;
-    }
-
-    @Override
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    @Override
-    public double getMaxHeight() {
-        return maxHeight;
-    }
-
-    @Override
-    public void setMaxWidth(double w) {
-        this.maxWidth = w;
-    }
-
-    @Override
-    public void setMaxHeight(double h) {
-        this.maxHeight = h;
-    }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
 
     public MessageOverlay onAction(Runnable action) {
         atlantafxMessage.setActionHandler(action);
@@ -200,6 +121,16 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
 
     @Override
     public Node render() {
+        if (getWidth() > 0 || getHeight() > 0) {
+            atlantafxMessage.setMinSize(width, height);
+        }
+        if (getPrefWidth() > 0 || getPrefHeight() > 0) {
+            atlantafxMessage.setPrefSize(getPrefWidth(), getPrefHeight());
+        }
+        if (getMaxWidth() > 0 || getMaxHeight() > 0) {
+            atlantafxMessage.setMaxSize(getMaxWidth(), getMaxHeight());
+        }
+
         atlantafxMessage.setTranslateX(getX());
         atlantafxMessage.setLayoutY(getY());
 
@@ -222,4 +153,91 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
 
         return atlantafxMessage;
     }
+
+    @Override
+    public double getWidth() {
+        return width;
+    }
+
+    @Override
+    public double getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setWidth(double w) {
+        this.width = w;
+        atlantafxMessage.setMinWidth(w);
+    }
+
+    @Override
+    public void setHeight(double h) {
+        this.height = h;
+        atlantafxMessage.setMinHeight(h);
+    }
+
+    @Override
+    public double getPrefWidth() {
+        return prefWidth;
+    }
+
+    @Override
+    public double getPrefHeight() {
+        return prefHeight;
+    }
+
+    @Override
+    public void setPrefWidth(double w) {
+        this.prefWidth = w;
+        atlantafxMessage.setPrefWidth(w);
+    }
+
+    @Override
+    public void setPrefHeight(double h) {
+        this.prefHeight = h;
+        atlantafxMessage.setPrefHeight(h);
+    }
+
+    @Override
+    public double getMaxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
+    @Override
+    public void setMaxWidth(double w) {
+        this.maxWidth = w;
+        atlantafxMessage.setMaxWidth(w);
+    }
+
+    @Override
+    public void setMaxHeight(double h) {
+        this.maxHeight = h;
+        atlantafxMessage.setMaxHeight(h);
+    }
+
+    @Override
+    public double getScaleWidth() {
+        return scaleWidth;
+    }
+
+    @Override
+    public void setScaleWidth(double w) {
+        this.scaleWidth = w;
+    }
+
+    @Override
+    public double getScaleHeight() {
+        return scaleHeight;
+    }
+
+    @Override
+    public void setScaleHeight(double h) {
+        this.scaleHeight = h;
+    }
+
 }

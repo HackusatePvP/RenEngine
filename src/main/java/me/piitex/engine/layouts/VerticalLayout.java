@@ -1,6 +1,7 @@
 package me.piitex.engine.layouts;
 
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.layout.*;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
@@ -20,9 +21,9 @@ public class VerticalLayout extends Layout {
     }
 
     @Override
-    public Pane render() {
+    public Node render() {
         // Clear
-        VBox pane = (VBox) getPane();
+        VBox pane = (VBox) getView();
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());

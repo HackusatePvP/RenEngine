@@ -10,7 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ComboBoxOverlay extends Overlay implements Region {
-    private List<String> items = new ArrayList<>();
+    private final ComboBox<String> comboBox;
+    private final List<String> items;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private IComboSelect comboSelect;
@@ -19,22 +20,26 @@ public class ComboBoxOverlay extends Overlay implements Region {
     private String defaultItem;
 
     public ComboBoxOverlay(List<String> items) {
+        this.comboBox = new ComboBox<>();
         this.items = items;
     }
 
     public ComboBoxOverlay(List<String> items, double width, double height) {
+        this.comboBox = new ComboBox<>();
         this.items = items;
         this.width = width;
         this.height = height;
     }
 
     public ComboBoxOverlay(String[] items, double width, double height) {
+        this.comboBox = new ComboBox<>();
         this.items = List.of(items);
         this.width = width;
         this.height = height;
     }
 
     public ComboBoxOverlay(List<String> items, double width, double height, double x, double y) {
+        this.comboBox = new ComboBox<>();
         this.items = items;
         this.width = width;
         this.height = height;
@@ -48,6 +53,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
 
     public void setDefaultItem(String defaultItem) {
         this.defaultItem = defaultItem;
+        comboBox.getSelectionModel().select(defaultItem);
     }
 
     public List<String> getItems() {
@@ -61,7 +67,6 @@ public class ComboBoxOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setTranslateX(getX());
         comboBox.setTranslateY(getY());
 
@@ -114,11 +119,13 @@ public class ComboBoxOverlay extends Overlay implements Region {
     @Override
     public void setWidth(double w) {
         this.width = w;
+        comboBox.setMinWidth(w);
     }
 
     @Override
     public void setHeight(double h) {
         this.height = h;
+        comboBox.setMinHeight(h);
     }
 
     @Override
@@ -134,11 +141,13 @@ public class ComboBoxOverlay extends Overlay implements Region {
     @Override
     public void setPrefWidth(double w) {
         this.prefWidth = w;
+        comboBox.setPrefWidth(w);
     }
 
     @Override
     public void setPrefHeight(double h) {
         this.prefHeight = h;
+        comboBox.setPrefHeight(h);
     }
 
     @Override
@@ -154,11 +163,13 @@ public class ComboBoxOverlay extends Overlay implements Region {
     @Override
     public void setMaxWidth(double w) {
         this.maxWidth = w;
+        comboBox.setMaxWidth(w);
     }
 
     @Override
     public void setMaxHeight(double h) {
         this.maxHeight = h;
+        comboBox.setMaxHeight(h);
     }
 
     @Override
@@ -180,5 +191,6 @@ public class ComboBoxOverlay extends Overlay implements Region {
     public void setScaleHeight(double h) {
         this.scaleHeight = h;
     }
+
 
 }

@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import me.piitex.engine.Window;
 import me.piitex.engine.loaders.FontLoader;
+import me.piitex.engine.hanlders.events.DirectorySelectEvent;
 import me.piitex.engine.overlays.events.IDirectorySelect;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class DirectoryOverlay extends Overlay {
     public Node render() {
         Button jfxButton;
         if (button != null) {
-            jfxButton = button.build();
+            jfxButton = (Button) button.render();
         } else {
             jfxButton = new Button(text);
         }
