@@ -1,7 +1,6 @@
-package me.piitex.engine.overlays.events;
+package me.piitex.engine.hanlders.events;
 
 import javafx.scene.input.KeyEvent;
-import me.piitex.engine.hanlders.events.Event;
 import me.piitex.engine.overlays.Overlay;
 
 public class OverlaySubmitEvent extends Event {

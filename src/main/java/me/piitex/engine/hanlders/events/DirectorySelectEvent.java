@@ -1,6 +1,4 @@
-package me.piitex.engine.overlays;
-
-import me.piitex.engine.hanlders.events.Event;
+package me.piitex.engine.hanlders.events;
 
 import java.io.File;
 
