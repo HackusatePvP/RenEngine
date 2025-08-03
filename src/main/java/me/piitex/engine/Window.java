@@ -1,5 +1,7 @@
 package me.piitex.engine;
 
+import atlantafx.base.controls.Card;
+import atlantafx.base.controls.Tile;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -14,7 +16,10 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import me.piitex.engine.containers.CardContainer;
 import me.piitex.engine.containers.EmptyContainer;
+import me.piitex.engine.containers.TileContainer;
+import me.piitex.engine.containers.tabs.Tab;
 import me.piitex.engine.hanlders.events.ContainerRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
@@ -126,11 +131,8 @@ public class Window {
         RenConfiguration.setHeight(height);
         buildStage();
 
-        if (builder.isAutoUpdate()) {
-            setupRenderLoop();
-            startRenderLoop();
-            render();
-        }
+        // Display stage.
+        render();
     }
 
     /**
@@ -176,19 +178,6 @@ public class Window {
         this.backgroundColor = color;
         root.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         stage.getScene().setFill(color);
-    }
-
-    private void setupRenderLoop() {
-        renderLoop = new Timeline(new KeyFrame(Duration.seconds(1.0 / 60.0), event -> {
-            update();
-        }));
-        renderLoop.setCycleCount(Timeline.INDEFINITE);
-    }
-
-    public void startRenderLoop() {
-        if (renderLoop != null) {
-            renderLoop.play();;
-        }
     }
 
     /**
@@ -295,6 +284,8 @@ public class Window {
             addContainer(getContainers().get(index), i);
         }
         containers.put(index, container);
+
+        root.getChildren().add(container.assemble());
     }
 
     /**
@@ -522,30 +513,93 @@ public class Window {
             } else if (pane.getChildren().size() != container.getElements().size()) {
                 renderContainer(container);
             } else {
-                boolean render = false;
-                for (Element element : container.getElements().values()) {
-                    if (element instanceof Layout layout) {
-                        if (layout.getElements().size() != layout.getPane().getChildren().size()) {
-                            render = true;
-                            break;
-                        }
-                    }
-                    if (element instanceof Container sub) {
-                        if (sub.getView() == null) {
-                            render = true;
-                            break;
-                        } else if (sub.getView() instanceof Pane && ((Pane) sub.getView()).getChildren().size() != sub.getElements().size()) {
-                            render = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (render) {
+                if (checkNestedChanges(container)) {
                     renderContainer(container);
                 }
             }
         });
+    }
+
+    private boolean checkNestedChanges(Renderer renderer) {
+        if (renderer instanceof Layout layout) {
+            if ( ((Pane) layout.getView()).getChildren().size() != renderer.getElements().size()) {
+                return true;
+            }
+        }
+
+        if (renderer instanceof CardContainer container) {
+            Card card = (Card) container.getView();
+
+            Node header = card.getHeader();
+            if (header instanceof Pane pane) {
+                if (pane.getChildren().size() != renderer.getElements().size()) {
+                    return true;
+                }
+            }
+
+            Node subHeader = card.getSubHeader();
+            if (subHeader instanceof Pane pane) {
+                if (pane.getChildren().size() != renderer.getElements().size()) {
+                    return true;
+                }
+            }
+
+            Node body = card.getBody();
+            if (body instanceof Pane pane) {
+                if (pane.getChildren().size() != renderer.getElements().size()) {
+                    return true;
+                }
+            }
+
+            Node footer = card.getFooter();
+            if (footer instanceof Pane pane) {
+                if (pane.getChildren().size() != renderer.getElements().size()) {
+                    return true;
+                }
+            }
+        } else if (renderer instanceof TileContainer container) {
+            Tile tile = (Tile) container.getView();
+
+            if (tile.getTitle() != null && !tile.getTitle().equals(container.getTitle())) {
+                return true;
+            }
+
+            if (tile.getAction() != null && tile.getAction() != container.getAction().getNode()) {
+                return true;
+            }
+
+            if (tile.getGraphic() != null && tile.getGraphic() != container.getGraphic().getNode()) {
+                return true;
+            }
+
+            if (tile.getDescription() != null && !tile.getDescription().equals(container.getDescription())) {
+                return true;
+            }
+
+        } else if (renderer instanceof Container container) {
+            if (container.getView() instanceof Pane pane) {
+                if (pane.getChildren().size() != renderer.getElements().size()) {
+                    return true;
+                }
+            }
+        }
+
+        if (renderer instanceof Tab tab) {
+            Pane pane = (Pane) tab.getJfxTab().getContent();
+            if (pane.getChildren().size() != renderer.getElements().size()) {
+                return true;
+            }
+        }
+
+        for (Element element : renderer.getElements().values()) {
+            if (element instanceof Renderer sub) {
+                if (checkNestedChanges(sub)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -573,7 +627,6 @@ public class Window {
         Map.Entry<Node, LinkedList<Node>> entry = container.build();
         Node node = entry.getKey();
         node.getStyleClass().addAll(container.getStyles());
-        container.setView(node);
 
         node.prefHeight(container.getHeight());
         node.prefWidth(container.getWidth());
