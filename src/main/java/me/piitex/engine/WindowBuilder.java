@@ -33,6 +33,7 @@ public class WindowBuilder {
     private boolean maximized = false;
     private boolean focused = true;
     private boolean scale = true;
+    private boolean autoUpdate = false;
 
     /**
      * Starts the building process for a new Window with a required title.
@@ -130,6 +131,11 @@ public class WindowBuilder {
         return this;
     }
 
+    public WindowBuilder setAutoUpdate(boolean autoUpdate) {
+        this.autoUpdate = autoUpdate;
+        return this;
+    }
+
     /**
      * Constructs and returns a new {@link Window} object based on the builder's configurations.
      * @return A new Window instance.
@@ -180,5 +186,9 @@ public class WindowBuilder {
 
     public boolean isScale() {
         return scale;
+    }
+
+    public boolean isAutoUpdate() {
+        return autoUpdate;
     }
 }

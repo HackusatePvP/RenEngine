@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The `Window` class serves as the primary GUI component, managing the rendering process for the engine.
+ * The Window serves as the primary GUI component, managing the rendering process for the engine.
  * It houses and manages three core components: {@link Container}, {@link Overlay}, and {@link Layout}.
  *
  * <p>Multiple windows can be created and rendered simultaneously. The window's title serves as its process name and label.
@@ -85,6 +85,7 @@ public class Window {
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
+    private Timeline renderLoop;
 
     private boolean focused;
 
@@ -124,6 +125,12 @@ public class Window {
         RenConfiguration.setWidth(width);
         RenConfiguration.setHeight(height);
         buildStage();
+
+        if (builder.isAutoUpdate()) {
+            setupRenderLoop();
+            startRenderLoop();
+            render();
+        }
     }
 
     /**
@@ -169,6 +176,19 @@ public class Window {
         this.backgroundColor = color;
         root.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         stage.getScene().setFill(color);
+    }
+
+    private void setupRenderLoop() {
+        renderLoop = new Timeline(new KeyFrame(Duration.seconds(1.0 / 60.0), event -> {
+            update();
+        }));
+        renderLoop.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    public void startRenderLoop() {
+        if (renderLoop != null) {
+            renderLoop.play();;
+        }
     }
 
     /**
@@ -344,9 +364,9 @@ public class Window {
         }
         containers.remove(toRemove);
 
-
-        // Assuming it's a popup
-        currentPopup = null;
+        if (currentPopup == container) {
+            currentPopup = null;
+        }
     }
 
     /**
@@ -354,6 +374,7 @@ public class Window {
      * A garbage collection hint is provided to the JVM.
      */
     public void clearContainers() {
+        containers.values().forEach(this::removeContainer);
         containers.clear();
         System.gc();
     }
@@ -493,6 +514,40 @@ public class Window {
         containers.values().forEach(this::renderContainer);
     }
 
+    public void update() {
+        containers.forEach((integer, container) -> {
+            Pane pane = (Pane) container.getView();
+            if (pane == null) {
+                renderContainer(container);
+            } else if (pane.getChildren().size() != container.getElements().size()) {
+                renderContainer(container);
+            } else {
+                boolean render = false;
+                for (Element element : container.getElements().values()) {
+                    if (element instanceof Layout layout) {
+                        if (layout.getElements().size() != layout.getPane().getChildren().size()) {
+                            render = true;
+                            break;
+                        }
+                    }
+                    if (element instanceof Container sub) {
+                        if (sub.getView() == null) {
+                            render = true;
+                            break;
+                        } else if (sub.getView() instanceof Pane && ((Pane) sub.getView()).getChildren().size() != sub.getElements().size()) {
+                            render = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (render) {
+                    renderContainer(container);
+                }
+            }
+        });
+    }
+
     /**
      * Renders a specific container by adding it on top of the current window's content.
      * The container is automatically assigned an index that places it at the highest layer.
@@ -511,6 +566,10 @@ public class Window {
      * @param container The container to render.
      */
     private void renderContainer(Container container) {
+        if (container.getView() != null) {
+            root.getChildren().remove(container.getView());
+        }
+
         Map.Entry<Node, LinkedList<Node>> entry = container.build();
         Node node = entry.getKey();
         node.getStyleClass().addAll(container.getStyles());
@@ -737,11 +796,6 @@ public class Window {
         return currentPopup;
     }
 
-    /**
-     * Handles various input events for the stage, including scroll events and dimension changes.
-     * This method applies scaling transformations to the root pane based on window resizing.
-     * @param stage The JavaFX Stage to handle input for.
-     */
     private void handleWindowScaling(Stage stage) {
         // This scales the application to the desired width and height that it is running at.
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
