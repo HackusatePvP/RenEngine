@@ -56,6 +56,10 @@ public abstract class Layout extends Renderer {
         return pane;
     }
 
+    public Pane getPane() {
+        return pane;
+    }
+
     public double getX() {
         return x;
     }
