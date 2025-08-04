@@ -10,6 +10,9 @@ The framework is untested for production. Will not work with mobile devices.
 ## API
 TODO
 
+### Update
+You no longer need to explicitly call `window.render()`. Window will auto update when adding and removing elements to renderers.
+
 ### Simple Usage
 
 Always create a Main class which EXCLUDES javafx components.
@@ -22,8 +25,11 @@ public class Main {
 ```
 
 Create your JavaFX entry point.
+
 ```java
 import javafx.application.Application;
+import me.piitex.engine.overlays.ButtonBuilder;
+import me.piitex.engine.overlays.ButtonOverlay;
 
 public class JavaFXLoad extends Application {
     @Override
@@ -31,9 +37,8 @@ public class JavaFXLoad extends Application {
         // Loads Atlanta css.
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
-        // RenEngine API. This will create the window.
         Window window = new WindowBuilder("App").setIcon(new ImageLoader(new File(App.getAppDirectory(), "logo.png"))).setDimensions(1920, 1080).build();
-        
+
         // Always store the window as a static singleton. This makes accessing and modifying the window easier.
         App.window = window;
 
@@ -44,15 +49,9 @@ public class JavaFXLoad extends Application {
             System.exit(0);
         });
 
-        // Render your first view/container for the application.
-        Container container = new HomeView().getContainer();
-        
-        // Add the container to the window.
-        window.addContainer(container);
-
         // This will create a system tray icon (Optional)
         FXTrayIcon icon = new FXTrayIcon(window.getStage(), new File(App.getAppDirectory(), "logo.png"), 128, 128);
-        
+
         // Handle exiting from the icon (Optional)
         icon.addExitItem("Exit", e -> {
             Platform.exit();
@@ -61,14 +60,22 @@ public class JavaFXLoad extends Application {
         // Display the icon in the system tray.
         icon.show();
 
-        // Renders/displays the window.
-        window.render();
+        // Start building the gui
+
+        // Render your first view/container for the application.
+        Container container = new HomeView().getContainer();
+
+        // Add the container to the window. Calling this function later in the process will allow the container to fully build before displaying.
+        window.addContainer(container);
+
+        ButtonOverlay buttonOverlay = new ButtonBuilder("start").setText("Start").build();
+        container.addElement(buttonOverlay);
     }
 
     public static void main(String[] args) {
         // Always load your backend before calling launch();
         new App();
-        
+
         // This function will call everything above. This is JavaFX API.
         // Renders GUI components
         launch();
