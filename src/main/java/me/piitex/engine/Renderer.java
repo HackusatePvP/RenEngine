@@ -53,6 +53,9 @@ public class Renderer extends Element {
 
     public void setWidth(double width) {
         this.width = width;
+        if (view instanceof Region region) {
+            region.setMinWidth(width);
+        }
     }
 
     public double getHeight() {
