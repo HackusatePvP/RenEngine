@@ -187,19 +187,24 @@ public class Renderer extends Element {
     }
 
     public void removeElement(int index) {
-        removeFromView(getElementAt(index).assemble());
-        elements.remove(index);
+        removeElement(getElementAt(index));
     }
 
     public void removeElement(Element element) {
-        removeElement(element.getIndex());
+        elements.remove(element.getIndex());
+        if (element instanceof Overlay overlay) {
+            removeFromView(overlay.getNode());
+        }
+        if (element instanceof Renderer renderer) {
+            removeFromView(renderer.getView());
+        }
     }
 
     public void removeAllElement(Element element) {
         LinkedHashMap<Integer, Element> toRemove = new LinkedHashMap<>(elements);
         toRemove.forEach((integer, e) -> {
             if (e == element) {
-                elements.remove(integer);
+                removeElement(e);
             }
         });
     }
