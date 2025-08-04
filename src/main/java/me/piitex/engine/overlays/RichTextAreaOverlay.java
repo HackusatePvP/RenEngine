@@ -11,10 +11,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import me.piitex.engine.hanlders.events.InputSetEvent;
+import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 import me.piitex.engine.overlays.events.IOverlaySubmit;
-import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -34,16 +34,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class RichTextAreaOverlay extends Overlay implements Region {
-    private final StyledTextArea<Object, String> textArea;
+    private StyledTextArea<Object, String> textArea;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private final String defaultInput;
-    private FontLoader fontLoader;
-    private String hintText = "";
     private String currentText;
+    private FontLoader fontLoader;
     private Color textFill = Color.BLACK;
-    private boolean renderBorder = true;
-    private boolean enabled = true;
+    boolean enabled = true;
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
     private ContextMenu contextMenu;
@@ -53,47 +51,37 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private final ScheduledExecutorService spellCheckExecutor;
     private ScheduledFuture<?> spellCheckFuture;
 
+    private final JLanguageTool langTool = new JLanguageTool(Languages.getLanguageForShortCode("en-US"));
+
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
         this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
 
-        BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
-            textExt.setFill(textFill);
-            if (styleType != null && styleType.equals("misspelled")) {
-                textExt.setUnderlineColor(Color.RED);
-                textExt.setUnderlineDashArray(new Number[]{2.0, 2.0});
-                textExt.setUnderlineWidth(1.0);
-                textExt.setUnderlineCap(StrokeLineCap.BUTT);
-            } else if (styleType != null && styleType.equals("grammarError")) {
-                textExt.setUnderlineColor(Color.BLUE);
-                textExt.setUnderlineDashArray(new Number[]{1.0, 1.0});
-                textExt.setUnderlineWidth(1.0);
-                textExt.setUnderlineCap(StrokeLineCap.BUTT);
-            } else {
-                textExt.setUnderlineColor(null);
-                textExt.setUnderlineDashArray(null);
-                textExt.setUnderlineWidth(0.0);
-                textExt.setUnderlineCap(null);
-            }
-        };
-
         textArea = new StyledTextArea<>(
                 null,
                 (paragraphTextFlow, paragraphStyle) -> {},
                 "default",
-                applyTextStyle
+                applyTextStyle()
         );
     }
 
     public RichTextAreaOverlay(String defaultInput, String hintText, double width, double height) {
         this.defaultInput = defaultInput;
-        this.hintText = hintText;
         this.width = width;
         this.height = height;
         this.spellCheckExecutor = Executors.newScheduledThreadPool(2);
 
+        textArea = new StyledTextArea<>(
+                null,
+                (paragraphTextFlow, paragraphStyle) -> {},
+                "default",
+                applyTextStyle()
+        );
+    }
+
+    public BiConsumer<TextExt, String> applyTextStyle() {
         BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
             textExt.setFill(textFill);
             if (styleType != null && styleType.equals("misspelled")) {
@@ -114,14 +102,27 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             }
         };
 
-        textArea = new StyledTextArea<>(
-                null,
-                (paragraphTextFlow, paragraphStyle) -> {},
-                "default",
-                applyTextStyle
-        );
+        return applyTextStyle;
     }
 
+    public void setCurrentText(String currentText) {
+        this.currentText = currentText;
+
+        textArea.replaceText(currentText);
+
+        List<RuleMatch> matches;
+        try {
+            matches = langTool.check(currentText);
+            applyHighlighting(matches, currentText.length(), textArea);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // Apply highlighting on the JavaFX Application Thread
+    }
+
+    public String getCurrentText() {
+        return currentText;
+    }
 
     public String getBackgroundColor() {
         return backgroundColor;
@@ -135,6 +136,26 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     public void setBorderColor(String borderColor) {
         this.borderColor = borderColor;
         updateColoring();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        textArea.setDisable(!enabled);
+    }
+
+    public void setTextFill(Color textFill) {
+        this.textFill = textFill;
+
+        // Not sure if this will work like this.
+        textArea = new StyledTextArea<>(
+                null,
+                (paragraphTextFlow, paragraphStyle) -> {},
+                "default",
+                applyTextStyle());
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public IInputSetEvent getiInputSetEvent() {
@@ -182,7 +203,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         }
 
 
-        JLanguageTool langTool = new JLanguageTool(Languages.getLanguageForShortCode("en-US"));
         for (Category category : langTool.getCategories().values()) {
             langTool.enableRuleCategory(category.getId());
         }
