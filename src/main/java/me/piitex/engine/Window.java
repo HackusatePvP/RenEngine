@@ -464,7 +464,7 @@ public class Window {
      * modifying, or removing {@link Overlay} or {@link Container} to update the display.
      * </p>
      */
-    public void render() {
+    protected void render() {
         build();
         if (focused) {
             stage.requestFocus();
@@ -675,9 +675,6 @@ public class Window {
 
             if (container.getBackgroundColor() != null) {
                 pane.setBackground(new Background(new BackgroundFill(container.getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
-            }
-            for (Node n : entry.getValue()) {
-                pane.getChildren().add(n);
             }
         }
         root.getStylesheets().addAll(container.getStylesheets());
