@@ -89,7 +89,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
             choiceBox.setMaxSize(getMaxWidth(), getMaxHeight());
         }
 
-        choiceBox.getItems().addAll(items);
+        choiceBox.getItems().setAll(items);
         if (defaultItem != null) {
             choiceBox.getSelectionModel().select(defaultItem);
         } else if (!items.isEmpty()) {

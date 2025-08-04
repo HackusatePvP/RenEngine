@@ -94,6 +94,8 @@ public class TextFlowOverlay extends Overlay implements Region {
     @Override
     public Node render() {
         // Creates text that overflows over the box.
+        textFlow.getChildren().clear();
+
         if (text != null) {
             // Using a VBox fixes all the spacing issues and weird new line stuff.
             VBox format = BBCodeParser.createLayout(text);
