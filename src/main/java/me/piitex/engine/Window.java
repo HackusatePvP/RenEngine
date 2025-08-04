@@ -365,7 +365,7 @@ public class Window {
      * A garbage collection hint is provided to the JVM.
      */
     public void clearContainers() {
-        containers.values().forEach(this::removeContainer);
+        new LinkedList<>(containers.values()).forEach(this::removeContainer);
         containers.clear();
         System.gc();
     }
