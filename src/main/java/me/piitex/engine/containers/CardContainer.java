@@ -119,6 +119,38 @@ public class CardContainer extends Container {
         return this;
     }
 
+    public Overlay getHeaderOverlay() {
+        return headerOverlay;
+    }
+
+    public Layout getHeaderLayout() {
+        return headerLayout;
+    }
+
+    public Layout getBodyLayout() {
+        return bodyLayout;
+    }
+
+    public Overlay getBodyOverlay() {
+        return bodyOverlay;
+    }
+
+    public Layout getSubHeaderLayout() {
+        return subHeaderLayout;
+    }
+
+    public Overlay getSubHeaderOverlay() {
+        return subHeaderOverlay;
+    }
+
+    public Layout getFooterLayout() {
+        return footerLayout;
+    }
+
+    public Overlay getFooterOverlay() {
+        return footerOverlay;
+    }
+
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
         // Ensure the card's position and size match the container's
@@ -147,7 +179,7 @@ public class CardContainer extends Container {
         }
 
         if (headerOverlay != null) {
-            Node node = headerOverlay.render();
+            Node node = headerOverlay.assemble();
             headerOverlay.setInputControls(node);
             headerOverlay.setNode(node);
             atlantafxCard.setHeader(node);
@@ -171,8 +203,7 @@ public class CardContainer extends Container {
         }
 
         if (bodyOverlay != null) {
-            Node node = bodyOverlay.render();
-            bodyOverlay.setInputControls(node);
+            Node node = bodyOverlay.assemble();
             bodyOverlay.setNode(node);
             atlantafxCard.setBody(node);
             if (bodyOverlay.getId() != null && !bodyOverlay.getId().isEmpty()) {
