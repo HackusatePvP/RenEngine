@@ -77,7 +77,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
             comboBox.setPrefHeight(height);
         }
 
-        comboBox.getItems().addAll(items);
+        comboBox.getItems().setAll(items);
         if (defaultItem != null) {
             comboBox.getSelectionModel().select(defaultItem);
         } else if (!items.isEmpty()) {
