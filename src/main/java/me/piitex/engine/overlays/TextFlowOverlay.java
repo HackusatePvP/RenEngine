@@ -89,7 +89,10 @@ public class TextFlowOverlay extends Overlay implements Region {
         textFlow.getChildren().add(overlay.assemble());
     }
 
-
+    public void setText(String text) {
+        this.text = text;
+        render();
+    }
 
     @Override
     public Node render() {
