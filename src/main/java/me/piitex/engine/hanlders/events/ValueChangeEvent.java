@@ -4,9 +4,9 @@ import me.piitex.engine.overlays.Overlay;
 
 public class ValueChangeEvent extends Event {
     private final Overlay overlay;
-    private final Object oldValue, newValue;
+    private final Number oldValue, newValue;
 
-    public ValueChangeEvent(Overlay overlay, Object oldValue, Object newValue) {
+    public ValueChangeEvent(Overlay overlay, Number oldValue, Number newValue) {
         this.overlay = overlay;
         this.oldValue = oldValue;
         this.newValue = newValue;
@@ -16,11 +16,11 @@ public class ValueChangeEvent extends Event {
         return overlay;
     }
 
-    public Object getOldValue() {
+    public Number getOldValue() {
         return oldValue;
     }
 
-    public Object getNewValue() {
+    public Number getNewValue() {
         return newValue;
     }
 }

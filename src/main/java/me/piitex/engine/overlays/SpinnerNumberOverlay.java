@@ -5,9 +5,9 @@ import javafx.scene.control.Spinner;
 import me.piitex.engine.hanlders.events.ValueChangeEvent;
 import me.piitex.engine.overlays.events.IValueChange;
 
-public class SpinnerNumberOverlay<T> extends Overlay implements Region {
-    private final Spinner<T> spinner;
-    private double min, max, def;
+public class SpinnerNumberOverlay extends Overlay implements Region {
+    private final Spinner<Number> spinner;
+    private Number min, max, def;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth = 1, scaleHeight = 1;
     private IValueChange change;
@@ -19,15 +19,22 @@ public class SpinnerNumberOverlay<T> extends Overlay implements Region {
         this.spinner = new Spinner<>(min, max, def);
     }
 
-    public double getMax() {
-        return max;
+    public SpinnerNumberOverlay(int min, int max, int def) {
+        this.min = min;
+        this.max = max;
+        this.def = def;
+        this.spinner = new Spinner<>(min, max, def);
     }
 
-    public double getMin() {
+    public Number getMin() {
         return min;
     }
 
-    public double getInitial() {
+    public Number getMax() {
+        return max;
+    }
+
+    public Number getInitialValue() {
         return def;
     }
 
