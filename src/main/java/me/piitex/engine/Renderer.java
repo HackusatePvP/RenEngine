@@ -64,6 +64,10 @@ public class Renderer extends Element {
 
     public void setHeight(double height) {
         this.height = height;
+
+        if (getView() instanceof Region region) {
+            region.setMinHeight(height);
+        }
     }
 
     public double getPrefWidth() {
@@ -77,6 +81,10 @@ public class Renderer extends Element {
     public void setPrefSize(double width, double height) {
         this.width = width;
         this.height = height;
+
+        if (getView() instanceof Region region) {
+            region.setPrefSize(width, height);
+        }
     }
 
     public double getMaxWidth() {
@@ -90,6 +98,10 @@ public class Renderer extends Element {
     public void setMaxSize(double width, double height) {
         this.maxWidth = width;
         this.maxHeight = height;
+
+        if (getView() instanceof Region region) {
+            region.setMaxSize(width, height);
+        }
     }
 
     public Color getBackgroundColor() {
@@ -165,7 +177,7 @@ public class Renderer extends Element {
         element.setIndex(index);
         elements.put(index, element);
 
-        addToView(element.assemble());
+        addToView(element.assemble(), index);
     }
 
     /**
@@ -224,9 +236,11 @@ public class Renderer extends Element {
         elements.clear();
     }
 
-    public void addToView(Node node) {
+    public void addToView(Node node, int index) {
         if (view instanceof Pane pane) {
-            pane.getChildren().add(node);
+            if (!pane.getChildren().contains(node)) {
+                pane.getChildren().add(index, node);
+            }
         } else {
             System.err.println("View is not a pane!");
         }
