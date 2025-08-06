@@ -11,10 +11,12 @@ public class TitledLayout extends VerticalLayout {
     private String title;
     private boolean collapse = true;
     private boolean expanded = true;
+    private final TitledPane titledPane;
 
     public TitledLayout(String title, double width, double height) {
         super(width, height);
         this.title = title;
+        this.titledPane = new TitledPane(title, getView());
     }
 
     public String getTitle() {
@@ -31,6 +33,7 @@ public class TitledLayout extends VerticalLayout {
 
     public void setCollapse(boolean collapse) {
         this.collapse = collapse;
+        titledPane.setCollapsible(collapse);
     }
 
     public boolean isExpanded() {
@@ -39,11 +42,11 @@ public class TitledLayout extends VerticalLayout {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
+        titledPane.setExpanded(expanded);
     }
 
     @Override
     public Node render() {
-        TitledPane titledPane = new TitledPane(title, getView());
         titledPane.setCollapsible(collapse);
         titledPane.setExpanded(expanded);
 
