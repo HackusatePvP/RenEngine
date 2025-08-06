@@ -89,6 +89,10 @@ public class TextFlowOverlay extends Overlay implements Region {
         textFlow.getChildren().add(overlay.assemble());
     }
 
+    public String getText() {
+        return text;
+    }
+
     public void setText(String text) {
         this.text = text;
         render();
