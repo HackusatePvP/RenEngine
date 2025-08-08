@@ -46,6 +46,10 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         this.change = change;
     }
 
+    public Number getCurrentValue() {
+        return spinner.getValue();
+    }
+
     @Override
     public Node render() {
         spinner.setTranslateX(getX());

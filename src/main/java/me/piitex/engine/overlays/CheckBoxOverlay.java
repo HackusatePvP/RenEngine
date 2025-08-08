@@ -7,6 +7,7 @@ import me.piitex.engine.overlays.events.ICheckBoxSet;
 
 public class CheckBoxOverlay extends Overlay {
     private final CheckBox checkBox;
+    private boolean selected;
     private boolean defaultValue = false;
     private String label;
 
@@ -34,6 +35,15 @@ public class CheckBoxOverlay extends Overlay {
     public void setLabel(String label) {
         this.label = label;
         checkBox.setText(label);
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        checkBox.setSelected(selected);
     }
 
     public ICheckBoxSet getCheckBoxSet() {

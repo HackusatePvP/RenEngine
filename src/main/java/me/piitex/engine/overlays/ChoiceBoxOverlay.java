@@ -6,12 +6,12 @@ import javafx.scene.control.ComboBox;
 import me.piitex.engine.hanlders.events.ComboBoxSelectEvent;
 import me.piitex.engine.overlays.events.IComboSelect;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ChoiceBoxOverlay extends Overlay implements Region {
     private final ChoiceBox<String> choiceBox;
+    private String selected;
     private List<String> items;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
@@ -69,6 +69,14 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         return items;
     }
 
+    public String getSelected() {
+        return selected;
+    }
+
+    public void setSelected(String selected) {
+        this.selected = selected;
+        choiceBox.getSelectionModel().select(selected);
+    }
 
     public Node getNode() {
         return node;
