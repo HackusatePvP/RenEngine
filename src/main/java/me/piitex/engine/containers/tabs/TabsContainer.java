@@ -6,12 +6,13 @@ import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 
 import java.util.AbstractMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class TabsContainer extends Container {
     private final TabPane tabPane;
-    private final LinkedList<Tab> tabs = new LinkedList<>();
+    private final Map<String, Tab> tabs = new LinkedHashMap<>();
     private boolean closeTabs = false;
     private String selectedTab;
 
@@ -25,12 +26,21 @@ public class TabsContainer extends Container {
         this.tabPane = (TabPane) getView();
     }
 
-    public LinkedList<Tab> getTabs() {
+    public Map<String, Tab> getTabs() {
         return tabs;
     }
 
     public void addTab(Tab tab) {
-        this.tabs.add(tab);
+        this.tabs.put(tab.getText(), tab);
+        tabPane.getTabs().add(tab.render());
+    }
+
+    public void replaceTab(Tab oldTab, Tab newTab) {
+        this.tabs.replace(oldTab.getText(), newTab);
+        int index = tabPane.getTabs().indexOf(oldTab.getJfxTab());
+        if (index != -1) {
+            tabPane.getTabs().set(index, newTab.render());
+        }
     }
 
     public void setCloseTabs(boolean closeTabs) {
@@ -43,6 +53,7 @@ public class TabsContainer extends Container {
 
     public void setSelectedTab(String selectedTab) {
         this.selectedTab = selectedTab;
+        tabPane.getSelectionModel().select(tabs.get(selectedTab).getJfxTab());
     }
 
     public TabPane getTabPane() {
@@ -99,14 +110,6 @@ public class TabsContainer extends Container {
             tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         } else {
             tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        }
-
-        for (Tab tab : tabs) {
-            javafx.scene.control.Tab t = tab.render();
-            tabPane.getTabs().add(t);
-            if (tab.getText().equalsIgnoreCase(selectedTab)) {
-                tabPane.getSelectionModel().select(t);
-            }
         }
 
         tabPane.setTranslateX(getX());
