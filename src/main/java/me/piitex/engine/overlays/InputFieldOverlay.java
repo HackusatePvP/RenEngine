@@ -49,7 +49,7 @@ public class InputFieldOverlay extends Overlay implements Region {
     }
 
     public String getCurrentText() {
-        return currentText;
+        return textField.getText();
     }
 
     public void setCurrentText(String currentText) {
