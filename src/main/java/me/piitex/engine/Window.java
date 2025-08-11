@@ -281,11 +281,17 @@ public class Window {
         Container current = containers.get(index);
         if (current != null) {
             int i = index + 1;
-            addContainer(getContainers().get(index), i);
+            removeContainer(current);
+            addContainer(current, i);
         }
         containers.put(index, container);
 
-        root.getChildren().add(container.assemble());
+        Node assemble = container.assemble();
+
+        root.getChildren().add(assemble);
+
+        ContainerRenderEvent event = new ContainerRenderEvent(container, assemble);
+        container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
     }
 
     /**
@@ -457,8 +463,7 @@ public class Window {
     }
 
     /**
-     * Builds and displays all active nodes on the screen. This function translates the engine's API
-     * into JavaFX and updates the stage and scene.
+     * Builds and displays all active nodes on the screen. This function translates the engine's API into JavaFX and updates the stage and scene.
      * <p>
      * Calling this excessively can cause visual flicker. It must be called after adding,
      * modifying, or removing {@link Overlay} or {@link Container} to update the display.
@@ -484,8 +489,7 @@ public class Window {
     /**
      * Builds the engine's API onto the JavaFX framework, optionally resetting the scene.
      * This method processes and prepares containers for display but does not automatically show them.
-     * @param reset True to reset the scene (clears and reinitializes the root pane and scene),
-     * false to only clear children.
+     * @param reset True to reset the scene (clears and reinitializes the root pane and scene), false to only clear children.
      */
     public void build(boolean reset) {
         if (containers.isEmpty()) {
@@ -664,22 +668,26 @@ public class Window {
         if (currentPopup != null) {
             removeContainer(currentPopup);
         }
-        Map.Entry<Node, LinkedList<Node>> entry = container.build();
-        Node node = entry.getKey();
-        container.setView(node);
         currentPopup = container;
 
-        if (node instanceof Pane pane) {
-            pane.setPrefWidth(container.getWidth());
-            pane.setPrefHeight(container.getHeight());
+        addContainer(container);
 
-            if (container.getBackgroundColor() != null) {
-                pane.setBackground(new Background(new BackgroundFill(container.getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
-            }
-        }
-        root.getStylesheets().addAll(container.getStylesheets());
-
-        getRoot().getChildren().add(node);
+//        Map.Entry<Node, LinkedList<Node>> entry = container.build();
+//        Node node = entry.getKey();
+//        container.setView(node);
+//        currentPopup = container;
+//
+//        if (node instanceof Pane pane) {
+//            pane.setPrefWidth(container.getWidth());
+//            pane.setPrefHeight(container.getHeight());
+//
+//            if (container.getBackgroundColor() != null) {
+//                pane.setBackground(new Background(new BackgroundFill(container.getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
+//            }
+//        }
+//        root.getStylesheets().addAll(container.getStylesheets());
+//
+//        getRoot().getChildren().add(node);
     }
 
     public void renderPopup(Overlay overlay, PopupPosition position, double width, double height, boolean autoClose) {
@@ -742,6 +750,13 @@ public class Window {
     public void renderPopup(Overlay overlay, double x, double y, double width, double height, boolean autoClose, TextOverlay label) {
         EmptyContainer container = new EmptyContainer(x, y, width, height);
         container.setPrefSize(width, height);
+
+        if (currentPopup != null) {
+            removeContainer(currentPopup);
+        }
+        currentPopup = container;
+
+
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
         container.setIndex(index);
 
@@ -778,11 +793,14 @@ public class Window {
             container.addElement(label);
         }
 
-        containers.put(index, container);
-        renderPopupContainer(container);
+        addContainer(container);
     }
 
     public void renderPopup(Container container, double x, double y, double width, double height) {
+        if (currentPopup != null) {
+            removeContainer(currentPopup);
+        }
+        currentPopup = container;
         container.setX(x);
         container.setY(y);
         container.setPrefSize(width, height);
@@ -791,16 +809,16 @@ public class Window {
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
         container.setIndex(index);
 
-        containers.put(index, container);
-        renderPopupContainer(container);
+        System.out.println("Rendering Container: (" + index + " , " + x + " , " + y + ")");
+
+        addContainer(container);
     }
 
     public void renderPopup(Container container, PopupPosition position, double width, double height) {
         double windowWidth = this.width;
         double windowHeight = this.height;
 
-        // Calculate x and y based on the desired position (in unscaled coordinates)
-        double calculatedX = 0;
+        double calculatedX;
         double calculatedY = switch (position) {
             case TOP_CENTER -> {
                 calculatedX = (windowWidth - width) / 2;
