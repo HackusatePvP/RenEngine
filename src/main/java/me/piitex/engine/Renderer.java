@@ -234,6 +234,9 @@ public class Renderer extends Element {
 
     public void removeAllElements() {
         elements.clear();
+        if (view instanceof Pane pane) {
+            pane.getChildren().clear();
+        }
     }
 
     public void addToView(Node node, int index) {
