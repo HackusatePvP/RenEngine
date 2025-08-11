@@ -98,6 +98,9 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         }
 
         choiceBox.getItems().setAll(items);
+        setInputControls(choiceBox);
+        this.node = choiceBox;
+
         if (defaultItem != null) {
             choiceBox.getSelectionModel().select(defaultItem);
         } else if (!items.isEmpty()) {
@@ -105,12 +108,12 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         }
         if (getComboSelect() != null) {
             choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null) return;
                 getComboSelect().onItemSelect(new ComboBoxSelectEvent(choiceBox,this, newValue));
             });
         }
 
-        setInputControls(choiceBox);
-        this.node = choiceBox;
+
         return choiceBox;
     }
 
