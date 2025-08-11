@@ -45,6 +45,10 @@ public class TitledLayout extends VerticalLayout {
         titledPane.setExpanded(expanded);
     }
 
+    public TitledPane getTitledPane() {
+        return titledPane;
+    }
+
     @Override
     public Node render() {
         titledPane.setCollapsible(collapse);
