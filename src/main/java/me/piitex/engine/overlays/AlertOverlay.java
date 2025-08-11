@@ -16,8 +16,7 @@ public class AlertOverlay extends Overlay {
     private final Alert.AlertType alertType;
     private String header;
     private String content;
-    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
+    private double width, height;
     private Window modal;
 
     private List<ButtonType> actionButtons = new ArrayList<>();
