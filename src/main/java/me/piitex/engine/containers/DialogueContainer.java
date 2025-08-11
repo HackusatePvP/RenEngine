@@ -66,6 +66,10 @@ public class DialogueContainer extends Container {
         this.cancelButton = cancelButton;
     }
 
+    public Pane getPane() {
+        return pane;
+    }
+
     /**
      * Method not supported with this container.
      */
@@ -101,7 +105,6 @@ public class DialogueContainer extends Container {
 
     @Override
     public Map.Entry<Node, LinkedList<Node>> build() {
-        Pane pane = new Pane();
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
 
@@ -136,6 +139,8 @@ public class DialogueContainer extends Container {
 
         LinkedList<Node> order = new LinkedList<>();
         order.add(card);
+
+        pane.getChildren().addAll(order);
 
         return new AbstractMap.SimpleEntry<>(pane, order);
     }
