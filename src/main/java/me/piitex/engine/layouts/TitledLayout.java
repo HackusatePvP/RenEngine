@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.*;
+import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
 public class TitledLayout extends VerticalLayout {
@@ -16,7 +17,7 @@ public class TitledLayout extends VerticalLayout {
     public TitledLayout(String title, double width, double height) {
         super(width, height);
         this.title = title;
-        this.titledPane = new TitledPane(title, getView());
+        this.titledPane = new TitledPane(title, getPane());
     }
 
     public String getTitle() {
@@ -45,6 +46,12 @@ public class TitledLayout extends VerticalLayout {
         titledPane.setExpanded(expanded);
     }
 
+
+    public void setSpacing(double spacing) {
+        VBox vBox = (VBox) getView();
+        vBox.setSpacing(spacing);
+    }
+
     public TitledPane getTitledPane() {
         return titledPane;
     }
@@ -54,8 +61,7 @@ public class TitledLayout extends VerticalLayout {
         titledPane.setCollapsible(collapse);
         titledPane.setExpanded(expanded);
 
-        VBox pane = (VBox) getView();
-        pane.setSpacing(getSpacing());
+        VBox pane = (VBox) super.render();
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         pane.getChildren().clear();
@@ -65,14 +71,12 @@ public class TitledLayout extends VerticalLayout {
         if (getHeight() > 0) {
             pane.setMinHeight(getHeight());
         }
-
         if (getPrefWidth() > 0) {
             pane.setPrefWidth(getPrefWidth());
         }
         if (getPrefHeight() > 0) {
             pane.setPrefHeight(getPrefHeight());
         }
-
         if (getMaxWidth() > 0) {
             pane.setMaxWidth(getMaxWidth());
         }
@@ -86,6 +90,17 @@ public class TitledLayout extends VerticalLayout {
             pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
         }
 
+        for (Element element : getElements().values()) {
+            Node child = element.assemble();
+            if (pane.getChildren().contains(child)) {
+                int index = pane.getChildren().indexOf(child);
+                pane.getChildren().set(index, child);
+            } else {
+                pane.getChildren().add(element.assemble());
+            }
+        }
+
+
         if (getClickEvent() != null) {
             pane.setOnMousePressed(mouseEvent -> {
                 getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent, this));
@@ -94,8 +109,9 @@ public class TitledLayout extends VerticalLayout {
             pane.setOnMousePressed(null);
         }
 
-        pane.getChildren().addAll(buildBase());
+
         setStyling(pane);
+        titledPane.setContent(pane);
         return titledPane;
     }
 }

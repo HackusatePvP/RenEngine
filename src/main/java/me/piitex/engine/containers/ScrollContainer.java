@@ -90,7 +90,7 @@ public class ScrollContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         scrollPane.setVvalue(scrollPosition);
         scrollPane.setTranslateX(getX());
         scrollPane.setTranslateY(getY());
@@ -133,7 +133,7 @@ public class ScrollContainer extends Container {
         setStyling(scrollPane);
 
         // Build pane layout for the scroll content
-        VBox pane = (VBox) layout.render();
+        VBox pane = (VBox) layout.assemble();
         LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
         layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         pane.setAlignment(layout.getAlignment());
@@ -145,20 +145,8 @@ public class ScrollContainer extends Container {
         }
 
         scrollPane.setContent(pane);
-
-        LinkedList<Node> order = buildBase();
-        order.add(pane);
-
-        // Offset overlays by 10
-        if (xOffset > 0 || yOffset > 0) {
-            order.forEach(node -> {
-                node.setTranslateX(node.getTranslateX() + xOffset);
-                node.setTranslateY(node.getTranslateX() + yOffset);
-            });
-        }
-
         scrollPane.requestFocus();
 
-        return new AbstractMap.SimpleEntry<>(scrollPane, order);
+        return scrollPane;
     }
 }

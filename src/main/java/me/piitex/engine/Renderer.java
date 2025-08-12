@@ -275,52 +275,6 @@ public class Renderer extends Element {
         this.yOffset = yOffset;
     }
 
-    /* Generic methods */
-    public LinkedList<Node> buildBase() {
-        LinkedList<Node> toReturn = new LinkedList<>();
-        for (Element element : getElements().values()) {
-            Node node = null;
-            if (element instanceof Overlay overlay) {
-                node = overlay.render();
-                node.getStyleClass().addAll(overlay.getStyles());
-                overlay.setInputControls(node);
-                overlay.setNode(node);
-            }
-            if (element instanceof Layout layout) {
-                node = layout.render();
-                LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
-                layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-                node.getStyleClass().addAll(layout.getStyles());
-            }
-            if (node != null) {
-                updateOffsets(node);
-                toReturn.add(node);
-                if (element.getId() != null && !element.getId().isEmpty()) {
-                    // Add the compiled nodes into the container
-                    getRenderedNodes().put(element.getId(), node);
-                }
-            }
-
-            // Render sub-containers last
-            if (element instanceof Container container) {
-                Map.Entry<Node, LinkedList<Node>> entry = container.build();
-                toReturn.add(entry.getKey());
-                entry.getKey().getStyleClass().addAll(container.getStyles());
-
-                if (container.getId() != null && !container.getId().isEmpty()) {
-                    getRenderedNodes().put(container.getId(), entry.getKey());
-                }
-
-                ContainerRenderEvent event = new ContainerRenderEvent(container, entry.getKey());
-                container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
-
-            }
-        }
-
-        return toReturn;
-    }
-
-
     public void setStyling(Node node) {
         node.getStyleClass().addAll(styles);
         if (node instanceof Region region) {
@@ -358,15 +312,39 @@ public class Renderer extends Element {
 
     @Override
     public Node assemble() {
+        Node node = null;
         if (this instanceof Container container) {
-            return container.build().getKey();
+            node = container.build();
         }
         if (this instanceof Layout layout) {
-            return layout.render();
+            node = layout.render();
         }
 
-        System.err.println("Could not assemble renderer...");
+        // Assemble existing elements.
+        if (node instanceof Pane pane) {
+            for (Element element : getElements().values()) {
+                Node child = element.assemble();
+                if (!pane.getChildren().contains(child)) {
+                    pane.getChildren().add(child);
+                }
+            }
+        }
 
-        return null;
+        // Handle events
+        if (this instanceof Container container) {
+            ContainerRenderEvent event = new ContainerRenderEvent(container, node);
+            container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
+        }
+        if (this instanceof Layout layout) {
+            LayoutRenderEvent event = new LayoutRenderEvent(layout.getPane(), layout);
+            layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
+        }
+
+        if (node == null) {
+            System.out.println("NODE IS NULL!!!");
+        }
+
+
+        return node;
     }
 }

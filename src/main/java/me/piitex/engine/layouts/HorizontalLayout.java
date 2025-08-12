@@ -9,9 +9,11 @@ import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
 public class HorizontalLayout extends Layout {
     private int spacing;
+    private final HBox pane;
 
     public HorizontalLayout(double width, double height) {
         super(new HBox(), width, height);
+        this.pane = (HBox) getView();
     }
 
     public int getSpacing() {
@@ -25,7 +27,6 @@ public class HorizontalLayout extends Layout {
     @Override
     public Node render() {
         // Clear
-        HBox pane = (HBox) getView();
         VBox.setVgrow(pane, Priority.ALWAYS);
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());

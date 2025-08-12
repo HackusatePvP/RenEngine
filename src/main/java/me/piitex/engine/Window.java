@@ -628,33 +628,7 @@ public class Window {
             root.getChildren().remove(container.getView());
         }
 
-        Map.Entry<Node, LinkedList<Node>> entry = container.build();
-        Node node = entry.getKey();
-        node.getStyleClass().addAll(container.getStyles());
-
-        node.prefHeight(container.getHeight());
-        node.prefWidth(container.getWidth());
-        node.setTranslateX(container.getX());
-        node.setTranslateY(container.getY());
-
-        if (node instanceof Pane pane) {
-            pane.setPrefWidth(container.getWidth());
-            pane.setPrefHeight(container.getHeight());
-
-            if (container.getBackgroundColor() != null) {
-                pane.setBackground(new Background(new BackgroundFill(container.getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
-            }
-            pane.getChildren().addAll(entry.getValue());
-        }
-
-        root.getStyleClass().addAll(container.getStyles());
-
-        root.getStylesheets().addAll(container.getStylesheets());
-
-        getRoot().getChildren().add(node);
-
-        ContainerRenderEvent event = new ContainerRenderEvent(container, entry.getKey());
-        container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
+        root.getChildren().add(container.assemble());
     }
 
     /**
@@ -672,7 +646,7 @@ public class Window {
 
         addContainer(container);
 
-//        Map.Entry<Node, LinkedList<Node>> entry = container.build();
+//        Node entry = container.build();
 //        Node node = entry.getKey();
 //        container.setView(node);
 //        currentPopup = container;
@@ -808,9 +782,6 @@ public class Window {
 
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
         container.setIndex(index);
-
-        System.out.println("Rendering Container: (" + index + " , " + x + " , " + y + ")");
-
         addContainer(container);
     }
 

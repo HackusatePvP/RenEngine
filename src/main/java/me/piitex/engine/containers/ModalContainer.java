@@ -49,7 +49,7 @@ public class ModalContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         modalBox.setTranslateX(getX());
         modalBox.setTranslateY(getY());
         if (getWidth() > 0) {
@@ -89,7 +89,7 @@ public class ModalContainer extends Container {
                 }
             }
             if (content instanceof Container container) {
-                node = container.build().getKey();
+                node = container.build();
                 if (node instanceof Pane pane) {
                     pane.setPadding(new Insets(16));
                 }
@@ -103,8 +103,6 @@ public class ModalContainer extends Container {
                 modalBox.addContent(node);
             }
         }
-
-        LinkedList<Node> order = buildBase();
 
         modalBox.getStyleClass().addAll(getStyles());
 

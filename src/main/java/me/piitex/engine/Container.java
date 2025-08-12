@@ -171,5 +171,5 @@ public abstract class Container extends Renderer {
      * Builds and assembles the container. Converts RenJava API into JavaFX.
      * @return An entry set where the key is the pane as a node. The value is the collection of nodes which the pane contains.
      */
-    public abstract Map.Entry<Node, LinkedList<Node>> build();
+    public abstract Node build();
 }

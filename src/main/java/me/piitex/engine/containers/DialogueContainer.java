@@ -104,7 +104,7 @@ public class DialogueContainer extends Container {
 
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
 
@@ -142,7 +142,7 @@ public class DialogueContainer extends Container {
 
         pane.getChildren().addAll(order);
 
-        return new AbstractMap.SimpleEntry<>(pane, order);
+        return pane;
     }
 
 }

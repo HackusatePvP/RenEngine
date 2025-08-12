@@ -90,16 +90,16 @@ public class TileContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         tile.setTitle(title);
         tile.setDescription(description);
-        if (graphic != null) {
+        if (graphic != null && tile.getGraphic() != null) {
             Node node = graphic.render();
             graphic.setInputControls(node);
             graphic.setNode(node);
             tile.setGraphic(node);
         }
-        if (action != null) {
+        if (action != null && tile.getAction() == null) {
             Node node = action.render();
             action.setInputControls(node);
             action.setNode(node);
@@ -132,6 +132,6 @@ public class TileContainer extends Container {
 
         setStyling(tile);
 
-        return new AbstractMap.SimpleEntry<>(tile, new LinkedList<>());
+        return tile;
     }
 }

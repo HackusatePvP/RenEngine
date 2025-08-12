@@ -6,10 +6,12 @@ import javafx.scene.layout.*;
 import me.piitex.engine.hanlders.events.LayoutClickEvent;
 
 public class VerticalLayout extends Layout {
+    private final VBox pane;
     private double spacing = 10;
 
     public VerticalLayout(double width, double height) {
         super(new VBox(), width, height);
+        this.pane = (VBox) getView();
     }
 
     public double getSpacing() {
@@ -23,7 +25,6 @@ public class VerticalLayout extends Layout {
     @Override
     public Node render() {
         // Clear
-        VBox pane = (VBox) getView();
         pane.setSpacing(getSpacing());
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
@@ -63,7 +64,6 @@ public class VerticalLayout extends Layout {
             pane.setOnMousePressed(null);
         }
 
-        pane.getChildren().addAll(buildBase());
         setStyling(pane);
         return pane;
     }

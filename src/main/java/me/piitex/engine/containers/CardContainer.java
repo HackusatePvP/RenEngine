@@ -152,7 +152,7 @@ public class CardContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         // Ensure the card's position and size match the container's
         atlantafxCard.setTranslateX(getX());
         atlantafxCard.setTranslateY(getY());
@@ -240,6 +240,6 @@ public class CardContainer extends Container {
         atlantafxCard.getStyleClass().addAll(getStyles());
 
 
-        return new AbstractMap.SimpleEntry<>(atlantafxCard, new LinkedList<>());
+        return atlantafxCard;
     }
 }

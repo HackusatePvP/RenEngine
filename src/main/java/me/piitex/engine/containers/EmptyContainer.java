@@ -51,7 +51,7 @@ public class EmptyContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         pane.setTranslateX(getX());
         pane.setTranslateY(getY());
         if (getWidth() > 0) {
@@ -77,9 +77,7 @@ public class EmptyContainer extends Container {
 
         setStyling(pane); // This is underlined red in the IDEA and will not compile.
 
-        LinkedList<Node> order = buildBase();
-
         // Return loworder because the other orders are added onto the low order.
-        return new AbstractMap.SimpleEntry<>(pane, order);
+        return pane;
     }
 }
