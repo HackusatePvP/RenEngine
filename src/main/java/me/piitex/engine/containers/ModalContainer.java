@@ -108,6 +108,6 @@ public class ModalContainer extends Container {
 
         setView(modalBox);
 
-        return new AbstractMap.SimpleEntry<>(modalBox, order);
+        return modalBox;
     }
 }
