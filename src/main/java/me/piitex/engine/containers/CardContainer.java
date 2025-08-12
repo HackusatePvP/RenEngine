@@ -2,30 +2,19 @@ package me.piitex.engine.containers;
 
 import atlantafx.base.controls.Card;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
-import me.piitex.engine.hanlders.events.LayoutRenderEvent;
-import me.piitex.engine.layouts.Layout;
-import me.piitex.engine.overlays.Overlay;
-import org.checkerframework.checker.units.qual.C;
 
-import java.util.AbstractMap;
 import java.util.LinkedList;
-import java.util.Map;
 public class CardContainer extends Container {
 
     private final Card atlantafxCard;
 
-    private Overlay headerOverlay;
-    private Layout headerLayout;
-    private Overlay subHeaderOverlay;
-    private Layout subHeaderLayout;
-    private Overlay bodyOverlay;
-    private Layout bodyLayout;
-    private Overlay footerOverlay;
-    private Layout footerLayout;
+    private Element header;
+    private Element subHeader;
+    private Element body;
+    private Element footer;
 
     public CardContainer(double x, double y, double width, double height) {
         super(new Card(), x, y, width, height);
@@ -69,86 +58,40 @@ public class CardContainer extends Container {
         return;
     }
 
-    public CardContainer setHeader(Overlay overlay) {
-        this.headerOverlay = overlay;
-        this.headerLayout = null; // Clear layout if overlay is set
-        return this;
+    public void setHeader(Element element) {
+        this.header = element;
+        atlantafxCard.setHeader(element.assemble());
     }
 
-    public CardContainer setHeader(Layout layout) {
-        this.headerLayout = layout;
-        this.headerOverlay = null; // Clear overlay if layout is set
-        return this;
+    public void setSubHeader(Element element) {
+        this.subHeader = element;
+        atlantafxCard.setSubHeader(element.assemble());
     }
 
-    public CardContainer setSubHeader(Overlay overlay) {
-        this.subHeaderOverlay = overlay;
-        this.subHeaderLayout = null; // Clear layout if overlay is set
-        return this;
+    public void setBody(Element element) {
+        this.body = element;
+        atlantafxCard.setBody(element.assemble());
     }
 
-    public CardContainer setSubHeader(Layout layout) {
-        this.subHeaderLayout = layout;
-        this.subHeaderOverlay = null; // Clear overlay if layout is set
-        return this;
+    public void setFooter(Element element) {
+        this.footer = element;
+        atlantafxCard.setFooter(element.assemble());
     }
 
-    public CardContainer setBody(Overlay overlay) {
-        this.bodyOverlay = overlay;
-        this.bodyLayout = null;
-        return this;
+    public Element getHeader() {
+        return header;
     }
 
-    public CardContainer setBody(Layout layout) {
-        this.bodyLayout = layout;
-        this.bodyOverlay = null;
-        return this;
+    public Element getSubHeader() {
+        return subHeader;
     }
 
-    public CardContainer setFooter(Overlay overlay) {
-        this.footerOverlay = overlay;
-        this.footerLayout = null;
-
-        return this;
+    public Element getBody() {
+        return body;
     }
 
-    public CardContainer setFooter(Layout layout) {
-        this.footerLayout = layout;
-        this.footerOverlay = null;
-
-        return this;
-    }
-
-    public Overlay getHeaderOverlay() {
-        return headerOverlay;
-    }
-
-    public Layout getHeaderLayout() {
-        return headerLayout;
-    }
-
-    public Layout getBodyLayout() {
-        return bodyLayout;
-    }
-
-    public Overlay getBodyOverlay() {
-        return bodyOverlay;
-    }
-
-    public Layout getSubHeaderLayout() {
-        return subHeaderLayout;
-    }
-
-    public Overlay getSubHeaderOverlay() {
-        return subHeaderOverlay;
-    }
-
-    public Layout getFooterLayout() {
-        return footerLayout;
-    }
-
-    public Overlay getFooterOverlay() {
-        return footerOverlay;
+    public Element getFooter() {
+        return footer;
     }
 
     @Override
@@ -176,59 +119,6 @@ public class CardContainer extends Container {
         }
         if (getMaxHeight() > 0) {
             atlantafxCard.setMaxHeight(getMaxHeight());
-        }
-
-        if (headerOverlay != null) {
-            Node node = headerOverlay.assemble();
-            headerOverlay.setInputControls(node);
-            headerOverlay.setNode(node);
-            atlantafxCard.setHeader(node);
-            if (headerOverlay.getId() != null && !headerOverlay.getId().isEmpty()) {
-                getRenderedNodes().put(headerOverlay.getId(), node);
-            }
-        } else if (headerLayout != null) {
-            Node node = headerLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent((Pane) headerLayout.getView(), headerLayout);
-            headerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-            atlantafxCard.setHeader(node);
-        }
-
-        if (subHeaderOverlay != null) {
-            atlantafxCard.setSubHeader(subHeaderOverlay.render());
-        } else if (subHeaderLayout != null) {
-            Node node = subHeaderLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent((Pane) subHeaderLayout.getView(), subHeaderLayout);
-            subHeaderLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-            atlantafxCard.setSubHeader(node);
-        }
-
-        if (bodyOverlay != null) {
-            Node node = bodyOverlay.assemble();
-            bodyOverlay.setNode(node);
-            atlantafxCard.setBody(node);
-            if (bodyOverlay.getId() != null && !bodyOverlay.getId().isEmpty()) {
-                getRenderedNodes().put(bodyOverlay.getId(), node);
-            }
-        } else if (bodyLayout != null) {
-            Node node = bodyLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent((Pane) bodyLayout.getView(), bodyLayout);
-            bodyLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-            atlantafxCard.setBody(node);
-        }
-
-        if (footerOverlay != null) {
-            Node node = footerOverlay.render();
-            footerOverlay.setInputControls(node);
-            footerOverlay.setNode(node);
-            atlantafxCard.setFooter(node);
-            if (footerOverlay.getId() != null && !footerOverlay.getId().isEmpty()) {
-                getRenderedNodes().put(footerOverlay.getId(), node);
-            }
-        } else if (footerLayout != null) {
-            Node node = footerLayout.render();
-            LayoutRenderEvent event = new LayoutRenderEvent((Pane) footerLayout.getView(), footerLayout);
-            footerLayout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-            atlantafxCard.setFooter(node);
         }
 
         if (getOnClick() != null) {
