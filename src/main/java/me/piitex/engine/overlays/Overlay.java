@@ -2,6 +2,7 @@ package me.piitex.engine.overlays;
 
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
@@ -199,9 +200,19 @@ public abstract class Overlay extends Element {
         }
 
         if (tooltip != null && !tooltip.isEmpty()) {
-            Tooltip tooltip = new Tooltip(getTooltip());
-            tooltip.setShowDelay(Duration.millis(250));
-            Tooltip.install(node, tooltip);
+            if (node instanceof Control control) {
+                Tooltip tooltip = new Tooltip(getTooltip());
+                tooltip.setWrapText(true);
+                tooltip.setPrefWidth(300);
+                tooltip.setShowDelay(Duration.millis(250));
+                control.setTooltip(tooltip);
+            } else {
+                Tooltip tooltip = new Tooltip(getTooltip());
+                tooltip.setPrefWidth(300);
+                tooltip.setWrapText(true);
+                tooltip.setShowDelay(Duration.millis(250));
+                Tooltip.install(node, tooltip);
+            }
         }
 
         if (node.getOnDragEntered() == null) {
