@@ -324,6 +324,9 @@ public class Renderer extends Element {
         if (node instanceof Pane pane) {
             for (Element element : getElements().values()) {
                 Node child = element.assemble();
+                if (element instanceof Overlay overlay) {
+                    overlay.setNode(child);
+                }
                 if (!pane.getChildren().contains(child)) {
                     pane.getChildren().add(child);
                 }
