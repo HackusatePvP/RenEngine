@@ -202,11 +202,9 @@ public class RichTextAreaOverlay extends Overlay implements Region {
             textArea.setMaxHeight(maxHeight);
         }
 
-
         for (Category category : langTool.getCategories().values()) {
             langTool.enableRuleCategory(category.getId());
         }
-
         // Running this every time the user types can cause lag when typing.
         // This will run every 500ms to check for spell checking
         // If the user types during the scheduler it will shut down and re-run in 500ms.
@@ -301,12 +299,17 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
         // Apply initial highlighting if there's text
         if (!textArea.getText().isEmpty()) {
-            try {
-                List<RuleMatch> initialMatches = langTool.check(textArea.getText());
-                Platform.runLater(() -> applyHighlighting(initialMatches, textArea.getText().length(), textArea));
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!spellCheckFuture.isDone()) {
+                spellCheckFuture.cancel(false);
             }
+            spellCheckFuture = spellCheckExecutor.schedule(() -> {
+                try {
+                    List<RuleMatch> initialMatches = langTool.check(textArea.getText());
+                    Platform.runLater(() -> applyHighlighting(initialMatches, textArea.getText().length(), textArea));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }, 200, TimeUnit.MILLISECONDS);
         }
 
         if (getiOverlaySubmit() != null) {
