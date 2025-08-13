@@ -177,7 +177,14 @@ public class Renderer extends Element {
         element.setIndex(index);
         elements.put(index, element);
 
-        addToView(element.assemble(), index);
+        Node node = element.assemble();
+        if (element instanceof Overlay overlay) {
+            overlay.setNode(node);
+        }
+        if (element instanceof Renderer renderer) {
+            renderer.setView(node);
+        }
+        addToView(node, index);
     }
 
     /**
