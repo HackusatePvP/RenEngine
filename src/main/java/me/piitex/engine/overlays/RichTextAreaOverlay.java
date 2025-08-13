@@ -121,7 +121,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     }
 
     public String getCurrentText() {
-        return currentText;
+        return textArea.getText();
     }
 
     public String getBackgroundColor() {
@@ -228,7 +228,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                     e.printStackTrace();
                     // Handle specific exception, e.g., logging
                 }
-            }, 200, TimeUnit.MILLISECONDS); // 500ms debounce
+            }, 1000, TimeUnit.MILLISECONDS); // 500ms debounce
 
         });
 
