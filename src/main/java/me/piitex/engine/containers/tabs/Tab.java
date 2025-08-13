@@ -48,7 +48,6 @@ public class Tab extends Renderer {
         content.setPrefSize(getWidth(), getHeight());
         jfxTab.setContent(content);
 
-        content.getChildren().setAll(buildBase());
         setStyling(content);
         return jfxTab;
     }
