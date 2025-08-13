@@ -373,7 +373,6 @@ public class Window {
     public void clearContainers() {
         new LinkedList<>(containers.values()).forEach(this::removeContainer);
         containers.clear();
-        System.gc();
     }
 
     /**
@@ -434,7 +433,6 @@ public class Window {
     public void close() {
         if (stage != null) {
             stage.close();
-            System.gc();
         }
     }
 
@@ -475,7 +473,6 @@ public class Window {
             stage.requestFocus();
         }
         stage.show();
-        System.gc();
     }
 
     /**
