@@ -85,7 +85,7 @@ public class TabsContainer extends Container {
     }
 
     @Override
-    public Map.Entry<Node, LinkedList<Node>> build() {
+    public Node build() {
         if (getWidth() > 0) {
             tabPane.setMinWidth(getWidth());
         }
@@ -116,8 +116,7 @@ public class TabsContainer extends Container {
         tabPane.setTranslateY(getY());
         tabPane.setPrefSize(getWidth(), getHeight());
 
-        LinkedList<Node> order = buildBase();
-
-        return new AbstractMap.SimpleEntry<>(tabPane, order);
+        
+        return tabPane;
     }
 }
