@@ -60,7 +60,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
     }
 
     public String getSelected() {
-        return selected;
+        return comboBox.getSelectionModel().getSelectedItem();
     }
 
     public void setSelected(String selected) {
@@ -98,6 +98,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
             if (getComboSelect() != null) {
                 getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, newValue));
             }
+            this.selected = newValue;
         });
 
         setInputControls(comboBox);
