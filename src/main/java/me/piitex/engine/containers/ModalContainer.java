@@ -21,23 +21,19 @@ public class ModalContainer extends Container {
     private final ModalBox modalBox;
     private Element content;
 
-    public ModalContainer(Element content, double width, double height) {
+    public ModalContainer(double width, double height) {
         super(new ModalBox(), 0, 0, width, height);
         this.modalBox = (ModalBox) getView();
-        this.content = content;
     }
 
-
-    public ModalContainer(Element content, double x, double y, double width, double height) {
+    public ModalContainer(double x, double y, double width, double height) {
         super(new ModalBox(), x, y, width, height);
         this.modalBox = (ModalBox) getView();
-        this.content = content;
     }
 
-    public ModalContainer(Element content, double x, double y, double width, double height, int index) {
+    public ModalContainer(double x, double y, double width, double height, int index) {
         super(new ModalBox(), x, y, width, height, index);
         this.modalBox = (ModalBox) getView();
-        this.content = content;
     }
 
     public Element getContent() {
@@ -46,6 +42,12 @@ public class ModalContainer extends Container {
 
     public void setContent(Element content) {
         this.content = content;
+        Node node = content.assemble();
+        AnchorPane.setTopAnchor(node, 0d);
+        AnchorPane.setRightAnchor(node, 0d);
+        AnchorPane.setBottomAnchor(node, 0d);
+        AnchorPane.setLeftAnchor(node, 0d);
+        modalBox.addContent(content.assemble());
     }
 
     @Override
@@ -73,37 +75,16 @@ public class ModalContainer extends Container {
             modalBox.setMaxHeight(getMaxHeight());
         }
         if (content != null) {
-            Node node = null;
-            if (content instanceof Overlay overlay) {
-                node = overlay.render();
-            }
-            if (content instanceof Layout layout) {
-                node = layout.render();
-                LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
-                layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
-                if (node instanceof VBox vBox) {
-                    vBox.setPadding(new Insets(16));
-                }
-                if (node instanceof HBox box) {
-                    box.setPadding(new Insets(16));
-                }
-            }
-            if (content instanceof Container container) {
-                node = container.build();
-                if (node instanceof Pane pane) {
-                    pane.setPadding(new Insets(16));
-                }
-            }
-            if (node != null) {
+            Node node = content.assemble();
+            if (!modalBox.getChildren().contains(node)) {
+                System.out.println("Adding to node!");
                 AnchorPane.setTopAnchor(node, 0d);
                 AnchorPane.setRightAnchor(node, 0d);
                 AnchorPane.setBottomAnchor(node, 0d);
                 AnchorPane.setLeftAnchor(node, 0d);
-
                 modalBox.addContent(node);
             }
         }
-
         modalBox.getStyleClass().addAll(getStyles());
 
         setView(modalBox);
