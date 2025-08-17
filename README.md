@@ -67,9 +67,6 @@ public class JavaFXLoad extends Application {
 
         // Add the container to the window. Calling this function later in the process will allow the container to fully build before displaying.
         window.addContainer(container);
-
-        ButtonOverlay buttonOverlay = new ButtonBuilder("start").setText("Start").build();
-        container.addElement(buttonOverlay);
     }
 
     public static void main(String[] args) {
