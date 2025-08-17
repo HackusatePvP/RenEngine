@@ -18,7 +18,6 @@ public class TextAreaOverlay extends Overlay implements Region {
     private FontLoader fontLoader;
     private String hintText = "";
     private String currentText;
-    private boolean enabled = true;
 
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
@@ -58,15 +57,6 @@ public class TextAreaOverlay extends Overlay implements Region {
     public void setCurrentText(String currentText) {
         this.currentText = currentText;
         textArea.setText(currentText);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        textArea.setDisable(!enabled);
     }
 
     public String getHintText() {
@@ -111,7 +101,7 @@ public class TextAreaOverlay extends Overlay implements Region {
 
         textArea.setText(defaultInput);
         setInputControls(textArea);
-        textArea.setEditable(enabled);
+        textArea.setEditable(!isEnabled());
 
         return textArea;
     }

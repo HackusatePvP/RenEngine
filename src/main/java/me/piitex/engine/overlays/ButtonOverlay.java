@@ -16,14 +16,12 @@ public class ButtonOverlay extends Overlay implements Region {
     private final String id;
     private String text;
     private FontLoader font;
-    private FontIcon icon;
+    private final FontIcon icon;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
-    private boolean alignGraphicToBox = true;
     private Paint textFill;
 
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-    private boolean enabled;
 
     /**
      * Private constructor used by the {@link ButtonBuilder}.
@@ -44,11 +42,12 @@ public class ButtonOverlay extends Overlay implements Region {
         this.scaleWidth = builder.getScaleWidth();
         this.scaleHeight = builder.getScaleHeight();
         this.images.addAll(builder.getImages());
-        this.enabled = builder.isEnabled();
         setX(builder.getX());
         setY(builder.getY());
         this.button = new Button();
+        button.setDisable(!builder.isEnabled());
     }
+
     public Button getButton() {
         return button;
     }
@@ -75,34 +74,15 @@ public class ButtonOverlay extends Overlay implements Region {
         button.setFont(font.getFont());
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        button.setDisable(!enabled);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     @Override
     public Node render() {
-        button.setDisable(!enabled);
         button.setId(id);
         button.getStyleClass().addAll(getStyles());
         for (ImageOverlay image : images) {
             if (image != null) {
                 ImageView imageView = new ImageView(image.getImage());
-                if (alignGraphicToBox) {
-                    if (width > 0) {
-                        imageView.setFitWidth(width);
-                    }
-                    if (height > 0) {
-                        imageView.setFitHeight(height);
-                    }
-                } else {
-                    imageView.setFitWidth(image.getFitWidth());
-                    imageView.setFitHeight(image.getFitHeight());
-                }
+                imageView.setFitWidth(width);
+                imageView.setFitHeight(height);
                 if (image.getX() > 0) {
                     imageView.setX(image.getX());
                 }

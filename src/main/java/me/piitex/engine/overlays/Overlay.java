@@ -41,9 +41,6 @@ import java.util.List;
  *
  *       // Add the container to the window if needed.
  *       window.addContainer(container);
- *
- *       // Render the screen
- *       window.render();
  *     }
  * </pre>
  *
@@ -72,6 +69,7 @@ public abstract class Overlay extends Element {
     private IOverlayClickRelease iOverlayClickRelease;
     private Cursor cursor;
     private Node node;
+
 
     // Specific style sheet files
     private final List<File> styleSheets = new ArrayList<>();
@@ -181,6 +179,20 @@ public abstract class Overlay extends Element {
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
+    }
+
+    public boolean isEnabled() {
+        if (getNode() != null) {
+            return !getNode().isDisable();
+        }
+
+        return false;
+    }
+
+    public void setEnabled(boolean enabled) {
+        if (getNode() != null) {
+            getNode().setDisable(!enabled);
+        }
     }
 
     /**

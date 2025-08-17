@@ -7,7 +7,7 @@ import me.piitex.engine.overlays.events.IValueChange;
 
 public class SpinnerNumberOverlay extends Overlay implements Region {
     private final Spinner<Number> spinner;
-    private Number min, max, def;
+    private final Number min, max, def;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth = 1, scaleHeight = 1;
     private IValueChange change;
@@ -48,6 +48,10 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
 
     public Number getCurrentValue() {
         return spinner.getValue();
+    }
+
+    public void setCurrentValue(Number number) {
+        spinner.getValueFactory().setValue(number);
     }
 
     @Override
