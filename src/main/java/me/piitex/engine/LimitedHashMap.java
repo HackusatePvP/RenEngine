@@ -32,7 +32,7 @@ public class LimitedHashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
-        return map.containsKey(value);
+        return map.containsValue(value);
     }
 
     @Override
@@ -45,10 +45,7 @@ public class LimitedHashMap<K, V> implements Map<K, V> {
         if (map.size() < limit) {
             map.put(key, value);
         } else {
-            Entry<K, V> remove = map.entrySet().stream().findFirst().orElse(null);
-            if (remove != null) {
-                map.remove(remove.getKey());
-            }
+            map.entrySet().stream().findFirst().ifPresent(remove -> map.remove(remove.getKey()));
         }
         return value;
     }
