@@ -19,7 +19,7 @@ public class AlertOverlay extends Overlay {
     private double width, height;
     private Window modal;
 
-    private List<ButtonType> actionButtons = new ArrayList<>();
+    private final List<ButtonType> actionButtons = new ArrayList<>();
 
     private IAlertConfirm alertConfirm;
 
@@ -110,9 +110,7 @@ public class AlertOverlay extends Overlay {
         alert.getButtonTypes().setAll(actionButtons);
 
         if (getAlertConfirm() != null) {
-            alert.setOnCloseRequest(event -> {
-                getAlertConfirm().onConfirm(new AlertConfirmEvent(alert, this));
-            });
+            alert.setOnCloseRequest(event -> getAlertConfirm().onConfirm(new AlertConfirmEvent(alert, this)));
         }
         return alert;
     }

@@ -8,7 +8,7 @@ import me.piitex.engine.overlays.events.IToggleSwitch;
 public class ToggleSwitchOverlay extends Overlay {
     private final ToggleSwitch toggleSwitch;
     private final boolean defaultValue;
-    private boolean currentValue = true;
+    private boolean currentValue;
 
     private IToggleSwitch event;
 

@@ -1,6 +1,5 @@
 package me.piitex.engine.overlays;
 
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;

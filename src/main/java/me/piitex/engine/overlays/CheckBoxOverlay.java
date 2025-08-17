@@ -8,7 +8,7 @@ import me.piitex.engine.overlays.events.ICheckBoxSet;
 public class CheckBoxOverlay extends Overlay {
     private final CheckBox checkBox;
     private boolean selected;
-    private boolean defaultValue = false;
+    private boolean defaultValue;
     private String label;
 
     private ICheckBoxSet checkBoxSet;

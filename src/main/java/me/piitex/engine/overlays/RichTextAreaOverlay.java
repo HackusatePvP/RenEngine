@@ -38,10 +38,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
     private final String defaultInput;
-    private String currentText;
-    private FontLoader fontLoader;
     private Color textFill = Color.BLACK;
-    boolean enabled = true;
     private IInputSetEvent iInputSetEvent;
     private IOverlaySubmit iOverlaySubmit;
     private ContextMenu contextMenu;
@@ -106,8 +103,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     }
 
     public void setCurrentText(String currentText) {
-        this.currentText = currentText;
-
         textArea.replaceText(currentText);
 
         List<RuleMatch> matches;
@@ -138,11 +133,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         updateColoring();
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        textArea.setDisable(!enabled);
-    }
-
     public void setTextFill(Color textFill) {
         this.textFill = textFill;
 
@@ -152,10 +142,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 (paragraphTextFlow, paragraphStyle) -> {},
                 "default",
                 applyTextStyle());
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public IInputSetEvent getiInputSetEvent() {

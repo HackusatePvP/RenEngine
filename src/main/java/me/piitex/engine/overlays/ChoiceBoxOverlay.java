@@ -2,7 +2,6 @@ package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import me.piitex.engine.hanlders.events.ComboBoxSelectEvent;
 import me.piitex.engine.overlays.events.IComboSelect;
 
@@ -59,9 +58,6 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
 
     public void setItems(LinkedList<String> items) {
         this.items = items;
-        if (node != null) {
-            ComboBox<String> comboBox = (ComboBox<String>) node;
-        }
         choiceBox.getItems().setAll(items);
     }
 

@@ -3,7 +3,6 @@ package me.piitex.engine.overlays;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
@@ -15,8 +14,6 @@ public class InputFieldOverlay extends Overlay implements Region {
     private final String defaultInput;
     private FontLoader fontLoader;
     private String hintText = "";
-    private String currentText;
-    private boolean enabled = true;
 
     private IInputSetEvent iInputSetEvent;
 
@@ -53,18 +50,7 @@ public class InputFieldOverlay extends Overlay implements Region {
     }
 
     public void setCurrentText(String currentText) {
-        this.currentText = currentText;
         textField.setText(currentText);
-    }
-
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        textField.setDisable(!enabled);
     }
 
     public String getHintText() {
@@ -98,7 +84,6 @@ public class InputFieldOverlay extends Overlay implements Region {
 
 
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            currentText = newValue;
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
             }
