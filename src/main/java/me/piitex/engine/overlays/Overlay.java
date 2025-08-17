@@ -212,17 +212,19 @@ public abstract class Overlay extends Element {
         }
 
         if (tooltip != null && !tooltip.isEmpty()) {
+            Tooltip tooltip = new Tooltip(getTooltip());
+            tooltip.setAutoHide(false);
+            tooltip.setShowDuration(Duration.seconds(30));
+            tooltip.setWrapText(true);
+            tooltip.setShowDelay(Duration.millis(250));
+
+            node.onMouseExitedProperty().addListener((observable, oldValue, newValue) -> {
+                tooltip.hide();
+            });
+
             if (node instanceof Control control) {
-                Tooltip tooltip = new Tooltip(getTooltip());
-                tooltip.setWrapText(true);
-                tooltip.setPrefWidth(300);
-                tooltip.setShowDelay(Duration.millis(250));
                 control.setTooltip(tooltip);
             } else {
-                Tooltip tooltip = new Tooltip(getTooltip());
-                tooltip.setPrefWidth(300);
-                tooltip.setWrapText(true);
-                tooltip.setShowDelay(Duration.millis(250));
                 Tooltip.install(node, tooltip);
             }
         }
