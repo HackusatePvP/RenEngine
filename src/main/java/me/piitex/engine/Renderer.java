@@ -26,9 +26,8 @@ public class Renderer extends Element {
     private Color backgroundColor;
     private Color borderColor;
     private double borderWidth = 1;
-    private String style;
 
-    private List<String> styles = new ArrayList<>();
+    private final List<String> styles = new ArrayList<>();
     private final Map<String, Node> renderedNodes = new HashMap<>();
 
     public Map<String, Node> getRenderedNodes() {
@@ -79,8 +78,8 @@ public class Renderer extends Element {
     }
 
     public void setPrefSize(double width, double height) {
-        this.width = width;
-        this.height = height;
+        this.prefWidth = width;
+        this.prefHeight = height;
 
         if (getView() instanceof Region region) {
             region.setPrefSize(width, height);

@@ -19,7 +19,6 @@ import java.util.Map;
  *     {@code
  *       EmptyContainer container = new EmptyContainer(x, y, width, height, index);
  *       window.addContainer(container);
- *       window.render();
  *     }
  * </pre>
  * @see Container

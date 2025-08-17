@@ -20,7 +20,6 @@ import me.piitex.engine.containers.CardContainer;
 import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.containers.TileContainer;
 import me.piitex.engine.containers.tabs.Tab;
-import me.piitex.engine.hanlders.events.ContainerRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
@@ -86,13 +85,12 @@ public class Window {
     private Scene scene;
     private Pane root;
 
-    private boolean scale;
+    private final boolean scale;
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
-    private Timeline renderLoop;
 
-    private boolean focused;
+    private final boolean focused;
 
     /**
      * Constructs a Window instance using properties defined in a {@link WindowBuilder}.
@@ -111,7 +109,6 @@ public class Window {
      *
      * // Add containers
      * window.addContainer(someContainer);
-     * window.render();
      * }</pre>
      * @param builder The {@link WindowBuilder} instance containing window configuration.
      */
@@ -289,9 +286,6 @@ public class Window {
         Node assemble = container.assemble();
 
         root.getChildren().add(assemble);
-
-        ContainerRenderEvent event = new ContainerRenderEvent(container, assemble);
-        container.getRenderEvents().forEach(iContainerRender -> iContainerRender.onContainerRender(event));
     }
 
     /**
@@ -486,7 +480,7 @@ public class Window {
     /**
      * Builds the engine's API onto the JavaFX framework, optionally resetting the scene.
      * This method processes and prepares containers for display but does not automatically show them.
-     * @param reset True to reset the scene (clears and reinitializes the root pane and scene), false to only clear children.
+     * @param reset True to reset the scene (clears and initialises the root pane and scene), false to only clear children.
      */
     public void build(boolean reset) {
         if (containers.isEmpty()) {
@@ -642,23 +636,6 @@ public class Window {
         currentPopup = container;
 
         addContainer(container);
-
-//        Node entry = container.build();
-//        Node node = entry.getKey();
-//        container.setView(node);
-//        currentPopup = container;
-//
-//        if (node instanceof Pane pane) {
-//            pane.setPrefWidth(container.getWidth());
-//            pane.setPrefHeight(container.getHeight());
-//
-//            if (container.getBackgroundColor() != null) {
-//                pane.setBackground(new Background(new BackgroundFill(container.getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
-//            }
-//        }
-//        root.getStylesheets().addAll(container.getStylesheets());
-//
-//        getRoot().getChildren().add(node);
     }
 
     public void renderPopup(Overlay overlay, PopupPosition position, double width, double height, boolean autoClose) {
@@ -732,13 +709,9 @@ public class Window {
         container.setIndex(index);
 
         if (overlay instanceof MessageOverlay messageOverlay) {
-            messageOverlay.onClose(event -> {
-                removeContainer(container);
-            });
+            messageOverlay.onClose(event -> removeContainer(container));
         } else if (overlay instanceof NotificationOverlay notificationOverlay) {
-            notificationOverlay.onClose(event -> {
-                removeContainer(container);
-            });
+            notificationOverlay.onClose(event -> removeContainer(container));
         }
 
         if (autoClose) {

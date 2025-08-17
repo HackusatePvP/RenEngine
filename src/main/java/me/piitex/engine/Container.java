@@ -28,21 +28,14 @@ import java.util.*;
  *      Container container = new EmptyContainer(1920, 1080);
  *
  *      window.addContainer(container);
- *
- *      window.render();
  * }
  * </pre>
  */
 public abstract class Container extends Renderer {
     private double x, y;
-
-    // Set container to a debug state. This will output the rendering process.
-    public boolean debug = false;
-
     private final List<String> stylesheets = new ArrayList<>();
-
     private IContainerClick click;
-    private List<IContainerRender> renderEvents = new LinkedList<>();
+    private final List<IContainerRender> renderEvents = new LinkedList<>();
 
     public Container(Node view, double x, double y, double width, double height) {
         setView(view);

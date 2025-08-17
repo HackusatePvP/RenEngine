@@ -65,7 +65,7 @@ public abstract class Element {
      *     For {@link Layout}'s it will return the {@link Layout#render()} result.
      * </p>
      * <p>
-     *     For {@link Container}'s it will return the key value of {@link Container#build()}.
+     *     For {@link Container}'s it will return the {@link Container#build()} result.
      * </p>
      * @return The constructed node.
      */
