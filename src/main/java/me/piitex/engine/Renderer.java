@@ -77,6 +77,22 @@ public class Renderer extends Element {
         return prefHeight;
     }
 
+    public void setPrefWidth(double prefWidth) {
+        this.prefWidth = prefWidth;
+
+        if (getView() instanceof Region region) {
+            region.setPrefWidth(height);
+        }
+    }
+
+    public void setPrefHeight(double prefHeight) {
+        this.prefHeight = prefHeight;
+
+        if (getView() instanceof Region region) {
+            region.setPrefHeight(height);
+        }
+    }
+
     public void setPrefSize(double width, double height) {
         this.prefWidth = width;
         this.prefHeight = height;
