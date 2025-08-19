@@ -222,7 +222,7 @@ public abstract class Overlay extends Element {
         if (tooltip != null && !tooltip.isEmpty()) {
             Tooltip tooltip = new Tooltip(getTooltip());
             tooltip.setAutoHide(false);
-            tooltip.setShowDuration(Duration.seconds(30));
+            tooltip.setShowDuration(Duration.INDEFINITE);
             tooltip.setWrapText(true);
             tooltip.setShowDelay(Duration.millis(250));
 
