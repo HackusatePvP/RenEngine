@@ -134,7 +134,7 @@ public class DialogueContainer extends Container {
         Card card = new Card();
         card.setHeader(new Tile(header, body));
 
-        HBox buttonBox = new HBox(20, cancelButton.render(), confirmButton.render());
+        HBox buttonBox = new HBox(20, cancelButton.assemble(), confirmButton.render());
         card.setFooter(buttonBox);
 
         LinkedList<Node> order = new LinkedList<>();

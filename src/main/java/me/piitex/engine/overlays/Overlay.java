@@ -207,7 +207,7 @@ public abstract class Overlay extends Element {
      * Converts the overlay into a {@link Node} which is used for the JavaFX API.
      * @return The converted {@link Node} for the overlay.
      */
-    public abstract Node render();
+    protected abstract Node render();
 
     @Override
     public Node assemble() {
