@@ -21,9 +21,4 @@ public interface Region {
 
     void setMaxWidth(double w);
     void setMaxHeight(double h);
-
-    @Deprecated double getScaleWidth();
-    @Deprecated void setScaleWidth(double w);
-    @Deprecated double getScaleHeight();
-    @Deprecated void setScaleHeight(double h);
 }

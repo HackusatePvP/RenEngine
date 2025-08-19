@@ -202,27 +202,6 @@ public class ButtonOverlay extends Overlay implements Region {
         button.setMaxHeight(h);
     }
 
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
     public LinkedList<ImageOverlay> getImages() {
         return images;
     }

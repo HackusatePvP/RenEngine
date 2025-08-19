@@ -104,24 +104,4 @@ public class ProgressBarOverlay extends Overlay implements Region {
         this.maxHeight = h;
         progressBar.setMaxHeight(h);
     }
-
-    @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
 }

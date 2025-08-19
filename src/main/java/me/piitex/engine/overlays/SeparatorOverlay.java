@@ -90,27 +90,6 @@ public class SeparatorOverlay extends Overlay implements Region {
     }
 
     @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
-    @Override
     public Node render() {
         separator.getStyleClass().addAll(getStyles());
         separator.setTranslateX(getX());

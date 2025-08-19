@@ -104,27 +104,6 @@ public class BoxOverlay extends Overlay implements Region {
     }
 
     @Override
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    @Override
-    public void setScaleWidth(double w) {
-        this.scaleWidth = w;
-    }
-
-    @Override
-    public double getScaleHeight() {
-        return scaleHeight;
-    }
-
-    @Override
-    public void setScaleHeight(double h) {
-        this.scaleHeight = h;
-    }
-
-
-    @Override
     public Node render() {
         Rectangle rectangle = new Rectangle(width, height);
         rectangle.setX(getX());
