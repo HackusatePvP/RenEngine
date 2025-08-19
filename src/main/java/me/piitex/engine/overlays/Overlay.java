@@ -83,6 +83,10 @@ public abstract class Overlay extends Element {
 
     public void setX(double x) {
         this.x = x;
+
+        if (node != null) {
+            node.setTranslateY(x);
+        }
     }
 
     public double getY() {
@@ -91,6 +95,10 @@ public abstract class Overlay extends Element {
 
     public void setY(double y) {
         this.y = y;
+
+        if (node != null) {
+            node.setTranslateY(y);
+        }
     }
 
     public String getTooltip() {

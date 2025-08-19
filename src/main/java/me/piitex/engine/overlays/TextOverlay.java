@@ -63,8 +63,6 @@ public class TextOverlay extends Overlay {
     @Override
     public Node render() {
         if (node instanceof FontIcon icon) {
-            icon.setTranslateX(getX());
-            icon.setTranslateY(getY());
             if (textFillColor != null) {
                 icon.setIconColor(textFillColor);
             }
@@ -74,9 +72,6 @@ public class TextOverlay extends Overlay {
             if (textFillColor != null) {
                 text.setFill(textFillColor);
             }
-
-            text.setTranslateX(getX());
-            text.setTranslateX(getY());
 
             if (fontLoader != null) {
                 text.setFont(fontLoader.getFont());
@@ -89,6 +84,8 @@ public class TextOverlay extends Overlay {
         }
 
         if (node != null) {
+            node.setTranslateX(getX());
+            node.setTranslateY(getY());
             node.getStyleClass().addAll(getStyles());
             setInputControls(node);
         }
