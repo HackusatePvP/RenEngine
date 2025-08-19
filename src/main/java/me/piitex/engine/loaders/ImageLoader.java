@@ -93,6 +93,16 @@ public class ImageLoader {
 
     // Credit: https://stackoverflow.com/questions/30970005/bufferedimage-to-javafx-image
     private Image getImage(BufferedImage img) {
-        return SwingFXUtils.toFXImage(img, new WritableImage((int) width, (int) height));
+        int width = (int) getWidth();
+        int height = (int) getHeight();
+
+        if (width <= 0) {
+            width = img.getWidth();
+        }
+        if (height <= 0) {
+            height = img.getHeight();
+        }
+
+        return SwingFXUtils.toFXImage(img, new WritableImage(width, height));
     }
 }
