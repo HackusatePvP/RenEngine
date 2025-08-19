@@ -68,6 +68,10 @@ public class TextAreaOverlay extends Overlay implements Region {
         textArea.setPromptText(hintText);
     }
 
+    public void setEditable(boolean editable) {
+        textArea.setEditable(editable);
+    }
+
     @Override
     public Node render() {
         textArea.setTranslateX(getX());

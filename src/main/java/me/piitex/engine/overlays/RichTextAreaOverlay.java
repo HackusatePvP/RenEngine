@@ -144,6 +144,10 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 applyTextStyle());
     }
 
+    public void setEditable(boolean editable) {
+        textArea.setEditable(editable);
+    }
+
     public IInputSetEvent getiInputSetEvent() {
         return iInputSetEvent;
     }

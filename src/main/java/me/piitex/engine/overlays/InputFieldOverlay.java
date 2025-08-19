@@ -62,6 +62,10 @@ public class InputFieldOverlay extends Overlay implements Region {
         textField.setPromptText(hintText);
     }
 
+    public void setEditable(boolean editable) {
+        textField.setEditable(editable);
+    }
+
     @Override
     public Node render() {
         textField.setTranslateX(getX());
@@ -90,8 +94,6 @@ public class InputFieldOverlay extends Overlay implements Region {
         });
 
         setInputControls(textField);
-
-        textField.setEditable(isEnabled());
         return textField;
     }
 
