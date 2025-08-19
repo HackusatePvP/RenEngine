@@ -1,8 +1,7 @@
 package me.piitex.engine.loaders;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelBuffer;
-import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import me.piitex.engine.LimitedHashMap;
 import org.girod.javafx.svgimage.SVGImage;
@@ -10,11 +9,9 @@ import org.girod.javafx.svgimage.SVGLoader;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.IntBuffer;
 import java.util.Map;
 
 /**
@@ -22,6 +19,7 @@ import java.util.Map;
  */
 public class ImageLoader {
     private final File file;
+    private double width, height;
 
     public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
     public static boolean useCache = true;
@@ -44,6 +42,23 @@ public class ImageLoader {
         this.file = file;
     }
 
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    // Faster but limited file support.
     public Image build() {
         if (useCache && imageCache.containsKey(file.getPath())) {
             return imageCache.get(file.getPath());
@@ -62,11 +77,11 @@ public class ImageLoader {
         }
     }
 
+    // Slower but works for most images.
     public Image buildRaw() {
         try {
-            return new Image(new FileInputStream(file));
+            return new Image(new FileInputStream(file), width, height, false, false);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -78,17 +93,6 @@ public class ImageLoader {
 
     // Credit: https://stackoverflow.com/questions/30970005/bufferedimage-to-javafx-image
     private Image getImage(BufferedImage img) {
-        //converting to a good type, read about types here: https://openjfx.io/javadoc/13/javafx.graphics/javafx/scene/image/PixelBuffer.html
-        BufferedImage newImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-        newImg.createGraphics().drawImage(img, 0, 0, img.getWidth(), img.getHeight(), null);
-
-        //converting the BufferedImage to an IntBuffer
-        int[] type_int_agrb = ((DataBufferInt) newImg.getRaster().getDataBuffer()).getData();
-        IntBuffer buffer = IntBuffer.wrap(type_int_agrb);
-
-        //converting the IntBuffer to an Image, read more about it here: https://openjfx.io/javadoc/13/javafx.graphics/javafx/scene/image/PixelBuffer.html
-        PixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
-        PixelBuffer<IntBuffer> pixelBuffer = new PixelBuffer(newImg.getWidth(), newImg.getHeight(), buffer, pixelFormat);
-        return new WritableImage(pixelBuffer);
+        return SwingFXUtils.toFXImage(img, new WritableImage((int) width, (int) height));
     }
 }

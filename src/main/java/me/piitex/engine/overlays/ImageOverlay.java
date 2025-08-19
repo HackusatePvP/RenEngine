@@ -134,10 +134,10 @@ public class ImageOverlay extends Overlay {
     public Node render() {
         imageView.setImage(image);
         imageView.setPreserveRatio(preserveRatio);
-        if (fitWidth != 0) {
+        if (fitWidth > 0) {
             imageView.setFitWidth(fitWidth);
         }
-        if (fitHeight != 0) {
+        if (fitHeight > 0) {
             imageView.setFitHeight(fitHeight);
         }
         imageView.setTranslateX(getX());
