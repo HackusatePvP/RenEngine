@@ -31,16 +31,24 @@ public class ImageOverlay extends Overlay {
     }
 
     public ImageOverlay(ImageLoader imageLoader) {
-        this.image = imageLoader.build();
+        this.fileName = imageLoader.getFile().getName();
+        if (fileName.endsWith(".gif")) {
+            this.image = imageLoader.buildRaw();
+        } else {
+            this.image = imageLoader.build();
+        }
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
-        this.fileName = imageLoader.getFile().getName();
         this.imageView = new ImageView();
     }
 
     public ImageOverlay(String imagePath) {
         ImageLoader loader = new ImageLoader(imagePath);
-        this.image = loader.build();
+        if (imagePath.endsWith(".gif")) {
+            this.image = loader.buildRaw();
+        } else {
+            this.image = loader.build();
+        }
         this.fileName = loader.getFile().getName();
         this.path = imagePath;
         this.fitWidth = image.getWidth();
@@ -50,7 +58,11 @@ public class ImageOverlay extends Overlay {
 
     public ImageOverlay(String directory, String imagePath) {
         ImageLoader loader = new ImageLoader(directory, imagePath);
-        this.image = loader.build();
+        if (imagePath.endsWith(".gif")) {
+            this.image = loader.buildRaw();
+        } else {
+            this.image = loader.build();
+        }
         this.fileName = loader.getFile().getName();
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
@@ -76,6 +88,7 @@ public class ImageOverlay extends Overlay {
         setX(x);
         setY(y);
     }
+
 
     public Image getImage() {
         return image;
@@ -119,7 +132,6 @@ public class ImageOverlay extends Overlay {
 
     @Override
     public Node render() {
-        Image image = getImage();
         imageView.setImage(image);
         imageView.setPreserveRatio(preserveRatio);
         if (fitWidth != 0) {
