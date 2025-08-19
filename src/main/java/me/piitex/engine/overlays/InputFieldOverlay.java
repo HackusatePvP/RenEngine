@@ -91,7 +91,7 @@ public class InputFieldOverlay extends Overlay implements Region {
 
         setInputControls(textField);
 
-        textField.setEditable(!isEnabled());
+        textField.setEditable(isEnabled());
         return textField;
     }
 
