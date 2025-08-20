@@ -95,7 +95,12 @@ public class TextFlowOverlay extends Overlay implements Region {
 
     public void setText(String text) {
         this.text = text;
-        render();
+        textFlow.getChildren().clear();
+        try {
+            VBox format = BBCodeParser.createLayout(text);
+            textFlow.getChildren().add(format);
+            render();
+        } catch (Exception ignored) {}
     }
 
     @Override
