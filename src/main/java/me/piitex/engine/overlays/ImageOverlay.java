@@ -30,14 +30,10 @@ public class ImageOverlay extends Overlay {
         this.imageView = new ImageView();
     }
 
-    public ImageOverlay(ImageLoader imageLoader) {
-        this.fileName = imageLoader.getFile().getName();
-        if (fileName.endsWith(".gif")) {
-            this.image = imageLoader.buildRaw();
-        } else {
-            this.image = imageLoader.build();
-        }
-        this.path = imageLoader.getFile().getAbsolutePath();
+    public ImageOverlay(ImageLoader loader) {
+        this.fileName = loader.getFile().getName();
+        this.image = loader.build();
+        this.path = loader.getFile().getAbsolutePath();
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
@@ -45,11 +41,7 @@ public class ImageOverlay extends Overlay {
 
     public ImageOverlay(String imagePath) {
         ImageLoader loader = new ImageLoader(imagePath);
-        if (imagePath.endsWith(".gif")) {
-            this.image = loader.buildRaw();
-        } else {
-            this.image = loader.build();
-        }
+        this.image = loader.build();
         this.fileName = loader.getFile().getName();
         this.path = loader.getFile().getAbsolutePath();
         this.fitWidth = image.getWidth();
@@ -59,11 +51,7 @@ public class ImageOverlay extends Overlay {
 
     public ImageOverlay(String directory, String imagePath) {
         ImageLoader loader = new ImageLoader(directory, imagePath);
-        if (imagePath.endsWith(".gif")) {
-            this.image = loader.buildRaw();
-        } else {
-            this.image = loader.build();
-        }
+        this.image = loader.build();
         this.path = loader.getFile().getAbsolutePath();
         this.fileName = loader.getFile().getName();
         this.fitWidth = image.getWidth();

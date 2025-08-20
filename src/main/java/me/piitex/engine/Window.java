@@ -42,7 +42,6 @@ import java.util.TreeMap;
  * .setStageStyle(StageStyle.UNDECORATED)
  * .setDimensions(800, 600)
  * .setBackgroundColor(Color.BLACK)
- * .setCaptureInput(true)
  * .build();
  * }</pre>
  *
@@ -73,6 +72,7 @@ import java.util.TreeMap;
  * @see Container
  * @see Overlay
  * @see Layout
+ * @see Platform#runLater(Runnable)
  */
 public class Window {
     private final String title;
@@ -140,7 +140,7 @@ public class Window {
         stage = new Stage();
 
         if (icon != null) {
-            Image windowIcon = icon.buildRaw();
+            Image windowIcon = icon.build();
             if (windowIcon != null) {
                 stage.getIcons().add(windowIcon);
             }

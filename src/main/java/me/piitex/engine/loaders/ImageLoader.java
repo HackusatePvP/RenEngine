@@ -58,30 +58,8 @@ public class ImageLoader {
         this.height = height;
     }
 
-    // Faster but limited file support.
+
     public Image build() {
-        if (useCache && imageCache.containsKey(file.getPath())) {
-            return imageCache.get(file.getPath());
-        }
-        try {
-            if (file.getName().endsWith(".svg")) {
-                SVGImage svgImage = SVGLoader.load(file);
-                return svgImage.toImage();
-            }
-            BufferedImage bufferedImage = ImageIO.read(file);
-            Image image = getImage(bufferedImage);
-
-            if (useCache) {
-                imageCache.put(file.getPath(), image);
-            }
-            return image;
-        } catch (IOException e) {
-            return buildRaw();
-        }
-    }
-
-    // Slower but works for most images.
-    public Image buildRaw() {
         if (useCache && imageCache.containsKey(file.getPath())) {
             return imageCache.get(file.getPath());
         }
