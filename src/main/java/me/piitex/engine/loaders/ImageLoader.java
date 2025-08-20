@@ -70,7 +70,10 @@ public class ImageLoader {
             }
             BufferedImage bufferedImage = ImageIO.read(file);
             Image image = getImage(bufferedImage);
-            imageCache.put(file.getPath(), image);
+
+            if (useCache) {
+                imageCache.put(file.getPath(), image);
+            }
             return image;
         } catch (IOException e) {
             return buildRaw();
@@ -79,8 +82,16 @@ public class ImageLoader {
 
     // Slower but works for most images.
     public Image buildRaw() {
+        if (useCache && imageCache.containsKey(file.getPath())) {
+            return imageCache.get(file.getPath());
+        }
+
         try {
-            return new Image(new FileInputStream(file), width, height, false, false);
+            Image image = new Image(new FileInputStream(file), width, height, false, false);
+            if (useCache) {
+                imageCache.put(file.getPath(), image);
+            }
+            return image;
         } catch (IOException e) {
             return null;
         }

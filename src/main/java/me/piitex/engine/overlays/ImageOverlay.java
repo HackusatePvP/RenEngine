@@ -37,6 +37,7 @@ public class ImageOverlay extends Overlay {
         } else {
             this.image = imageLoader.build();
         }
+        this.path = imageLoader.getFile().getAbsolutePath();
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
@@ -50,7 +51,7 @@ public class ImageOverlay extends Overlay {
             this.image = loader.build();
         }
         this.fileName = loader.getFile().getName();
-        this.path = imagePath;
+        this.path = loader.getFile().getAbsolutePath();
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
@@ -63,6 +64,7 @@ public class ImageOverlay extends Overlay {
         } else {
             this.image = loader.build();
         }
+        this.path = loader.getFile().getAbsolutePath();
         this.fileName = loader.getFile().getName();
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
@@ -84,6 +86,7 @@ public class ImageOverlay extends Overlay {
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.fileName = imageLoader.getFile().getName();
+        this.path = imageLoader.getFile().getAbsolutePath();
         this.imageView = new ImageView();
         setX(x);
         setY(y);
@@ -95,8 +98,20 @@ public class ImageOverlay extends Overlay {
     }
 
     public void setImage(ImageLoader loader) {
-        this.image = loader.build();
-        imageView.setImage(image);
+        if (loader != null) {
+            this.image = loader.build();
+            imageView.setImage(image);
+        } else {
+            this.image = null;
+            imageView.setImage(null);
+            if (path != null) {
+                ImageLoader.imageCache.remove(path);
+            }
+
+            // Sometimes the file will still be loaded in the JVM preventing io operations.
+            // GC call is a workaround that issue but not guaranteed.
+            System.gc();
+        }
     }
 
     public String getFileName() {
