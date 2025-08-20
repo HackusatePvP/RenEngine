@@ -105,8 +105,6 @@ public class TextAreaOverlay extends Overlay implements Region {
 
         textArea.setText(defaultInput);
         setInputControls(textArea);
-        textArea.setEditable(!isEnabled());
-
         return textArea;
     }
 
