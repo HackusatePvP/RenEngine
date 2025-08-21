@@ -51,7 +51,7 @@ public class TextAreaOverlay extends Overlay implements Region {
     }
 
     public String getCurrentText() {
-        return currentText;
+        return textArea.getText();
     }
 
     public void setCurrentText(String currentText) {
