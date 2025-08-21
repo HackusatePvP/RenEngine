@@ -98,9 +98,12 @@ public class TextFlowOverlay extends Overlay implements Region {
         textFlow.getChildren().clear();
         try {
             VBox format = BBCodeParser.createLayout(text);
+            format.setMaxWidth(getMaxWidth());
+            format.setMinWidth(getWidth());
             textFlow.getChildren().add(format);
-            render();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            textFlow.getChildren().add(new Text(text));
+        }
     }
 
     @Override
@@ -109,11 +112,7 @@ public class TextFlowOverlay extends Overlay implements Region {
         textFlow.getChildren().clear();
 
         if (text != null) {
-            // Using a VBox fixes all the spacing issues and weird new line stuff.
-            VBox format = BBCodeParser.createLayout(text);
-            format.setMaxWidth(getMaxWidth());
-            format.setMinWidth(getWidth());
-            textFlow.getChildren().add(format);
+            setText(text);
         }
 
         for (Overlay overlay : texts) {
