@@ -94,6 +94,10 @@ public class CardContainer extends Container {
         return footer;
     }
 
+    public Card getCard() {
+        return atlantafxCard;
+    }
+
     @Override
     public Node build() {
         // Ensure the card's position and size match the container's

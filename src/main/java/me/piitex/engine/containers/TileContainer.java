@@ -89,6 +89,10 @@ public class TileContainer extends Container {
         return;
     }
 
+    public Tile getTile() {
+        return tile;
+    }
+
     @Override
     public Node build() {
         tile.setTitle(title);

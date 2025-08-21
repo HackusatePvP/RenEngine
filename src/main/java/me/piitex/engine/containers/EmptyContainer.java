@@ -49,6 +49,10 @@ public class EmptyContainer extends Container {
         this.pane = (Pane) getView();
     }
 
+    public Pane getPane() {
+        return pane;
+    }
+
     @Override
     public Node build() {
         pane.setTranslateX(getX());
