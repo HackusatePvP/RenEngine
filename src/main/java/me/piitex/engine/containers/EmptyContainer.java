@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import me.piitex.engine.Container;
 import me.piitex.engine.Window;
+import me.piitex.engine.hanlders.events.ContainerClickEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
@@ -78,9 +79,12 @@ public class EmptyContainer extends Container {
             pane.setMaxHeight(getMaxHeight());
         }
 
-        setStyling(pane); // This is underlined red in the IDEA and will not compile.
+        setStyling(pane);
 
-        // Return loworder because the other orders are added onto the low order.
+        if (getOnClick() != null) {
+            pane.setOnMouseClicked(event -> getOnClick().onClick(new ContainerClickEvent(this)));
+        }
+
         return pane;
     }
 }
