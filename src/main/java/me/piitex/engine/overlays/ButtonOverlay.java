@@ -46,6 +46,7 @@ public class ButtonOverlay extends Overlay implements Region {
         setY(builder.getY());
         this.button = new Button();
         button.setDisable(!builder.isEnabled());
+        setNode(button);
     }
 
     public Button getButton() {
