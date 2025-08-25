@@ -22,6 +22,8 @@ public class ImageLoader {
     private double width, height;
 
     public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
+    private static final Map<String, Double> imageSizeCache = new LimitedHashMap<>(50);
+
     public static boolean useCache = true;
 
     /**
@@ -60,7 +62,7 @@ public class ImageLoader {
 
 
     public Image build() {
-        if (useCache && imageCache.containsKey(file.getPath())) {
+        if (useCache && imageCache.containsKey(file.getPath()) && (width + height == imageSizeCache.get(file.getPath()))) {
             return imageCache.get(file.getPath());
         }
 
@@ -68,9 +70,11 @@ public class ImageLoader {
             Image image = new Image(new FileInputStream(file), width, height, false, false);
             if (useCache) {
                 imageCache.put(file.getPath(), image);
+                imageSizeCache.put(file.getPath(), width + height);
             }
             return image;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
