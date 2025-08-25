@@ -50,6 +50,10 @@ public class ModalContainer extends Container {
         modalBox.addContent(content.assemble());
     }
 
+    public ModalBox getModalBox() {
+        return modalBox;
+    }
+
     @Override
     public Node build() {
         modalBox.setTranslateX(getX());
