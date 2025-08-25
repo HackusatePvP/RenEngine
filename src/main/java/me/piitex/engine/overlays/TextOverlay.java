@@ -18,22 +18,26 @@ public class TextOverlay extends Overlay {
     public TextOverlay(String text) {
         this.string = text;
         this.node = new Text();
+        setNode(node);
     }
 
     public TextOverlay(FontIcon icon) {
         this.node = icon;
+        setNode(node);
     }
 
     public TextOverlay(String text, FontLoader fontLoader) {
         this.string = text;
         this.fontLoader = fontLoader;
         this.node = new Text();
+        setNode(node);
     }
 
     public TextOverlay(String text, Color textFillColor) {
         this.string = text;
         this.textFillColor = textFillColor;
         this.node = new Text();
+        setNode(node);
     }
 
     public TextOverlay(String text, Color textFillColor, FontLoader fontLoader) {
@@ -41,12 +45,14 @@ public class TextOverlay extends Overlay {
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
         this.node = new Text();
+        setNode(node);
     }
 
     public TextOverlay(String text, FontLoader fontLoader, double x, double y) {
         this.string = text;
         this.fontLoader = fontLoader;
         this.node = new Text();
+        setNode(node);
         setX(x);
         setY(y);
     }
@@ -56,6 +62,7 @@ public class TextOverlay extends Overlay {
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
         this.node = new Text();
+        setNode(node);
         setX(x);
         setY(y);
     }
