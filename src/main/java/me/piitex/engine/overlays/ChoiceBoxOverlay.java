@@ -66,7 +66,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     }
 
     public String getSelected() {
-        return selected;
+        return choiceBox.getSelectionModel().getSelectedItem();
     }
 
     public void setSelected(String selected) {
