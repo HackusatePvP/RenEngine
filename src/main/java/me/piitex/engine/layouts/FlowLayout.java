@@ -36,6 +36,9 @@ public class FlowLayout extends Layout {
     public Node render() {
         VBox.setVgrow(pane, Priority.ALWAYS);
         HBox.setHgrow(pane, Priority.ALWAYS);
+        if (getAlignment() != null) {
+            pane.setAlignment(getAlignment());
+        }
         pane.setVgap(getVerticalSpacing());
         pane.setHgap(getHorizontalSpacing());
         pane.setTranslateX(getX());
