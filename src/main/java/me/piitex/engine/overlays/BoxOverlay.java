@@ -5,19 +5,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class BoxOverlay extends Overlay implements Region {
+    private final Rectangle rectangle;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
     private Color fillColor;
     private Color strokeColor = Color.WHITE;
 
     public BoxOverlay(double width, double height) {
         this.width = width;
         this.height = height;
+        this.rectangle = new Rectangle(width, height);
     }
 
     public BoxOverlay(double width, double height, double x, double y) {
         this.width = width;
         this.height = height;
+        this.rectangle = new Rectangle(width, height);
         setX(x);
         setY(y);
     }
@@ -26,11 +28,13 @@ public class BoxOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         this.fillColor = color;
+        this.rectangle = new Rectangle(width, height);
     }
     public BoxOverlay(double width, double height, double x, double y, Color color) {
         this.width = width;
         this.height = height;
         this.strokeColor = color;
+        this.rectangle = new Rectangle(width, height);
         setX(x);
         setY(y);
     }
@@ -41,6 +45,7 @@ public class BoxOverlay extends Overlay implements Region {
 
     public void setFillColor(Color fillColor) {
         this.fillColor = fillColor;
+        rectangle.setFill(fillColor);
     }
 
     @Override
@@ -103,9 +108,12 @@ public class BoxOverlay extends Overlay implements Region {
         this.maxHeight = h;
     }
 
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+
     @Override
     public Node render() {
-        Rectangle rectangle = new Rectangle(width, height);
         rectangle.setX(getX());
         rectangle.setY(getY());
         if (getFillColor() != null) {
