@@ -48,6 +48,11 @@ public class BoxOverlay extends Overlay implements Region {
         rectangle.setFill(fillColor);
     }
 
+    public void setStrokeColor(Color strokeColor) {
+        this.strokeColor = strokeColor;
+        rectangle.setStroke(strokeColor);
+    }
+
     @Override
     public double getWidth() {
         return width;
