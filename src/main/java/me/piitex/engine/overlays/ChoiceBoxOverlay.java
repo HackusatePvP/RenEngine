@@ -74,6 +74,10 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         choiceBox.getSelectionModel().select(selected);
     }
 
+    public ChoiceBox<String> getChoiceBox() {
+        return choiceBox;
+    }
+
     public Node getNode() {
         return node;
     }
@@ -105,7 +109,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         if (getComboSelect() != null) {
             choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue == null) return;
-                getComboSelect().onItemSelect(new ComboBoxSelectEvent(choiceBox,this, newValue));
+                getComboSelect().onItemSelect(new ComboBoxSelectEvent(choiceBox,this, oldValue, newValue));
             });
         }
 

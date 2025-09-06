@@ -68,6 +68,10 @@ public class ComboBoxOverlay extends Overlay implements Region {
         comboBox.getSelectionModel().select(selected);
     }
 
+    public ComboBox<String> getComboBox() {
+        return comboBox;
+    }
+
     public Node getNode() {
         return node;
     }
@@ -89,14 +93,11 @@ public class ComboBoxOverlay extends Overlay implements Region {
             comboBox.getSelectionModel().select(defaultItem);
         } else if (!items.isEmpty()) {
             comboBox.getSelectionModel().selectFirst();
-            if (getComboSelect() != null) {
-                getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, items.getFirst()));
-            }
         }
 
         comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (getComboSelect() != null) {
-                getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, newValue));
+                getComboSelect().onItemSelect(new ComboBoxSelectEvent(comboBox,this, selected, newValue));
             }
             this.selected = newValue;
         });

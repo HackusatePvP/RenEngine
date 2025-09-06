@@ -1,17 +1,20 @@
 package me.piitex.engine.hanlders.events;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import me.piitex.engine.overlays.Overlay;
 
 public class ComboBoxSelectEvent extends Event {
     private final Node node;
     private final Overlay overlay;
-    private final String item;
+    private final String oldValue;
+    private final String newValue;
 
-    public ComboBoxSelectEvent(Node node, Overlay overlay, String item) {
+    public ComboBoxSelectEvent(Node node, Overlay overlay, String oldValue, String newValue) {
         this.node = node;
         this.overlay = overlay;
-        this.item = item;
+        this.oldValue = oldValue;
+        this.newValue = newValue;
     }
 
     public Node getNode() {
@@ -22,7 +25,11 @@ public class ComboBoxSelectEvent extends Event {
         return overlay;
     }
 
-    public String getItem() {
-        return item;
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public String getNewValue() {
+        return newValue;
     }
 }
