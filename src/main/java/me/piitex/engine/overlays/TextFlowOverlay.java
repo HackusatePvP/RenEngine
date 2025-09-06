@@ -106,6 +106,10 @@ public class TextFlowOverlay extends Overlay implements Region {
         }
     }
 
+    public TextFlow getTextFlow() {
+        return textFlow;
+    }
+
     @Override
     public Node render() {
         // Creates text that overflows over the box.
