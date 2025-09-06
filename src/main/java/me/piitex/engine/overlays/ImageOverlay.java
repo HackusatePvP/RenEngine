@@ -11,7 +11,7 @@ public class ImageOverlay extends Overlay {
     private Image image;
     private double fitWidth, fitHeight;
     private boolean preserveRatio = true;
-    private final String fileName;
+    private String fileName;
     private String path = "Unknown";
 
     public ImageOverlay(Image image) {
@@ -20,6 +20,7 @@ public class ImageOverlay extends Overlay {
         this.fitHeight = image.getHeight();
         this.fileName = "Unknown";
         this.imageView = new ImageView();
+        setNode(imageView);
     }
 
     public ImageOverlay(WritableImage image) {
@@ -28,6 +29,7 @@ public class ImageOverlay extends Overlay {
         this.fitHeight = image.getHeight();
         this.fileName = "Unknown";
         this.imageView = new ImageView();
+        setNode(imageView);
     }
 
     public ImageOverlay(ImageLoader loader) {
@@ -37,6 +39,7 @@ public class ImageOverlay extends Overlay {
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
+        setNode(imageView);
     }
 
     public ImageOverlay(String imagePath) {
@@ -47,6 +50,7 @@ public class ImageOverlay extends Overlay {
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
+        setNode(imageView);
     }
 
     public ImageOverlay(String directory, String imagePath) {
@@ -57,6 +61,7 @@ public class ImageOverlay extends Overlay {
         this.fitWidth = image.getWidth();
         this.fitHeight = image.getHeight();
         this.imageView = new ImageView();
+        setNode(imageView);
     }
 
     public ImageOverlay(Image image, double x, double y) {
@@ -65,6 +70,7 @@ public class ImageOverlay extends Overlay {
         this.fitHeight = image.getHeight();
         this.fileName = "Unknown";
         this.imageView = new ImageView();
+        setNode(imageView);
         setX(x);
         setY(y);
     }
@@ -76,6 +82,7 @@ public class ImageOverlay extends Overlay {
         this.fileName = imageLoader.getFile().getName();
         this.path = imageLoader.getFile().getAbsolutePath();
         this.imageView = new ImageView();
+        setNode(imageView);
         setX(x);
         setY(y);
     }
@@ -88,6 +95,7 @@ public class ImageOverlay extends Overlay {
     public void setImage(ImageLoader loader) {
         if (loader != null) {
             this.image = loader.build();
+            this.fileName = loader.getFile().getName();
             imageView.setImage(image);
         } else {
             this.image = null;
