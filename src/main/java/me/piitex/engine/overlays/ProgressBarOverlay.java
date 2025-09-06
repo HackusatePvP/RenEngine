@@ -1,6 +1,7 @@
 package me.piitex.engine.overlays;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 
@@ -13,10 +14,12 @@ public class ProgressBarOverlay extends Overlay implements Region {
         this.progressBar = new ProgressBar();
     }
 
+    public void bind(ObservableValue<? extends Number> binding) {
+        progressBar.progressProperty().bind(binding);
+    }
+
     @Override
     public Node render() {
-        progressBar.progressProperty().bind(Bindings.createDoubleBinding(() -> -1d));
-
         progressBar.setTranslateX(getX());
         progressBar.setTranslateY(getY());
 
