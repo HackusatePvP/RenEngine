@@ -211,7 +211,11 @@ public abstract class Overlay extends Element {
 
     @Override
     public Node assemble() {
-        return render();
+        Node node = render();
+        setNode(node);
+        setInputControls(node);
+
+        return node;
     }
 
     public void setInputControls(Node node) {
