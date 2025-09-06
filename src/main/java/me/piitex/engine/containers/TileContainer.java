@@ -5,18 +5,15 @@ import javafx.scene.Node;
 
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
-import me.piitex.engine.overlays.Overlay;
 
-import java.util.AbstractMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class TileContainer extends Container {
     private final Tile tile;
-    private Overlay graphic;
+    private Element graphic;
     private String title;
     private String description;
-    private Overlay action;
+    private Element action;
 
     public TileContainer() {
         super(new Tile(), 0, 0, 0, 0);
@@ -33,11 +30,11 @@ public class TileContainer extends Container {
         this.tile = (Tile) getView();
     }
 
-    public Overlay getGraphic() {
+    public Element getGraphic() {
         return graphic;
     }
 
-    public void setGraphic(Overlay graphic) {
+    public void setGraphic(Element graphic) {
         this.graphic = graphic;
         tile.setGraphic(graphic.assemble());
     }
@@ -60,12 +57,12 @@ public class TileContainer extends Container {
         tile.setDescription(description);
     }
 
-    public void setAction(Overlay action) {
+    public void setAction(Element action) {
         this.action = action;
         tile.setAction(action.assemble());
     }
 
-    public Overlay getAction() {
+    public Element getAction() {
         return action;
     }
 
@@ -99,14 +96,10 @@ public class TileContainer extends Container {
         tile.setDescription(description);
         if (graphic != null && tile.getGraphic() != null) {
             Node node = graphic.assemble();
-            graphic.setInputControls(node);
-            graphic.setNode(node);
             tile.setGraphic(node);
         }
         if (action != null && tile.getAction() == null) {
             Node node = action.assemble();
-            action.setInputControls(node);
-            action.setNode(node);
             tile.setAction(node);
         }
         tile.setTranslateX(getX());
