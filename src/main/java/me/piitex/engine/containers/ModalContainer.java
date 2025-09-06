@@ -81,7 +81,6 @@ public class ModalContainer extends Container {
         if (content != null) {
             Node node = content.assemble();
             if (!modalBox.getChildren().contains(node)) {
-                System.out.println("Adding to node!");
                 AnchorPane.setTopAnchor(node, 0d);
                 AnchorPane.setRightAnchor(node, 0d);
                 AnchorPane.setBottomAnchor(node, 0d);

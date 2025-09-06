@@ -73,7 +73,6 @@ public class PaginationContainer extends Container {
      */
     @Override
     public void addElement(Element element) {
-        // Do nothing, elements should be added to the pages, not the container itself.
-        System.out.println("Cannot add an Element directly to a PaginationContainer. Add it to a page instead.");
+        return;
     }
 }

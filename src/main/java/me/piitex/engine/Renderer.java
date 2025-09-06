@@ -367,11 +367,6 @@ public class Renderer extends Element {
             layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         }
 
-        if (node == null) {
-            System.out.println("NODE IS NULL!!!");
-        }
-
-
         return node;
     }
 }
