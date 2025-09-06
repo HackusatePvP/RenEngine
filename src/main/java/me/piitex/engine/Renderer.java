@@ -337,9 +337,11 @@ public class Renderer extends Element {
         Node node = null;
         if (this instanceof Container container) {
             node = container.build();
+            container.setView(node);
         }
         if (this instanceof Layout layout) {
             node = layout.render();
+            layout.setView(node);
         }
 
         // Assemble existing elements.
