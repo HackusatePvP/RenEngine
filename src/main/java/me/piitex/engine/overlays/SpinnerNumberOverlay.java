@@ -44,6 +44,10 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
 
     public void onValueChange(IValueChange change) {
         this.change = change;
+
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            change.onValueChange(new ValueChangeEvent(this, oldValue, newValue));
+        });
     }
 
     public Number getCurrentValue() {
@@ -82,13 +86,6 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
 
         if (getMaxHeight() > 0) {
             spinner.setMaxHeight(getMaxHeight());
-        }
-
-
-        if (getOnValueChange() != null) {
-            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                getOnValueChange().onValueChange(new ValueChangeEvent(this, oldValue, newValue));
-            });
         }
 
         return spinner;
