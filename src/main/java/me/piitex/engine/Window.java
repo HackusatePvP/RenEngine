@@ -1,7 +1,5 @@
 package me.piitex.engine;
 
-import atlantafx.base.controls.Card;
-import atlantafx.base.controls.Tile;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -16,10 +14,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import me.piitex.engine.containers.CardContainer;
 import me.piitex.engine.containers.EmptyContainer;
-import me.piitex.engine.containers.TileContainer;
-import me.piitex.engine.containers.tabs.Tab;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
