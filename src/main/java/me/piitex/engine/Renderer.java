@@ -261,6 +261,14 @@ public class Renderer extends Element {
         }
     }
 
+    public void replaceElement(int index, Element element) {
+        if (view instanceof Pane pane) {
+            pane.getChildren().remove(index);
+            pane.getChildren().add(index, element.assemble());
+            elements.replace(index, element);
+        }
+    }
+
     public void addToView(Node node, int index) {
         if (view instanceof Pane pane) {
             if (!pane.getChildren().contains(node)) {
