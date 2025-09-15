@@ -153,7 +153,7 @@ public class TextFlowOverlay extends Overlay implements Region {
                 default -> System.out.println("Unsupported overlay in TextFlow. {}" + overlay.toString());
             }
 
-            Node node = overlay.render();
+            Node node = overlay.assemble();
             textFlow.getChildren().add(node);
         }
 
