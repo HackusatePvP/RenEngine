@@ -18,12 +18,12 @@ public class TabsContainer extends Container {
 
     public TabsContainer(double x, double y, double width, double height) {
         super(new TabPane(), x, y, width, height);
-        this.tabPane = (TabPane) getView();
+        this.tabPane = (TabPane) getNode();
     }
 
     public TabsContainer(double x, double y, double width, double height, int index) {
         super(new TabPane(), x, y, width, height, index);
-        this.tabPane = (TabPane) getView();
+        this.tabPane = (TabPane) getNode();
     }
 
     public Map<String, Tab> getTabs() {

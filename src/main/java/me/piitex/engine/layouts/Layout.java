@@ -21,7 +21,7 @@ public abstract class Layout extends Renderer {
 
     protected Layout(Pane pane, double width, double height) {
         this.pane = pane;
-        setView(pane);
+        setNode(pane);
         setWidth(width);
         setHeight(height);
         this.renderEvents = new ArrayList<>();
@@ -49,11 +49,6 @@ public abstract class Layout extends Renderer {
 
     public List<ILayoutRender> getRenderEvents() {
         return renderEvents;
-    }
-
-    @Override
-    public Node getView() {
-        return pane;
     }
 
     public Pane getPane() {

@@ -24,13 +24,13 @@ public class DialogueContainer extends Container {
 
     public DialogueContainer(String header, double width, double height) {
         super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
         this.header = header;
     }
 
     public DialogueContainer(String header, double x, double y, double width, double height) {
         super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
         this.header = header;
     }
 

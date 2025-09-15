@@ -32,22 +32,22 @@ public class EmptyContainer extends Container {
 
     public EmptyContainer(double x, double y, double width, double height) {
         super(new Pane(), x, y, width, height);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
     }
 
     public EmptyContainer(double x, double y, double width, double height, int index) {
         super(new Pane(), x, y, width, height, index);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
     }
 
     public EmptyContainer(double width, double height) {
         super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
     }
 
     public EmptyContainer(double width, double height, int index) {
         super(new Pane(), 0, 0, width, height, index);
-        this.pane = (Pane) getView();
+        this.pane = (Pane) getNode();
     }
 
     public Pane getPane() {

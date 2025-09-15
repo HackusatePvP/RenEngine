@@ -17,17 +17,17 @@ public class TileContainer extends Container {
 
     public TileContainer() {
         super(new Tile(), 0, 0, 0, 0);
-        this.tile = (Tile) getView();
+        this.tile = (Tile) getNode();
     }
 
     public TileContainer(double x, double y, double width, double height) {
         super(new Tile(), x, y, width, height);
-        this.tile = (Tile) getView();
+        this.tile = (Tile) getNode();
     }
 
     public TileContainer(double width, double height) {
         super(new Tile(), 0, 0, width, height);
-        this.tile = (Tile) getView();
+        this.tile = (Tile) getNode();
     }
 
     public Element getGraphic() {

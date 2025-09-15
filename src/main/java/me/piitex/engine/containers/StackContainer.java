@@ -10,7 +10,7 @@ public class StackContainer extends Container {
 
     public StackContainer(double width, double height) {
         super(new StackPane(), 0, 0, width, height);
-        this.pane = (StackPane) getView();
+        this.pane = (StackPane) getNode();
     }
 
     public StackPane getPane() {

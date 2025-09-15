@@ -3,7 +3,9 @@ package me.piitex.engine;
 
 import javafx.scene.Node;
 import me.piitex.engine.layouts.Layout;
+import me.piitex.engine.overlays.ImageOverlay;
 import me.piitex.engine.overlays.Overlay;
+import me.piitex.engine.overlays.TextOverlay;
 
 /**
  * Represents a graphical element that can be rendered to the {@link Window} or a {@link Container}.
@@ -20,6 +22,8 @@ import me.piitex.engine.overlays.Overlay;
 public abstract class Element {
     private int index = 0;
     private String id;
+    private boolean enabled = true;
+    private Node node; // Underlying JavaFX component
 
     public String getId() {
         return id;
@@ -55,11 +59,33 @@ public abstract class Element {
         this.index = index;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (getNode() != null) {
+            getNode().setDisable(!enabled);
+        } else {
+            Exception exception = new RuntimeException("Node is not rendered!");
+            exception.printStackTrace();
+        }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
     /**
      * Assembles the element into its JavaFX {@link Node}.
      *
      * <p>
-     *     For {@link Overlay}'s it will return the {@link Overlay#render()} result.
+     *     For {@link Overlay}'s it will return the render functions. Examples: {@link TextOverlay#render()}, {@link ImageOverlay#render()}
      * </p>
      * <p>
      *     For {@link Layout}'s it will return the {@link Layout#render()} result.

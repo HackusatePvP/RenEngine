@@ -25,7 +25,7 @@ public class ScrollContainer extends Container {
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
         super(new ScrollPane(), x, y, width, height);
-        this.scrollPane = (ScrollPane) getView();
+        this.scrollPane = (ScrollPane) getNode();
         this.layout = layout;
     }
 
@@ -134,7 +134,7 @@ public class ScrollContainer extends Container {
 
         // Build pane layout for the scroll content
         VBox pane = (VBox) layout.assemble();
-        LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getView(), layout);
+        LayoutRenderEvent event = new LayoutRenderEvent((Pane) layout.getNode(), layout);
         layout.getRenderEvents().forEach(iLayoutRender -> iLayoutRender.onLayoutRender(event));
         pane.setAlignment(layout.getAlignment());
 

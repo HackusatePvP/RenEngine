@@ -18,7 +18,6 @@ import java.util.*;
  */
 public class Renderer extends Element {
     private final TreeMap<Integer, Element> elements = new TreeMap<>();
-    private Node view;
     private double width, height;
     private double prefWidth, prefHeight;
     private double maxWidth, maxHeight;
@@ -28,23 +27,6 @@ public class Renderer extends Element {
     private double borderWidth = 1;
 
     private final List<String> styles = new ArrayList<>();
-    private final Map<String, Node> renderedNodes = new HashMap<>();
-
-    public Map<String, Node> getRenderedNodes() {
-        return renderedNodes;
-    }
-
-    public Node getView() {
-        return view;
-    }
-
-    public void setView(Node view) {
-        this.view = view;
-    }
-
-    public Node getNode(String id) {
-        return renderedNodes.get(id);
-    }
 
     public double getWidth() {
         return width;
@@ -52,7 +34,7 @@ public class Renderer extends Element {
 
     public void setWidth(double width) {
         this.width = width;
-        if (view instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setMinWidth(width);
         }
     }
@@ -64,7 +46,7 @@ public class Renderer extends Element {
     public void setHeight(double height) {
         this.height = height;
 
-        if (getView() instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setMinHeight(height);
         }
     }
@@ -80,7 +62,7 @@ public class Renderer extends Element {
     public void setPrefWidth(double prefWidth) {
         this.prefWidth = prefWidth;
 
-        if (getView() instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setPrefWidth(height);
         }
     }
@@ -88,7 +70,7 @@ public class Renderer extends Element {
     public void setPrefHeight(double prefHeight) {
         this.prefHeight = prefHeight;
 
-        if (getView() instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setPrefHeight(height);
         }
     }
@@ -97,7 +79,7 @@ public class Renderer extends Element {
         this.prefWidth = width;
         this.prefHeight = height;
 
-        if (getView() instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setPrefSize(width, height);
         }
     }
@@ -114,7 +96,7 @@ public class Renderer extends Element {
         this.maxWidth = width;
         this.maxHeight = height;
 
-        if (getView() instanceof Region region) {
+        if (getNode() instanceof Region region) {
             region.setMaxSize(width, height);
         }
     }
@@ -197,7 +179,7 @@ public class Renderer extends Element {
             overlay.setNode(node);
         }
         if (element instanceof Renderer renderer) {
-            renderer.setView(node);
+            renderer.setNode(node);
         }
         addToView(node, index);
     }
@@ -233,7 +215,7 @@ public class Renderer extends Element {
             removeFromView(overlay.getNode());
         }
         if (element instanceof Renderer renderer) {
-            removeFromView(renderer.getView());
+            removeFromView(renderer.getNode());
         }
     }
 
@@ -256,13 +238,13 @@ public class Renderer extends Element {
 
     public void removeAllElements() {
         elements.clear();
-        if (view instanceof Pane pane) {
+        if (getNode() instanceof Pane pane) {
             pane.getChildren().clear();
         }
     }
 
     public void replaceElement(int index, Element element) {
-        if (view instanceof Pane pane) {
+        if (getNode() instanceof Pane pane) {
             pane.getChildren().remove(index);
             pane.getChildren().add(index, element.assemble());
             elements.replace(index, element);
@@ -270,7 +252,7 @@ public class Renderer extends Element {
     }
 
     public void addToView(Node node, int index) {
-        if (view instanceof Pane pane) {
+        if (getNode() instanceof Pane pane) {
             if (!pane.getChildren().contains(node)) {
                 if (index < pane.getChildren().size()) {
                     pane.getChildren().add(index, node);
@@ -284,7 +266,7 @@ public class Renderer extends Element {
     }
 
     public void removeFromView(Node node) {
-        if (view instanceof Pane pane) {
+        if (getNode() instanceof Pane pane) {
             pane.getChildren().remove(node);
         }
     }
@@ -345,11 +327,11 @@ public class Renderer extends Element {
         Node node = null;
         if (this instanceof Container container) {
             node = container.build();
-            container.setView(node);
+            container.setNode(node);
         }
         if (this instanceof Layout layout) {
             node = layout.render();
-            layout.setView(node);
+            layout.setNode(node);
         }
 
         // Assemble existing elements.

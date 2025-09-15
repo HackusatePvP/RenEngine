@@ -38,7 +38,7 @@ public abstract class Container extends Renderer {
     private final List<IContainerRender> renderEvents = new LinkedList<>();
 
     public Container(Node view, double x, double y, double width, double height) {
-        setView(view);
+        setNode(view);
         this.x = x;
         this.y = y;
         setWidth(width);
@@ -46,14 +46,13 @@ public abstract class Container extends Renderer {
     }
 
     public Container(Node view, double x, double y, double width, double height, int index) {
-        setView(view);
+        setNode(view);
         this.x = x;
         this.y = y;
         setWidth(width);
         setHeight(height);
         setIndex(index);
     }
-
 
     /**
      * @return The x position of the container in correlation to the window.

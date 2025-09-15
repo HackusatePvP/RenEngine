@@ -48,7 +48,7 @@ public class TitledLayout extends VerticalLayout {
 
 
     public void setSpacing(double spacing) {
-        VBox vBox = (VBox) getView();
+        VBox vBox = (VBox) getNode();
         vBox.setSpacing(spacing);
     }
 

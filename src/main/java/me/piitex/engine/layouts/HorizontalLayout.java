@@ -13,7 +13,7 @@ public class HorizontalLayout extends Layout {
 
     public HorizontalLayout(double width, double height) {
         super(new HBox(), width, height);
-        this.pane = (HBox) getView();
+        this.pane = (HBox) getNode();
     }
 
     public int getSpacing() {

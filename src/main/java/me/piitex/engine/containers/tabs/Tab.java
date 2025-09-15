@@ -15,7 +15,7 @@ public class Tab extends Renderer {
         this.jfxTab = new javafx.scene.control.Tab(text);
         this.content = new Pane();
 
-        setView(content);
+        setNode(content);
     }
 
     public String getText() {

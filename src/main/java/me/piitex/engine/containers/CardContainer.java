@@ -18,12 +18,12 @@ public class CardContainer extends Container {
 
     public CardContainer(double x, double y, double width, double height) {
         super(new Card(), x, y, width, height);
-        this.atlantafxCard = (Card) getView();
+        this.atlantafxCard = (Card) getNode();
     }
 
     public CardContainer(double width, double height) {
         super(new Card(), 0, 0, width, height);
-        this.atlantafxCard = (Card) getView();
+        this.atlantafxCard = (Card) getNode();
     }
 
     /**

@@ -11,7 +11,7 @@ public class VerticalLayout extends Layout {
 
     public VerticalLayout(double width, double height) {
         super(new VBox(), width, height);
-        this.pane = (VBox) getView();
+        this.pane = (VBox) getNode();
     }
 
     public double getSpacing() {

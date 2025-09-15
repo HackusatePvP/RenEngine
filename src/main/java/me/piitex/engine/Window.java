@@ -344,7 +344,7 @@ public class Window {
         for (Map.Entry<Integer, Container> entry : containers.entrySet()) {
             if (entry.getValue() == container) {
                 toRemove = entry.getKey();
-                root.getChildren().remove(container.getView());
+                root.getChildren().remove(container.getNode());
                 break;
             }
         }
@@ -513,8 +513,8 @@ public class Window {
      * @param container The container to render.
      */
     private void renderContainer(Container container) {
-        if (container.getView() != null) {
-            root.getChildren().remove(container.getView());
+        if (container.getNode() != null) {
+            root.getChildren().remove(container.getNode());
         }
 
         root.getChildren().add(container.assemble());

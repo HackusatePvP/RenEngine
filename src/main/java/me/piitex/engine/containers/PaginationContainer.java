@@ -15,7 +15,7 @@ public class PaginationContainer extends Container {
 
     public PaginationContainer(double x, double y, double width, double height) {
         super(new Pagination(), x, y, width, height);
-        this.pagination = (Pagination) getView();
+        this.pagination = (Pagination) getNode();
     }
 
     public PaginationContainer(double width, double height) {

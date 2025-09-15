@@ -23,17 +23,17 @@ public class ModalContainer extends Container {
 
     public ModalContainer(double width, double height) {
         super(new ModalBox(), 0, 0, width, height);
-        this.modalBox = (ModalBox) getView();
+        this.modalBox = (ModalBox) getNode();
     }
 
     public ModalContainer(double x, double y, double width, double height) {
         super(new ModalBox(), x, y, width, height);
-        this.modalBox = (ModalBox) getView();
+        this.modalBox = (ModalBox) getNode();
     }
 
     public ModalContainer(double x, double y, double width, double height, int index) {
         super(new ModalBox(), x, y, width, height, index);
-        this.modalBox = (ModalBox) getView();
+        this.modalBox = (ModalBox) getNode();
     }
 
     public Element getContent() {
@@ -90,7 +90,7 @@ public class ModalContainer extends Container {
         }
         modalBox.getStyleClass().addAll(getStyles());
 
-        setView(modalBox);
+        setNode(modalBox);
 
         return modalBox;
     }
