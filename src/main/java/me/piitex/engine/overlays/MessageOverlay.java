@@ -28,6 +28,7 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         this.title = title;
         this.description = description;
         this.atlantafxMessage = new Message(title, description);
+        setNode(atlantafxMessage);
     }
 
 
@@ -52,6 +53,7 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         this.title = title;
         this.description = description;
         this.atlantafxMessage = new Message(title, description);
+        setNode(atlantafxMessage);
     }
 
     /**
@@ -78,6 +80,7 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
 
         Node graphicNode = (graphicOverlay != null) ? graphicOverlay.render() : null;
         this.atlantafxMessage = new Message(title, description, graphicNode);
+        setNode(atlantafxMessage);
     }
 
 

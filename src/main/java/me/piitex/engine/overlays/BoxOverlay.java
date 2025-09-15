@@ -14,12 +14,14 @@ public class BoxOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         this.rectangle = new Rectangle(width, height);
+        setNode(rectangle);
     }
 
     public BoxOverlay(double width, double height, double x, double y) {
         this.width = width;
         this.height = height;
         this.rectangle = new Rectangle(width, height);
+        setNode(rectangle);
         setX(x);
         setY(y);
     }
@@ -29,12 +31,14 @@ public class BoxOverlay extends Overlay implements Region {
         this.height = height;
         this.fillColor = color;
         this.rectangle = new Rectangle(width, height);
+        setNode(rectangle);
     }
     public BoxOverlay(double width, double height, double x, double y, Color color) {
         this.width = width;
         this.height = height;
         this.strokeColor = color;
         this.rectangle = new Rectangle(width, height);
+        setNode(rectangle);
         setX(x);
         setY(y);
     }

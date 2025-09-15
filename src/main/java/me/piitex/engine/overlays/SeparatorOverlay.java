@@ -13,6 +13,7 @@ public class SeparatorOverlay extends Overlay implements Region {
     public SeparatorOverlay(Orientation orientation) {
         this.separator = new Separator(orientation);
         this.orientation = orientation;
+        setNode(separator);
     }
 
     public Orientation getOrientation(Orientation orientation) {

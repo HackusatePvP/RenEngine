@@ -16,6 +16,7 @@ public class ToggleSwitchOverlay extends Overlay {
         this.toggleSwitch = new ToggleSwitch();
         this.defaultValue = defaultValue;
         this.currentValue = defaultValue;
+        setNode(toggleSwitch);
     }
 
     public boolean getDefaultValue() {

@@ -12,6 +12,7 @@ public class ProgressBarOverlay extends Overlay implements Region {
 
     public ProgressBarOverlay() {
         this.progressBar = new ProgressBar();
+        setNode(progressBar);
     }
 
     public void bind(ObservableValue<? extends Number> binding) {

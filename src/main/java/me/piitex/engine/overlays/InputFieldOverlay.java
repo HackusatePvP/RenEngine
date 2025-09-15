@@ -22,6 +22,7 @@ public class InputFieldOverlay extends Overlay implements Region {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
+        setNode(textField);
         setX(x);
         setY(y);
     }
@@ -32,6 +33,7 @@ public class InputFieldOverlay extends Overlay implements Region {
         this.hintText = hintText;
         this.width = width;
         this.height = height;
+        setNode(textField);
         setX(x);
         setY(y);
     }
@@ -92,7 +94,6 @@ public class InputFieldOverlay extends Overlay implements Region {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
             }
         });
-
         setInputControls(textField);
         return textField;
     }

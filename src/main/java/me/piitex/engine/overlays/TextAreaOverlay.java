@@ -27,6 +27,7 @@ public class TextAreaOverlay extends Overlay implements Region {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
+        setNode(textArea);
         setX(x);
         setY(y);
     }
@@ -37,6 +38,7 @@ public class TextAreaOverlay extends Overlay implements Region {
         this.hintText = hintText;
         this.width = width;
         this.height = height;
+        setNode(textArea);
         setX(x);
         setY(y);
     }

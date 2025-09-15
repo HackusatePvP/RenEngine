@@ -15,12 +15,14 @@ public class HyperLinkOverlay extends Overlay {
     public HyperLinkOverlay(String link) {
         this.hyperlink = new Hyperlink(link);
         this.link = link;
+        setNode(hyperlink);
     }
 
     public HyperLinkOverlay(String link, String text) {
         this.hyperlink = new Hyperlink(text);
         this.link = link;
         this.text = text;
+        setNode(hyperlink);
     }
 
     public String getLink() {

@@ -22,15 +22,16 @@ public class SliderOverlay extends Overlay implements Region {
         this.maxValue = maxValue;
         this.currentValue = currentValue;
         this.slider = new Slider(minValue, maxValue, currentValue);
+        setNode(slider);
     }
 
     public SliderOverlay(double minValue, double maxValue, double currentValue, double x, double y, double width, double height) {
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.currentValue = currentValue;
-        this.slider = new Slider(minValue, maxValue, currentValue);
+        this(minValue, maxValue, currentValue);
+        setNode(slider);
         setX(x);
         setY(y);
+        setWidth(width);
+        setHeight(height);
     }
 
     public double getMaxValue() {

@@ -24,6 +24,7 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         this.text = text;
+        setNode(textFlow);
     }
 
     public TextFlowOverlay(String text, FontLoader fontLoader, int width, int height) {
@@ -32,6 +33,7 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.font = fontLoader;
         this.width = width;
         this.height = height;
+        setNode(textFlow);
     }
 
     public TextFlowOverlay(TextOverlay text, int width, int height) {
@@ -39,6 +41,7 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         texts.add(text);
+        setNode(textFlow);
     }
 
     public TextFlowOverlay(LinkedList<Overlay> texts, int width, int height) {
@@ -46,6 +49,7 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         this.texts = texts;
+        setNode(textFlow);
     }
 
     public LinkedList<Overlay> getTexts() {

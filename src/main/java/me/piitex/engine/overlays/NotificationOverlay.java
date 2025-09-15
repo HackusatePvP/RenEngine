@@ -27,6 +27,7 @@ public class NotificationOverlay extends Overlay implements Region {
         this.message = message;
         this.graphic = graphic;
         this.notification = new Notification(message, graphic);
+        setNode(notification);
     }
 
     @Override

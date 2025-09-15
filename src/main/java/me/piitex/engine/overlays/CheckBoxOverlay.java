@@ -17,6 +17,7 @@ public class CheckBoxOverlay extends Overlay {
         this.checkBox = new CheckBox(label);
         this.defaultValue = check;
         this.label = label;
+        setNode(checkBox);
     }
 
     public boolean isDefaultValue() {

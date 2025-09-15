@@ -62,6 +62,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 "default",
                 applyTextStyle()
         );
+        setNode(textArea);
     }
 
     public RichTextAreaOverlay(String defaultInput, String hintText, double width, double height) {
@@ -76,6 +77,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 "default",
                 applyTextStyle()
         );
+        setNode(textArea);
     }
 
     public BiConsumer<TextExt, String> applyTextStyle() {

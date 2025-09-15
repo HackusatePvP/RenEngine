@@ -22,6 +22,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
     public ChoiceBoxOverlay(List<String> items) {
         this.choiceBox = new ChoiceBox<>();
         this.items = items;
+        setNode(choiceBox);
     }
 
     public ChoiceBoxOverlay(List<String> items, double width, double height) {
@@ -29,6 +30,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         this.items = items;
         this.width = width;
         this.height = height;
+        setNode(choiceBox);
     }
 
     public ChoiceBoxOverlay(String[] items, double width, double height) {
@@ -36,6 +38,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         this.items = List.of(items);
         this.width = width;
         this.height = height;
+        setNode(choiceBox);
     }
 
     public ChoiceBoxOverlay(List<String> items, double width, double height, double x, double y) {
@@ -45,6 +48,7 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         this.height = height;
         setX(x);
         setY(y);
+        setNode(choiceBox);
     }
 
     public String getDefaultItem() {

@@ -21,6 +21,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
     public ComboBoxOverlay(List<String> items) {
         this.comboBox = new ComboBox<>();
         this.items = items;
+        setNode(comboBox);
     }
 
     public ComboBoxOverlay(List<String> items, double width, double height) {
@@ -28,6 +29,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.items = items;
         this.width = width;
         this.height = height;
+        setNode(comboBox);
     }
 
     public ComboBoxOverlay(String[] items, double width, double height) {
@@ -35,6 +37,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.items = List.of(items);
         this.width = width;
         this.height = height;
+        setNode(comboBox);
     }
 
     public ComboBoxOverlay(List<String> items, double width, double height, double x, double y) {
@@ -42,6 +45,7 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.items = items;
         this.width = width;
         this.height = height;
+        setNode(comboBox);
         setX(x);
         setY(y);
     }

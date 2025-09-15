@@ -68,7 +68,6 @@ public abstract class Overlay extends Element {
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
     private Cursor cursor;
-    private Node node;
 
 
     // Specific style sheet files
@@ -84,8 +83,8 @@ public abstract class Overlay extends Element {
     public void setX(double x) {
         this.x = x;
 
-        if (node != null) {
-            node.setTranslateY(x);
+        if (getNode() != null) {
+            getNode().setTranslateY(x);
         }
     }
 
@@ -96,8 +95,8 @@ public abstract class Overlay extends Element {
     public void setY(double y) {
         this.y = y;
 
-        if (node != null) {
-            node.setTranslateY(y);
+        if (getNode() != null) {
+            getNode().setTranslateY(y);
         }
     }
 
@@ -173,34 +172,12 @@ public abstract class Overlay extends Element {
         return styles;
     }
 
-    public Node getNode() {
-        return node;
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
-    }
-
     public Cursor getCursor() {
         return cursor;
     }
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
-    }
-
-    public boolean isEnabled() {
-        if (getNode() != null) {
-            return !getNode().isDisable();
-        }
-
-        return false;
-    }
-
-    public void setEnabled(boolean enabled) {
-        if (getNode() != null) {
-            getNode().setDisable(!enabled);
-        }
     }
 
     /**

@@ -9,7 +9,6 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
     private final Spinner<Number> spinner;
     private final Number min, max, def;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth = 1, scaleHeight = 1;
     private IValueChange change;
 
     public SpinnerNumberOverlay(double min, double max, double def) {
@@ -17,6 +16,7 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         this.max = max;
         this.def = def;
         this.spinner = new Spinner<>(min, max, def);
+        setNode(spinner);
     }
 
     public SpinnerNumberOverlay(int min, int max, int def) {
@@ -24,6 +24,7 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         this.max = max;
         this.def = def;
         this.spinner = new Spinner<>(min, max, def);
+        setNode(spinner);
     }
 
     public Number getMin() {

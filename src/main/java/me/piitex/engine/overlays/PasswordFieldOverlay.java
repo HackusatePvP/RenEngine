@@ -22,6 +22,7 @@ public class PasswordFieldOverlay extends Overlay implements Region {
         this.defaultInput = defaultInput;
         this.width = width;
         this.height = height;
+        setNode(textField);
         setX(x);
         setY(y);
     }
