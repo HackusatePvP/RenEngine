@@ -2,10 +2,13 @@ package me.piitex.engine;
 
 
 import javafx.scene.Node;
+import me.piitex.engine.exceptions.NodeNotDefinedException;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.ImageOverlay;
 import me.piitex.engine.overlays.Overlay;
 import me.piitex.engine.overlays.TextOverlay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a graphical element that can be rendered to the {@link Window} or a {@link Container}.
@@ -24,6 +27,8 @@ public abstract class Element {
     private String id;
     private boolean enabled = true;
     private Node node; // Underlying JavaFX component
+
+    private static final Logger logger = LoggerFactory.getLogger(Element.class);
 
     public String getId() {
         return id;
@@ -64,8 +69,8 @@ public abstract class Element {
         if (getNode() != null) {
             getNode().setDisable(!enabled);
         } else {
-            Exception exception = new RuntimeException("Node is not rendered!");
-            exception.printStackTrace();
+            NodeNotDefinedException exception = new NodeNotDefinedException(this);
+            logger.error(exception.getMessage(), exception);
         }
     }
 
