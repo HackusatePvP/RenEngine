@@ -24,23 +24,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Element {
     private int index = 0;
-    private String id;
     private boolean enabled = true;
     private Node node; // Underlying JavaFX component
 
     private static final Logger logger = LoggerFactory.getLogger(Element.class);
-
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets an identifier for the element. Used to fetch the compiled {@link javafx.scene.Node} after rendering.
-     * @param id Unique identifier.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
 
     /**
      * Retrieves the rendering index of this element.
