@@ -63,7 +63,7 @@ public class JavaFXLoad extends Application {
         // Start building the gui
 
         // Render your first view/container for the application.
-        Container container = new HomeView().getContainer();
+        Container container = new HomeView();
 
         // Add the container to the window. Calling this function later in the process will allow the container to fully build before displaying.
         window.addContainer(container);
@@ -76,6 +76,22 @@ public class JavaFXLoad extends Application {
         // This function will call everything above. This is JavaFX API.
         // Renders GUI components
         launch();
+    }
+}
+```
+Create your first view.
+```java
+import me.piitex.engine.Container;
+import me.piitex.engine.overlays.TextOverlay;
+
+public class HomeView extends Container {
+
+    public HomeView() {
+        // Build your first view
+        TextOverlay text = new TextOverlay("Example text");
+        text.setX(20);
+        text.setY(20);
+        addElement(text);
     }
 }
 ```
