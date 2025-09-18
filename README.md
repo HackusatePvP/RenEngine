@@ -1,5 +1,5 @@
 # RenEngine
-Simplified JavaFX framework for creating basic applications.
+Simplified JavaFX framework for creating basic applications. Now supports JDK 25.
 
 ## Warning
 The framework is untested for production. Will not work with mobile devices.
