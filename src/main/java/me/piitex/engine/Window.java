@@ -469,7 +469,9 @@ public class Window {
      * For most use cases, {@link #render()} is recommended as it also shows the updated display.
      */
     public void build() {
-        build(false);
+        if (!containers.isEmpty()) {
+            build(false);
+        }
     }
 
     /**
@@ -478,10 +480,6 @@ public class Window {
      * @param reset True to reset the scene (clears and initialises the root pane and scene), false to only clear children.
      */
     public void build(boolean reset) {
-        if (containers.isEmpty()) {
-            System.err.println("You must add containers to the window before every render call.");
-        }
-
         root.getChildren().clear();
         root.getStylesheets().clear();
         if (reset) {
