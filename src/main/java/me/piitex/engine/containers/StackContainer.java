@@ -9,8 +9,9 @@ public class StackContainer extends Container {
     private final StackPane pane;
 
     public StackContainer(double width, double height) {
-        super(new StackPane(), 0, 0, width, height);
-        this.pane = (StackPane) getNode();
+        StackPane tempPane = new StackPane();
+        this.pane = tempPane;
+        super(tempPane, 0, 0, width, height);
     }
 
     public StackPane getPane() {

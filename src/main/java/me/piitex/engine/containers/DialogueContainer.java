@@ -23,15 +23,17 @@ public class DialogueContainer extends Container {
     private final Pane pane;
 
     public DialogueContainer(String header, double width, double height) {
-        super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getNode();
+        Pane tempPane = new Pane();
+        this.pane = tempPane;
         this.header = header;
+        super(tempPane, 0, 0, width, height);
     }
 
     public DialogueContainer(String header, double x, double y, double width, double height) {
-        super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getNode();
+        Pane tempPane = new Pane();
+        this.pane = tempPane;
         this.header = header;
+        super(tempPane, x, y, width, height);
     }
 
     public String getHeader() {

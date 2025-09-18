@@ -10,8 +10,9 @@ public class VerticalLayout extends Layout {
     private double spacing = 10;
 
     public VerticalLayout(double width, double height) {
-        super(new VBox(), width, height);
-        this.pane = (VBox) getNode();
+        VBox tempPane = new VBox();
+        this.pane = tempPane;
+        super(tempPane, width, height);
     }
 
     public double getSpacing() {

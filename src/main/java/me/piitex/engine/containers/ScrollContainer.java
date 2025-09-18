@@ -24,8 +24,9 @@ public class ScrollContainer extends Container {
     private double scrollPosition;
 
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
-        super(new ScrollPane(), x, y, width, height);
-        this.scrollPane = (ScrollPane) getNode();
+        ScrollPane tempPane = new ScrollPane();
+        this.scrollPane = tempPane;
+        super(tempPane, x, y, width, height);
         this.layout = layout;
     }
 

@@ -21,19 +21,18 @@ public class ModalContainer extends Container {
     private final ModalBox modalBox;
     private Element content;
 
+    public ModalContainer(double x, double y, double width, double height, int index) {
+        ModalBox tempBox = new ModalBox();
+        this.modalBox = tempBox;
+        super(tempBox, x, y, width, height, index);
+    }
+
     public ModalContainer(double width, double height) {
-        super(new ModalBox(), 0, 0, width, height);
-        this.modalBox = (ModalBox) getNode();
+        this(0, 0, width, height, 0);
     }
 
     public ModalContainer(double x, double y, double width, double height) {
-        super(new ModalBox(), x, y, width, height);
-        this.modalBox = (ModalBox) getNode();
-    }
-
-    public ModalContainer(double x, double y, double width, double height, int index) {
-        super(new ModalBox(), x, y, width, height, index);
-        this.modalBox = (ModalBox) getNode();
+        this(x, y, width, height, 0);
     }
 
     public Element getContent() {

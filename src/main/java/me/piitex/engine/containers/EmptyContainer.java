@@ -30,24 +30,22 @@ import java.util.Map;
 public class EmptyContainer extends Container {
     private final Pane pane;
 
-    public EmptyContainer(double x, double y, double width, double height) {
-        super(new Pane(), x, y, width, height);
-        this.pane = (Pane) getNode();
+    public EmptyContainer(double x, double y, double width, double height, int index) {
+        Pane tempPane = new Pane();
+        this.pane = tempPane;
+        super(tempPane, x, y, width, height, index);
     }
 
-    public EmptyContainer(double x, double y, double width, double height, int index) {
-        super(new Pane(), x, y, width, height, index);
-        this.pane = (Pane) getNode();
+    public EmptyContainer(double x, double y, double width, double height) {
+        this(x, y, width, height, 0);
     }
 
     public EmptyContainer(double width, double height) {
-        super(new Pane(), 0, 0, width, height);
-        this.pane = (Pane) getNode();
+        this(0, 0, width, height, 0);
     }
 
     public EmptyContainer(double width, double height, int index) {
-        super(new Pane(), 0, 0, width, height, index);
-        this.pane = (Pane) getNode();
+        this(0, 0, width, height, index);
     }
 
     public Pane getPane() {

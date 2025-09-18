@@ -12,8 +12,9 @@ public class FlowLayout extends Layout {
     private final FlowPane pane;
 
     public FlowLayout(double width, double height) {
-        super(new FlowPane(), width, height);
-        this.pane = (FlowPane) getNode();
+        FlowPane tempPane = new FlowPane();
+        this.pane = tempPane;
+        super(tempPane, width, height);
     }
 
     public int getVerticalSpacing() {

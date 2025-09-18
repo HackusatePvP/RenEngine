@@ -16,14 +16,14 @@ public class TabsContainer extends Container {
     private boolean closeTabs = false;
     private String selectedTab;
 
-    public TabsContainer(double x, double y, double width, double height) {
-        super(new TabPane(), x, y, width, height);
-        this.tabPane = (TabPane) getNode();
+    public TabsContainer(double x, double y, double width, double height, int index) {
+        TabPane tempPane = new TabPane();
+        this.tabPane = tempPane;
+        super(tempPane, x, y, width, height, index);
     }
 
-    public TabsContainer(double x, double y, double width, double height, int index) {
-        super(new TabPane(), x, y, width, height, index);
-        this.tabPane = (TabPane) getNode();
+    public TabsContainer(double x, double y, double width, double height) {
+        this(x, y, width, height, 0);
     }
 
     public Map<String, Tab> getTabs() {

@@ -15,19 +15,18 @@ public class TileContainer extends Container {
     private String description;
     private Element action;
 
-    public TileContainer() {
-        super(new Tile(), 0, 0, 0, 0);
-        this.tile = (Tile) getNode();
+    public TileContainer(double x, double y, double width, double height) {
+        Tile tempTile = new Tile();
+        this.tile = tempTile;
+        super(tempTile, x, y, width, height);
     }
 
-    public TileContainer(double x, double y, double width, double height) {
-        super(new Tile(), x, y, width, height);
-        this.tile = (Tile) getNode();
+    public TileContainer() {
+        this(0,0,0,0);
     }
 
     public TileContainer(double width, double height) {
-        super(new Tile(), 0, 0, width, height);
-        this.tile = (Tile) getNode();
+        this(0, 0, width, height);
     }
 
     public Element getGraphic() {

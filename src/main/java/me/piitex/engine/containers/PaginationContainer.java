@@ -14,8 +14,9 @@ public class PaginationContainer extends Container {
     private final List<Renderer> pages = new LinkedList<>();
 
     public PaginationContainer(double x, double y, double width, double height) {
-        super(new Pagination(), x, y, width, height);
-        this.pagination = (Pagination) getNode();
+        Pagination tempPage = new Pagination();
+        this.pagination = tempPage;
+        super(tempPage, x, y, width, height);
     }
 
     public PaginationContainer(double width, double height) {

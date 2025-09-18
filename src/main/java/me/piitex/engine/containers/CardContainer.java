@@ -17,13 +17,17 @@ public class CardContainer extends Container {
     private Element footer;
 
     public CardContainer(double x, double y, double width, double height) {
-        super(new Card(), x, y, width, height);
-        this.atlantafxCard = (Card) getNode();
+        // Java 25 Update: You can now call code before the super() method
+        // I think this is slightly better than confusing casting.
+        Card card = new Card();
+        this.atlantafxCard = card;
+        super(card, x, y, width, height);
     }
 
     public CardContainer(double width, double height) {
-        super(new Card(), 0, 0, width, height);
-        this.atlantafxCard = (Card) getNode();
+        Card card = new Card();
+        this.atlantafxCard = card;
+        super(card, 0, 0, width, height);
     }
 
     /**
