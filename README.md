@@ -80,11 +80,12 @@ public class JavaFXLoad extends Application {
 }
 ```
 Create your first view.
+
 ```java
-import me.piitex.engine.Container;
+import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.overlays.TextOverlay;
 
-public class HomeView extends Container {
+public class HomeView extends EmptyContainer {
 
     public HomeView() {
         // Build your first view
