@@ -594,6 +594,7 @@ public class Window {
     public void renderPopup(Overlay overlay, double x, double y, double width, double height, boolean autoClose, TextOverlay label) {
         EmptyContainer container = new EmptyContainer(x, y, width, height);
         container.setPrefSize(width, height);
+        container.setMaxSize(width, height);
 
         if (currentPopup != null) {
             removeContainer(currentPopup);
