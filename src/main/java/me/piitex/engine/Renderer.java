@@ -25,8 +25,8 @@ public class Renderer extends Element {
     private Color backgroundColor;
     private Color borderColor;
     private double borderWidth = 1;
-
     private final List<String> styles = new ArrayList<>();
+
 
     public double getWidth() {
         return width;

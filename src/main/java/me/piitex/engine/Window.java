@@ -73,7 +73,8 @@ public class Window {
     private final String title;
     private final ImageLoader icon;
     private final StageStyle stageStyle;
-    private int width, height;
+    private double initialWidth, initialHeight;
+    private double width, height;
     private boolean fullscreen, maximized ;
     private Color backgroundColor;
     private Stage stage;
@@ -114,13 +115,13 @@ public class Window {
         this.icon = builder.getIcon();
         this.width = builder.getWidth();
         this.height = builder.getHeight();
+        this.initialWidth = builder.getWidth();
+        this.initialHeight = builder.getHeight();
         this.backgroundColor = builder.getBackgroundColor();
         this.fullscreen = builder.isFullscreen();
         this.maximized = builder.isMaximized();
         this.focused = builder.isFocused();
         this.scale = builder.isScale();
-        RenConfiguration.setWidth(width);
-        RenConfiguration.setHeight(height);
         buildStage();
 
         // Display stage.
@@ -150,9 +151,7 @@ public class Window {
         root.setPrefSize(width, height);
 
         if (scale) {
-            double scaleWidth = (double) width / RenConfiguration.getWidth();
-            double scaleHeight = (double) height / RenConfiguration.getHeight();
-            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+            Scale scale = new Scale(getWidthScale(), getHeightScale(), 0, 0);
             root.getTransforms().setAll(scale);
             handleWindowScaling(stage);
         }
@@ -207,20 +206,20 @@ public class Window {
      * Retrieves the configured width of the window.
      * @return The window width.
      */
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
     public void setWidth(int width) {
         this.width = width;
-        RenConfiguration.setWidth(width);
+        this.initialWidth = width;
         stage.setWidth(width);
         root.getTransforms().clear();
     }
 
     public void setHeight(int height) {
         this.height = height;
-        RenConfiguration.setHeight(height);
+        this.initialHeight = height;
         stage.setHeight(height);
         root.getTransforms().clear();
     }
@@ -229,8 +228,16 @@ public class Window {
      * Retrieves the configured height of the window.
      * @return The window height.
      */
-    public int getHeight() {
+    public double getHeight() {
         return height;
+    }
+
+    public double getWidthScale() {
+        return width / initialWidth;
+    }
+
+    public double getHeightScale() {
+        return height / initialHeight;
     }
 
     /**
@@ -576,8 +583,8 @@ public class Window {
         };
 
         // Adjust calculatedX and calculatedY for the root Pane's current scaling
-        double currentScaleX = RenConfiguration.getWidthScale();
-        double currentScaleY = RenConfiguration.getHeightScale();
+        double currentScaleX = getWidthScale();
+        double currentScaleY = getHeightScale();
 
         // Prevent division by zero if scales are not yet initialized or are zero
         if (currentScaleX == 0) currentScaleX = 1.0;
@@ -680,8 +687,8 @@ public class Window {
             }
         };
 
-        double currentScaleX = RenConfiguration.getWidthScale();
-        double currentScaleY = RenConfiguration.getHeightScale();
+        double currentScaleX = getWidthScale();
+        double currentScaleY = getHeightScale();
 
         if (currentScaleX == 0) currentScaleX = 1.0;
         if (currentScaleY == 0) currentScaleY = 1.0;
@@ -705,19 +712,19 @@ public class Window {
     private void handleWindowScaling(Stage stage) {
         // This scales the application to the desired width and height that it is running at.
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-            RenConfiguration.setCurrentWindowHeight(newValue.doubleValue());
+            this.height = newValue.doubleValue();
 
-            double scaleWidth = RenConfiguration.getWidthScale();
-            double scaleHeight = newValue.doubleValue() / RenConfiguration.getHeight();
+            double scaleWidth = getWidthScale();
+            double scaleHeight = getHeightScale();
 
             Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
             root.getTransforms().setAll(scale);
         });
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
-            RenConfiguration.setCurrentWindowWidth(newValue.doubleValue());
+            this.width = newValue.doubleValue();
 
-            double scaleWidth = newValue.doubleValue() / RenConfiguration.getWidth();
-            double scaleHeight = RenConfiguration.getHeightScale();
+            double scaleWidth = getWidthScale();
+            double scaleHeight = getHeightScale();
 
             Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
             root.getTransforms().setAll(scale);
