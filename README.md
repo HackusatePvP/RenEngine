@@ -119,6 +119,7 @@ Configure Maven to properly build an executable jar file.
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
+                            You will need to change this!!!
                             <mainClass>me.piitex.app.Main</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
@@ -155,6 +156,7 @@ Configure Maven to properly build an executable jar file.
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    ALSO CHANGE THIS
                                     <mainClass>me.piitex.app.Main</mainClass>
                                 </transformer>
                                 <!-- Need for Ikonli fonts to work -->
