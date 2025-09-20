@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import me.piitex.engine.containers.EmptyContainer;
+import me.piitex.engine.hanlders.IWindowResize;
+import me.piitex.engine.hanlders.events.WindowResizeEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
@@ -82,11 +84,11 @@ public class Window {
     private Pane root;
 
     private final boolean scale;
+    private final boolean focused;
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
-
-    private final boolean focused;
+    private IWindowResize windowResize;
 
     /**
      * Constructs a Window instance using properties defined in a {@link WindowBuilder}.
@@ -153,8 +155,9 @@ public class Window {
         if (scale) {
             Scale scale = new Scale(getWidthScale(), getHeightScale(), 0, 0);
             root.getTransforms().setAll(scale);
-            handleWindowScaling(stage);
         }
+
+        handleWindowScaling(stage);
 
         scene = new Scene(root);
 
@@ -709,6 +712,14 @@ public class Window {
         return currentPopup;
     }
 
+    public void onWindowResize(IWindowResize windowResize) {
+        this.windowResize = windowResize;
+    }
+
+    public IWindowResize getWindowResize() {
+        return windowResize;
+    }
+
     private void handleWindowScaling(Stage stage) {
         // This scales the application to the desired width and height that it is running at.
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -717,8 +728,15 @@ public class Window {
             double scaleWidth = getWidthScale();
             double scaleHeight = getHeightScale();
 
-            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
-            root.getTransforms().setAll(scale);
+            if (scale) {
+                Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+                root.getTransforms().setAll(scale);
+            } else {
+                if (getWindowResize() != null) {
+                    WindowResizeEvent event = new WindowResizeEvent(this, oldValue, newValue);
+                    getWindowResize().onWindowResize(event);
+                }
+            }
         });
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
             this.width = newValue.doubleValue();
@@ -726,8 +744,15 @@ public class Window {
             double scaleWidth = getWidthScale();
             double scaleHeight = getHeightScale();
 
-            Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
-            root.getTransforms().setAll(scale);
+            if (scale) {
+                Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
+                root.getTransforms().setAll(scale);
+            } else {
+                if (getWindowResize() != null) {
+                    WindowResizeEvent event = new WindowResizeEvent(this, oldValue, newValue);
+                    getWindowResize().onWindowResize(event);
+                }
+            }
         });
     }
 }
