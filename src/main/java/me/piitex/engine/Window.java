@@ -213,14 +213,14 @@ public class Window {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
         this.initialWidth = width;
         stage.setWidth(width);
         root.getTransforms().clear();
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
         this.initialHeight = height;
         stage.setHeight(height);
@@ -466,7 +466,7 @@ public class Window {
      * modifying, or removing {@link Overlay} or {@link Container} to update the display.
      * </p>
      */
-    protected void render() {
+    public void render() {
         build();
         if (focused) {
             stage.requestFocus();

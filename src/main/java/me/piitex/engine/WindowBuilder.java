@@ -26,8 +26,8 @@ public class WindowBuilder {
     private StageStyle stageStyle = StageStyle.DECORATED;
     private Pane root = new Pane();
     private ImageLoader icon;
-    private int width = 1920;
-    private int height = 1080;
+    private double width = 1920;
+    private double height = 1080;
     private Color backgroundColor = Color.BLACK;
     private boolean fullscreen = false;
     private boolean maximized = false;
@@ -79,7 +79,7 @@ public class WindowBuilder {
      * @param height The height of the window.
      * @return The current WindowBuild instance for chaining.
      */
-    public WindowBuilder setDimensions(int width, int height) {
+    public WindowBuilder setDimensions(double width, double height) {
         this.width = width;
         this.height = height;
         return this;
@@ -154,11 +154,11 @@ public class WindowBuilder {
         return icon;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

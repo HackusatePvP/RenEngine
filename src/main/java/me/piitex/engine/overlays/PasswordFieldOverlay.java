@@ -3,8 +3,6 @@ package me.piitex.engine.overlays;
 import atlantafx.base.controls.PasswordTextField;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 
