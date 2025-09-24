@@ -3,10 +3,13 @@ package me.piitex.engine.overlays;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.hanlders.events.TextAreaSubmitEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
+import me.piitex.engine.overlays.events.IOverlaySubmit;
+import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 import me.piitex.engine.overlays.events.ITextAreaSubmit;
 
 public class TextAreaOverlay extends Overlay implements Region {
@@ -92,10 +95,11 @@ public class TextAreaOverlay extends Overlay implements Region {
         });
 
         if (getiTextAreaSubmit() != null) {
-            textArea.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    if (event.isShiftDown()) {
-                        textArea.appendText("\n");
+            textArea.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    keyEvent.consume();
+                    if (keyEvent.isShiftDown()) {
+                        textArea.insertText(textArea.getCaretPosition(), "\n");
                     } else {
                         getiTextAreaSubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
                     }

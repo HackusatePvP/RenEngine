@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -304,9 +305,10 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         }
 
         if (getiOverlaySubmit() != null) {
-            textArea.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    if (event.isShiftDown()) {
+            textArea.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    keyEvent.consume();
+                    if (keyEvent.isShiftDown()) {
                         textArea.insertText(textArea.getCaretPosition(), "\n");
                     } else {
                         getiOverlaySubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
