@@ -3,12 +3,11 @@ package me.piitex.engine.overlays;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 import me.piitex.engine.hanlders.events.InputSetEvent;
+import me.piitex.engine.hanlders.events.TextAreaSubmitEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
-import me.piitex.engine.overlays.events.IOverlaySubmit;
-import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
+import me.piitex.engine.overlays.events.ITextAreaSubmit;
 
 public class TextAreaOverlay extends Overlay implements Region {
     private final TextArea textArea;
@@ -20,7 +19,7 @@ public class TextAreaOverlay extends Overlay implements Region {
     private String currentText;
 
     private IInputSetEvent iInputSetEvent;
-    private IOverlaySubmit iOverlaySubmit;
+    private ITextAreaSubmit iTextAreaSubmit;
 
     public TextAreaOverlay(String defaultInput, double x, double y, double width, double height) {
         this.textArea = new TextArea(defaultInput);
@@ -92,13 +91,13 @@ public class TextAreaOverlay extends Overlay implements Region {
             }
         });
 
-        if (getiOverlaySubmit() != null) {
+        if (getiTextAreaSubmit() != null) {
             textArea.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
                     if (event.isShiftDown()) {
                         textArea.appendText("\n");
                     } else {
-                        getiOverlaySubmit().onSubmit(new OverlaySubmitEvent(this, event));
+                        getiTextAreaSubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
                     }
                 }
             });
@@ -183,11 +182,11 @@ public class TextAreaOverlay extends Overlay implements Region {
         this.iInputSetEvent = iInputSetEvent;
     }
 
-    public IOverlaySubmit getiOverlaySubmit() {
-        return iOverlaySubmit;
+    public ITextAreaSubmit getiTextAreaSubmit() {
+        return iTextAreaSubmit;
     }
 
-    public void onSubmit(IOverlaySubmit iOverlaySubmit) {
-        this.iOverlaySubmit = iOverlaySubmit;
+    public void onSubmit(ITextAreaSubmit iOverlaySubmit) {
+        this.iTextAreaSubmit = iOverlaySubmit;
     }
 }

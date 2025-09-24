@@ -11,10 +11,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import me.piitex.engine.hanlders.events.InputSetEvent;
-import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
-import me.piitex.engine.loaders.FontLoader;
+import me.piitex.engine.hanlders.events.TextAreaSubmitEvent;
 import me.piitex.engine.overlays.events.IInputSetEvent;
-import me.piitex.engine.overlays.events.IOverlaySubmit;
+import me.piitex.engine.overlays.events.ITextAreaSubmit;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -40,7 +39,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private final String defaultInput;
     private Color textFill = Color.BLACK;
     private IInputSetEvent iInputSetEvent;
-    private IOverlaySubmit iOverlaySubmit;
+    private ITextAreaSubmit iOverlaySubmit;
     private ContextMenu contextMenu;
     private String backgroundColor;
     private String borderColor;
@@ -158,11 +157,11 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         this.iInputSetEvent = iInputSetEvent;
     }
 
-    public IOverlaySubmit getiOverlaySubmit() {
+    public ITextAreaSubmit getiOverlaySubmit() {
         return iOverlaySubmit;
     }
 
-    public void onSubmit(IOverlaySubmit iOverlaySubmit) {
+    public void onSubmit(ITextAreaSubmit iOverlaySubmit) {
         this.iOverlaySubmit = iOverlaySubmit;
     }
 
@@ -310,7 +309,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                     if (event.isShiftDown()) {
                         textArea.insertText(textArea.getCaretPosition(), "\n");
                     } else {
-                        getiOverlaySubmit().onSubmit(new OverlaySubmitEvent(this, event));
+                        getiOverlaySubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
                     }
                 }
             });
