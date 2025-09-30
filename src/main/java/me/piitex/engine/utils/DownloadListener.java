@@ -29,4 +29,10 @@ public interface DownloadListener {
      * @param e The exception that caused the failure.
      */
     void onDownloadError(DownloadInfo info, Exception e);
+
+    /**
+     * Called when the download is explicitly cancelled by the user via cancelDownload(url).
+     * @param info The state of the download at the time of cancellation.
+     */
+    void onDownloadCancel(DownloadInfo info);
 }
