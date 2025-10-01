@@ -1,5 +1,7 @@
 package me.piitex.os;
 
+import javafx.application.Platform;
+import me.piitex.os.exceptions.InvalidDownloadThreadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +34,14 @@ public class FileDownloader {
      */
     public void startDownload(String fileUrl, File outputFile) {
         logger.info("Submitting download task for: {}", fileUrl);
-        Future<?> future = executor.submit(() -> performDownload(fileUrl, outputFile));
-        activeFutures.put(fileUrl, future);
+
+        if (Platform.isFxApplicationThread()) {
+            Exception exception = new InvalidDownloadThreadException();
+            logger.error(exception.getMessage(), exception);
+            return;
+        }
+
+        performDownload(fileUrl, outputFile);
     }
 
     private void performDownload(String fileUrl, File outputFile) {
