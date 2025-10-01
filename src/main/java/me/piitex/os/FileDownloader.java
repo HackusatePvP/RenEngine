@@ -12,11 +12,9 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 public class FileDownloader {
-    private final ExecutorService executor;
     private static final int BUFFER_SIZE = 4096;
     private static final Logger logger = LoggerFactory.getLogger(FileDownloader.class);
     private final ConcurrentHashMap<String, DownloadInfo> activeDownloads = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Future<?>> activeFutures = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, URLConnection> activeConnections = new ConcurrentHashMap<>();
     private final Set<DownloadListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -24,8 +22,7 @@ public class FileDownloader {
      * Initializes the FileDownloader and its thread pool.
      */
     public FileDownloader() {
-        // Use a single-threaded executor to run downloads sequentially
-        this.executor = Executors.newSingleThreadExecutor(); 
+
     }
 
     /**
@@ -103,7 +100,6 @@ public class FileDownloader {
         } finally {
             if (info != null) {
                 activeDownloads.remove(info.getDownloadUrl());
-                activeFutures.remove(info.getDownloadUrl());
                 activeConnections.remove(info.getDownloadUrl());
             }
         }
@@ -111,7 +107,6 @@ public class FileDownloader {
 
     public boolean cancelDownload(String fileUrl) {
         DownloadInfo info = activeDownloads.remove(fileUrl);
-        Future<?> future = activeFutures.remove(fileUrl);
         URLConnection connection = activeConnections.remove(fileUrl);
 
         // Force the stream/connection to close to unstick the I/O thread
@@ -127,9 +122,6 @@ public class FileDownloader {
 
         // Interrupt the thread
         boolean wasRunning = false;
-        if (future != null) {
-            wasRunning = future.cancel(true);
-        }
 
         // Call the cancel listeners
         if (info != null) {
@@ -221,7 +213,6 @@ public class FileDownloader {
      * Shuts down the executor service cleanly. Should be called when the application exits.
      */
     public void shutdown() {
-        executor.shutdown();
         activeDownloads.clear();
         listeners.clear();
         logger.info("Downloader service shut down.");
