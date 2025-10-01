@@ -1,5 +1,8 @@
 package me.piitex.engine.configurations;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.IllegalBlockSizeException;
 import java.io.*;
 import java.util.*;
@@ -8,6 +11,8 @@ public class InfoFile {
     private final File file;
     private final boolean encrypt;
     private final boolean dev = false; // When set to true it disables encryption even if encryption is true.
+
+    private static final Logger logger = LoggerFactory.getLogger(InfoFile.class);
 
     private Map<String, String> entryMap = new HashMap<>();
 
@@ -334,7 +339,13 @@ public class InfoFile {
      * @throws RuntimeException if an {@link IOException} occurs during file writing.
      */
     public void update() {
-        if (file == null) return;
+        if (file == null) {
+            logger.warn("Failed to write data! File is null.");
+            return;
+        }
+        if (!file.exists()) {
+            logger.warn("Failed to write data! '{}' Does not exist!", file.getName());
+        }
         try {
             FileWriter writer;
             File output = new File("output.info");
