@@ -274,6 +274,19 @@ public class Window {
     }
 
     /**
+     * Adds a {@link Container} to the window using its intrinsic index.
+     * @param container The container to add.
+     */
+    public void addContainer(Container container) {
+        addContainer(container, container.getIndex());
+    }
+
+    public void addContainer(Container container, Node node) {
+        addContainer(container, node, container.getIndex());
+    }
+
+
+    /**
      * Adds a {@link Container} to the window at a specific index. If a container already exists at the given index,
      * it attempts to shift existing containers to accommodate the new one.
      * @param container The container to add.
@@ -294,11 +307,20 @@ public class Window {
     }
 
     /**
-     * Adds a {@link Container} to the window using its intrinsic index.
+     * Adds a pre-compiled {@link Container} to the window. Use {@link Container#assemble()} to build the {@link Node}.
      * @param container The container to add.
+     * @param node The pre-compiled node to add.
+     * @param index The desired rendering index for the container.
      */
-    public void addContainer(Container container) {
-        addContainer(container, container.getIndex());
+    public void addContainer(Container container, Node node, int index) {
+        Container current = containers.get(index);
+        if (current != null) {
+            int i = index + 1;
+            removeContainer(current);
+            addContainer(current, i);
+        }
+        containers.put(index, container);
+        root.getChildren().add(node);
     }
 
     /**
