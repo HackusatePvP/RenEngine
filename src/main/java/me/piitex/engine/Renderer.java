@@ -260,8 +260,6 @@ public class Renderer extends Element {
                     pane.getChildren().add(node);
                 }
             }
-        } else {
-            System.err.println("View is not a pane!");
         }
     }
 
