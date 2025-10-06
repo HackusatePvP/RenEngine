@@ -153,7 +153,6 @@ public class ImageOverlay extends Overlay {
         }
         imageView.setTranslateX(getX());
         imageView.setTranslateY(getY());
-        setInputControls(imageView);
         return imageView;
     }
 }

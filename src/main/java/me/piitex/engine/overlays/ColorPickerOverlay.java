@@ -41,7 +41,6 @@ public class ColorPickerOverlay extends Overlay implements Region {
     protected Node render() {
         colorPicker.setTranslateX(getX());
         colorPicker.setTranslateY(getY());
-        setInputControls(colorPicker);
         colorPicker.setOnAction(event -> {
             if (getColorSelect() != null) {
                 getColorSelect().onColorSelect(new ColorSelectionEvent(this, colorPicker));

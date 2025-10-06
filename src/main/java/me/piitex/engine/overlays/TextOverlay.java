@@ -94,7 +94,6 @@ public class TextOverlay extends Overlay {
             node.setTranslateX(getX());
             node.setTranslateY(getY());
             node.getStyleClass().addAll(getStyles());
-            setInputControls(node);
         }
 
         return node;

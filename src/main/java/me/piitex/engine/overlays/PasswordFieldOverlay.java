@@ -79,7 +79,6 @@ public class PasswordFieldOverlay extends Overlay implements Region {
         textField.setText(defaultInput);
         textField.setAlignment(Pos.CENTER_LEFT);
 
-        setInputControls(textField);
         return textField;
     }
 

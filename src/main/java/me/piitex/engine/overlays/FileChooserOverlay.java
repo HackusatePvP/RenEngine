@@ -74,9 +74,6 @@ public class FileChooserOverlay extends Overlay {
             }
 
         });
-
-        setInputControls(jfxButton);
-
         return jfxButton;
     }
 }

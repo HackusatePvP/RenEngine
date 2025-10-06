@@ -106,7 +106,6 @@ public class ComboBoxOverlay extends Overlay implements Region {
             this.selected = newValue;
         });
 
-        setInputControls(comboBox);
         this.node = comboBox;
         return comboBox;
     }

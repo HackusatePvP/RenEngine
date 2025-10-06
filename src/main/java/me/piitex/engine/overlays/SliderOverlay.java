@@ -125,7 +125,6 @@ public class SliderOverlay extends Overlay implements Region {
             sliderChange.onSliderChange(new SliderChangeEvent(this, slider.getValue()));
         });
 
-        setInputControls(slider);
         return slider;
     }
 

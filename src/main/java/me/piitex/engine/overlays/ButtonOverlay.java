@@ -131,7 +131,6 @@ public class ButtonOverlay extends Overlay implements Region {
             button.setTranslateY(getY());
         }
 
-        setInputControls(button);
         button.setTranslateX(getX());
         button.setTranslateY(getY());
         return button;

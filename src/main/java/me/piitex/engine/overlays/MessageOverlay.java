@@ -151,9 +151,6 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         }
 
         atlantafxMessage.getStyleClass().addAll(getStyles());
-
-        setInputControls(atlantafxMessage);
-
         return atlantafxMessage;
     }
 

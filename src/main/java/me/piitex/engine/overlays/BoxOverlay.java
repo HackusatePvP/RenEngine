@@ -130,7 +130,6 @@ public class BoxOverlay extends Overlay implements Region {
         }
         rectangle.setStroke(strokeColor);
 
-        setInputControls(rectangle);
         return rectangle;
     }
 }

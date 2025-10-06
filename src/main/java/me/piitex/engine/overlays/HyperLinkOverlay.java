@@ -58,7 +58,6 @@ public class HyperLinkOverlay extends Overlay {
         hyperlink.setOnMouseClicked(event -> {
 
         });
-        setInputControls(hyperlink);
         return hyperlink;
     }
 }

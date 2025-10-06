@@ -187,7 +187,6 @@ public class TextFlowOverlay extends Overlay implements Region {
 
         textFlow.setTranslateX(getX());
         textFlow.setTranslateY(getY());
-        setInputControls(textFlow);
 
         textFlow.widthProperty().addListener((obs, oldVal, newVal) -> {
             for (Node node : textFlow.getChildren()) {

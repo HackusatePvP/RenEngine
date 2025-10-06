@@ -109,7 +109,6 @@ public class TextAreaOverlay extends Overlay implements Region {
 
 
         textArea.setText(defaultInput);
-        setInputControls(textArea);
         return textArea;
     }
 

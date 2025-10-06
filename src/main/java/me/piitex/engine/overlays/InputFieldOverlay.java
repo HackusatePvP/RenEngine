@@ -94,7 +94,6 @@ public class InputFieldOverlay extends Overlay implements Region {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
             }
         });
-        setInputControls(textField);
         return textField;
     }
 

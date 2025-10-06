@@ -50,8 +50,6 @@ public class NotificationOverlay extends Overlay implements Region {
                 overlayClose.onClose(new OverlayCloseEvent(this));
             }
         });
-
-        setInputControls(notification);
         notification.getStyleClass().addAll(getStyles());
         return notification;
     }

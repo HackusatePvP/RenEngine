@@ -75,8 +75,6 @@ public class DirectoryOverlay extends Overlay {
 
         });
 
-        setInputControls(jfxButton);
-
         return jfxButton;
 
     }

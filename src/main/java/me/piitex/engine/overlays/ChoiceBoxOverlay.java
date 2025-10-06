@@ -102,7 +102,6 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         }
 
         choiceBox.getItems().setAll(items);
-        setInputControls(choiceBox);
         this.node = choiceBox;
 
         if (defaultItem != null) {
