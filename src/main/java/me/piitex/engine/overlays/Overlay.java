@@ -1,5 +1,6 @@
 package me.piitex.engine.overlays;
 
+import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -190,7 +191,18 @@ public abstract class Overlay extends Element {
     public Node assemble() {
         Node node = render();
         setNode(node);
-        setInputControls(node);
+
+        // Starting to implement sub-thread loading.
+        // Input controls directly access JavaFX's event listeners.
+        // Event listeners are required to be executed on the FXThread.
+        // Check if the current thread is the FXThread, if not run it on the FXThread.
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> {
+                setInputControls(node);
+            });
+        } else {
+            setInputControls(node);
+        }
 
         return node;
     }
