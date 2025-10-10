@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.IllegalBlockSizeException;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 public class InfoFile {
@@ -50,7 +51,7 @@ public class InfoFile {
             // Load file
             Scanner scanner = null;
             try {
-                File output = new File("output.info");
+                File output = Files.createTempFile(null, ".info").toFile();
                 if (encrypt && !dev) {
                     // Decrypt file
                     try {
@@ -69,7 +70,7 @@ public class InfoFile {
                     }
                 }
                 output.delete();
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
                 if (scanner != null) {
@@ -348,7 +349,7 @@ public class InfoFile {
         }
         try {
             FileWriter writer;
-            File output = new File("output.info");
+            File output = Files.createTempFile(null, ".info").toFile();
             if (encrypt && !dev) {
                 writer = new FileWriter(output);
             } else {
