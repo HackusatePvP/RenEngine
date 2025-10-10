@@ -25,6 +25,7 @@ import javafx.stage.Stage;
  */
 public abstract class FXLoad extends Application {
 
+    @Override
     public void init() {
         preInitialization();
     }
