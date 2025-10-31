@@ -5,7 +5,7 @@ import org.apache.commons.lang3.SystemUtils;
 /**
  * Simple utility for gathering operating system information.
  */
-public class OSUtility {
+public class OSUtil {
 
     public static String getOS() {
         return SystemUtils.OS_NAME;

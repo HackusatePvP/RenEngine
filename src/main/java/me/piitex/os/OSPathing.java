@@ -6,7 +6,7 @@ public class OSPathing {
 
     public static File getDocumentsDirectory() {
         String userHome = System.getProperty("user.home");
-        if (OSUtility.getOS().contains("Windows")) {
+        if (OSUtil.getOS().contains("Windows")) {
             return new File(userHome + File.separator + "Documents");
         } else {
             return new File(userHome + File.separator + ".local" + File.separator + "share");
@@ -15,7 +15,7 @@ public class OSPathing {
 
     public static File getAppDataDirectory() {
         String userHome = System.getProperty("user.home");
-        String os = OSUtility.getOS();
+        String os = OSUtil.getOS();
 
         if (os.equalsIgnoreCase("Windows")) {
             String localAppData = System.getenv("APPDATA");

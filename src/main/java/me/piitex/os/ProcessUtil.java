@@ -11,7 +11,7 @@ import java.util.Optional;
 public class ProcessUtil {
     private static final Logger logger = LoggerFactory.getLogger(ProcessUtil.class);
 
-    private static final boolean VALIDATE_OS = OSUtility.getOS().toLowerCase().contains("window");
+    private static final boolean VALIDATE_OS = OSUtil.getOS().toLowerCase().contains("window");
 
     static {
         if (!VALIDATE_OS) {
