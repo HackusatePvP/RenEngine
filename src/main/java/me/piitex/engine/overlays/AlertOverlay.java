@@ -27,6 +27,11 @@ public class AlertOverlay extends Overlay {
         this.alert = new Alert(alertType);
         this.title = title;
         this.alertType = alertType;
+        setNode(alert.getDialogPane());
+    }
+
+    public Alert getAlert() {
+        return alert;
     }
 
     public String getTitle() {
@@ -95,7 +100,8 @@ public class AlertOverlay extends Overlay {
         this.alertConfirm = alertConfirm;
     }
 
-    public Alert build() {
+    @Override
+    public Node render() {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
@@ -112,11 +118,6 @@ public class AlertOverlay extends Overlay {
         if (getAlertConfirm() != null) {
             alert.setOnCloseRequest(event -> getAlertConfirm().onConfirm(new AlertConfirmEvent(alert, this)));
         }
-        return alert;
-    }
-
-    @Override
-    public Node render() {
-        return null;
+        return alert.getDialogPane();
     }
 }
