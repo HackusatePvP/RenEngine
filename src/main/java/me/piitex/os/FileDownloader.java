@@ -49,7 +49,7 @@ public class FileDownloader {
         try {
             URL url = new URL(fileUrl);
             URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(500);
+            connection.setConnectTimeout(5000);
             activeConnections.put(fileUrl, connection); // Store the connection
 
             long fileSize = connection.getContentLengthLong();
@@ -144,7 +144,7 @@ public class FileDownloader {
         try {
             URL url = new URL(fileUrl);
             URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(500);
+            connection.setConnectTimeout(5000);
             if (connection instanceof HttpURLConnection) {
                 ((HttpURLConnection) connection).setRequestMethod("HEAD");
             }
