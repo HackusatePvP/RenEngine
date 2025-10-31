@@ -1,10 +1,8 @@
 name: Release Build
 
 on:
-  workflow_run:
-    workflows: ["Maven Package"]
-    types:
-      - completed
+  release:
+    types: [published]
 
 jobs:
   build:
