@@ -303,7 +303,15 @@ public class Window {
 
         Node assemble = container.assemble();
 
-        root.getChildren().add(assemble);
+        if (index > 0) {
+            if (root.getChildren().size() < index) {
+                root.getChildren().addLast(assemble);
+            } else {
+                root.getChildren().add(index, assemble);
+            }
+        } else {
+            root.getChildren().add(assemble);
+        }
     }
 
     /**
@@ -726,7 +734,7 @@ public class Window {
     }
 
     public void renderAlert(AlertOverlay alertOverlay) {
-        Alert alert = alertOverlay.build();
+        Alert alert = alertOverlay.getAlert();
         alert.showAndWait();
     }
 
