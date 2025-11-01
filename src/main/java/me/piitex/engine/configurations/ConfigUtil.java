@@ -25,7 +25,7 @@ public class ConfigUtil {
         // Check if the file exists and is readable before attempting to read.
         if (!configFile.exists()) {
             if (!configFile.createNewFile()) {
-                log.warn("Could not create file '{}'", configFile.getAbsolutePath());
+                log.warn("Could not create file during initialization'{}'", configFile.getAbsolutePath());
             }
         }
         if (!configFile.isFile()) {
@@ -385,7 +385,7 @@ public class ConfigUtil {
     public void save() throws IOException {
         if (!configFile.exists()) {
             if (!configFile.createNewFile()) {
-                log.warn("Could not create file '{}'", configFile.getAbsolutePath());
+                log.warn("Could not create file while saving '{}'", configFile.getAbsolutePath());
             }
         }
         if (!configFile.canWrite()) {
