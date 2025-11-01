@@ -73,7 +73,7 @@ public class InfoFile {
                 }
 
                 if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file '{}'", file.getAbsolutePath());
+                    logger.error("Unable to delete unencrypted file during initialization '{}'", file.getAbsolutePath());
                 }
 
             } catch (IOException e) {
@@ -376,7 +376,7 @@ public class InfoFile {
             }
             if (output.exists()) {
                 if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file '{}'", file.getAbsolutePath());
+                    logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
                 }
             }
         } catch (IOException e) {

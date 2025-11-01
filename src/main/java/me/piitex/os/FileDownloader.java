@@ -94,7 +94,7 @@ public class FileDownloader {
                 if (message.contains("socket closed") || message.contains("stream closed") || message.contains("operation canceled")) {
                     // This is a controlled stop. We don't treat it as a failure.
                     // The handleCancel event has already fired.
-                    logger.info("Download task for {} stopped by user or interruption.", info != null ? info.getFileName() : fileUrl);
+                    logger.info("Download task for {} stopped by user or interruption.", info.getFileName());
                 } else {
                     handleError(info, e);
                 }

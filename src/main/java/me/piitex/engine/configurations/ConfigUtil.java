@@ -1,9 +1,13 @@
 package me.piitex.engine.configurations;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.*;
 
 public class ConfigUtil {
+    private static final Logger log = LoggerFactory.getLogger(ConfigUtil.class);
     private final Map<String, Object> configData;
     private final File configFile;
 
@@ -20,7 +24,9 @@ public class ConfigUtil {
 
         // Check if the file exists and is readable before attempting to read.
         if (!configFile.exists()) {
-            configFile.createNewFile();
+            if (!configFile.createNewFile()) {
+                log.warn("Could not create file '{}'", configFile.getAbsolutePath());
+            }
         }
         if (!configFile.isFile()) {
             throw new IOException("Path is not a file: " + configFile.getAbsolutePath());
@@ -60,19 +66,18 @@ public class ConfigUtil {
 
         while ((line = reader.readLine()) != null) {
             lineNumber++;
-            String originalLine = line;
             String trimmedLine = line.trim();
 
             if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
                 continue;
             }
 
-            int currentIndentation = getIndentation(originalLine);
-            String content = originalLine.trim();
+            int currentIndentation = getIndentation(line);
+            String content = line.trim();
 
             int colonIndex = content.indexOf(':');
             if (colonIndex == -1) {
-                throw new IOException("Invalid format: Missing colon at line " + lineNumber + ". Line: '" + originalLine + "'");
+                throw new IOException("Invalid format: Missing colon at line " + lineNumber + ". Line: '" + line + "'");
             }
 
             String key = content.substring(0, colonIndex).trim();
@@ -83,7 +88,7 @@ public class ConfigUtil {
             }
 
             if (contextStack.isEmpty()) {
-                throw new IOException("Invalid indentation: line " + lineNumber + " has no valid parent scope. Line: '" + originalLine + "'");
+                throw new IOException("Invalid indentation: line " + lineNumber + " has no valid parent scope. Line: '" + line + "'");
             }
 
             Map<String, Object> currentMap = contextStack.peek().getKey();
@@ -379,7 +384,9 @@ public class ConfigUtil {
      */
     public void save() throws IOException {
         if (!configFile.exists()) {
-            configFile.createNewFile();
+            if (!configFile.createNewFile()) {
+                log.warn("Could not create file '{}'", configFile.getAbsolutePath());
+            }
         }
         if (!configFile.canWrite()) {
             throw new IOException("Cannot write to configuration file: " + configFile.getAbsolutePath());
