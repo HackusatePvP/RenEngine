@@ -1,5 +1,6 @@
 package me.piitex.os;
 
+import me.piitex.os.exceptions.UnSupportedOSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class ProcessUtil {
 
     static {
         if (!VALIDATE_OS) {
-            logger.error("Unsupported operating system. ProcessUtil will only work with Windows devices.");
+            throw new UnSupportedOSException("This system is unsupported for ProcessUtil.");
         }
     }
 
