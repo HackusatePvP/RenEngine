@@ -32,8 +32,7 @@ public class FileCrypter {
     private static final int GCM_IV_LENGTH_BYTES = 12;
     private static final int GCM_TAG_LENGTH_BITS = 128;
 
-    // NOT THE CORRECT WAY TO DO THIS
-    // Key-wrapping should be used instead.
+    // RECOMMENDED TO CHANGE
     private static final String passKey = System.getProperty("user.name") + System.getProperty("user.home") + System.getProperty("os.name");
 
     public static void encryptFile(File file, File outputFile) {
@@ -44,11 +43,12 @@ public class FileCrypter {
         byte[] iv = new byte[GCM_IV_LENGTH_BYTES]; // Generate a unique IV for each encryption
         secureRandom.nextBytes(iv);
 
+        char[] passKeyChars = MasterKeyManager.getPersistentPassKey();
+
         try (FileInputStream inputStream = new FileInputStream(file);
              FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 
             SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_ALG);
-            char[] passKeyChars = passKey.toCharArray();
             KeySpec spec = new PBEKeySpec(passKeyChars, salt, ITERATION_COUNT, KEY_LENGTH_BITS);
             SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
             java.util.Arrays.fill(passKeyChars, (char) 0);
@@ -83,6 +83,7 @@ public class FileCrypter {
     }
 
     public static void decryptFile(File file, File outputFile) throws IllegalBlockSizeException, IOException {
+        char[] passKeyChars = MasterKeyManager.getPersistentPassKey();
         try (FileInputStream inputStream = new FileInputStream(file);
              FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 
@@ -98,10 +99,12 @@ public class FileCrypter {
                 throw new IOException("Could not read full IV from the encrypted file. Expected " + GCM_IV_LENGTH_BYTES + " bytes, got " + bytesReadIv);
             }
 
-            char[] passKeyChars = passKey.toCharArray();
             SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_ALG);
+            // Use the persistent key here:
             KeySpec spec = new PBEKeySpec(passKeyChars, salt, ITERATION_COUNT, KEY_LENGTH_BITS);
             SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+
+            // *** IMPORTANT SECURITY STEP: Wipe the key from memory immediately after use ***
             java.util.Arrays.fill(passKeyChars, (char) 0);
 
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding"); // Use AES in GCM mode with no padding
