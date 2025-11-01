@@ -1,25 +1,41 @@
 # RenEngine
 Simplified JavaFX framework for creating basic applications. Now supports JDK 25.
 
+## Installation/Usage
+You can manually install or use the GitHub package.
+
+### Build local (easy)
+1. Clone the repository. 
+2. Execute `./mvnw clean install`.
+
+### Use GitHub Package
+1. Locate your local m2 repository `C:\Users\YourUser\.m2\`
+2. Create a new file called `settings.xml`
+3. Enter your GitHub credentials.
+```xml
+<servers>
+  <server>
+    <id>github</id>
+    <username>Username</username>
+    <password>Password</password>
+  </server>
+</servers>
+```
+
 ## Warning
 The framework is untested for production. Will not work with mobile devices.
 
 ## Style/Design
 [AtlantaFX](https://github.com/mkpaz/atlantafx) has been integrated into the framework.
 
-## API
-TODO
-
-### Update
-You no longer need to explicitly call `window.render()`. Window will auto update when adding and removing elements to renderers.
-
 ### Simple Usage
 
 Always create a Main class which EXCLUDES javafx components.
 ```java
 public class Main {
-    public static void main(String[] args) {
-        JavaFXLoad.main(args); // Call to your JavaFX main class. I always call it JavaFXLoad.
+    static void main(String[] args) {
+        new App(); // Calls the pre-initialization stage.
+        Application.launch(App.class); // Calls the initialization stage.
     }
 }
 ```
@@ -27,13 +43,26 @@ public class Main {
 Create your JavaFX entry point.
 
 ```java
-import javafx.application.Application;
+import me.piitex.engine.fxloader.FXLoad;
 import me.piitex.engine.overlays.ButtonBuilder;
 import me.piitex.engine.overlays.ButtonOverlay;
 
-public class JavaFXLoad extends Application {
+public class App extends FXLoad {
+
+    /**
+     * Pre-initialization stage. Load backend components.
+     */
     @Override
-    public void start(Stage s) {
+    public void preInitialization() {
+
+    }
+
+    /**
+     * Initializes the GUI components.
+     * @param stage Initial JavaFX {@link javafx.stage.Stage}.
+     */
+    @Override
+    public void initialization(Stage stage) {
         // Loads Atlanta css.
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
@@ -67,15 +96,6 @@ public class JavaFXLoad extends Application {
 
         // Add the container to the window. Calling this function later in the process will allow the container to fully build before displaying.
         window.addContainer(container);
-    }
-
-    public static void main(String[] args) {
-        // Always load your backend before calling launch();
-        new App();
-
-        // This function will call everything above. This is JavaFX API.
-        // Renders GUI components
-        launch();
     }
 }
 ```
