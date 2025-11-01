@@ -43,7 +43,9 @@ public class InfoFile {
         this.encrypt = encrypt;
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                if (!file.createNewFile()) {
+                    logger.warn("Unable to create file '{}'", file.getAbsolutePath());
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -69,7 +71,11 @@ public class InfoFile {
                         entryMap.put(line.split("=")[0], line.split("=")[1].replace("!@!", "\n"));
                     }
                 }
-                output.delete();
+
+                if (!output.delete()) {
+                    logger.error("Unable to delete unencrypted file '{}'", file.getAbsolutePath());
+                }
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -369,7 +375,9 @@ public class InfoFile {
                 FileCrypter.encryptFile(output, file);
             }
             if (output.exists()) {
-                output.delete();
+                if (!output.delete()) {
+                    logger.error("Unable to delete unencrypted file '{}'", file.getAbsolutePath());
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

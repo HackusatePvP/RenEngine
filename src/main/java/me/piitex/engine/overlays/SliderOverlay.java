@@ -111,14 +111,10 @@ public class SliderOverlay extends Overlay implements Region {
 
         // Check if they have css files
         File sliderCss = new File(System.getProperty("user.dir") + "/game/css/slider.css");
-        if (!sliderCss.exists()) {
-            // ERROR
-        } else {
-            try {
-                slider.getStylesheets().add(sliderCss.toURI().toURL().toExternalForm());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+        try {
+            slider.getStylesheets().add(sliderCss.toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
         // Handle slider events
         slider.setOnMouseDragged(event -> {

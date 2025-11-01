@@ -12,10 +12,7 @@ import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Window;
 import me.piitex.engine.hanlders.events.*;
-import me.piitex.engine.overlays.events.IOverlayClick;
-import me.piitex.engine.overlays.events.IOverlayClickRelease;
-import me.piitex.engine.overlays.events.IOverlayHover;
-import me.piitex.engine.overlays.events.IOverlayHoverExit;
+import me.piitex.engine.overlays.events.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,6 +65,7 @@ public abstract class Overlay extends Element {
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
     private IOverlayClickRelease iOverlayClickRelease;
+    private IOverlaySubmit iOverlaySubmit;
     private Cursor cursor;
 
 
@@ -141,6 +139,10 @@ public abstract class Overlay extends Element {
         this.iOverlayHoverExit = iOverlayHoverExit;
     }
 
+    public void onOverlaySubmit(IOverlaySubmit iOverlaySubmit) {
+        this.iOverlaySubmit = iOverlaySubmit;
+    }
+
     public IOverlayClick getOnClick() {
         return iOverlayClick;
     }
@@ -155,6 +157,10 @@ public abstract class Overlay extends Element {
 
     public IOverlayClickRelease getOnRelease() {
         return iOverlayClickRelease;
+    }
+
+    public IOverlayClick getiOverlayClick() {
+        return iOverlayClick;
     }
 
     public List<File> getStyleSheets() {
@@ -267,7 +273,9 @@ public abstract class Overlay extends Element {
                     if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
                         textArea.appendText("\n");
                     } else if (event.getCode() == KeyCode.ENTER) {
-                        //TODO: Handle submit action for the overlay.
+                        if (iOverlaySubmit != null) {
+                            iOverlaySubmit.onSubmit(new OverlaySubmitEvent(this, event));
+                        }
                     }
                 });
             }

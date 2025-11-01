@@ -126,14 +126,14 @@ public class TextFlowOverlay extends Overlay implements Region {
         for (Overlay overlay : texts) {
             // Check node type
             switch (overlay) {
-                case TextOverlay text -> {
-                    text.setText(text.getText().replace("\\n", System.lineSeparator()));
-                    if (font != null && text.getFontLoader() == null) {
+                case TextOverlay text1 -> {
+                    text1.setText(text1.getText().replace("\\n", System.lineSeparator()));
+                    if (font != null && text1.getFontLoader() == null) {
                         // Passes
-                        text.setFont(font);
+                        text1.setFont(font);
                     }
                     if (textFillColor != null) {
-                        text.setTextFill(textFillColor);
+                        text1.setTextFill(textFillColor);
                     }
                 }
                 case HyperLinkOverlay hyperlink -> {

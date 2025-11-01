@@ -591,7 +591,7 @@ public class Window {
         double windowHeight = this.height;
 
         // Calculate x and y based on the desired position (in unscaled coordinates)
-        double calculatedX = 0;
+        double calculatedX;
         double calculatedY = switch (position) {
             case TOP_CENTER -> {
                 calculatedX = (windowWidth - width) / 2;
