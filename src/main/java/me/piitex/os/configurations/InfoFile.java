@@ -1,4 +1,4 @@
-package me.piitex.engine.configurations;
+package me.piitex.os.configurations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

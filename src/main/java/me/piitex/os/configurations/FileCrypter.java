@@ -1,4 +1,4 @@
-package me.piitex.engine.configurations;
+package me.piitex.os.configurations;
 
 
 import javax.crypto.*;
