@@ -8,10 +8,6 @@ import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 
-import java.util.AbstractMap;
-import java.util.LinkedList;
-import java.util.Map;
-
 public class ScrollContainer extends Container {
     private final ScrollPane scrollPane;
     private final Layout layout;
