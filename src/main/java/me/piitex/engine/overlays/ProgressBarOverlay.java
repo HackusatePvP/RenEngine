@@ -1,6 +1,5 @@
 package me.piitex.engine.overlays;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;

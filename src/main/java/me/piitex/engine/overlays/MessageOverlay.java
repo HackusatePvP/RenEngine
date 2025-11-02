@@ -1,12 +1,10 @@
-package me.piitex.engine.overlays; // Adjust package to match your overlays
+package me.piitex.engine.overlays;
 
 import atlantafx.base.controls.Message;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.event.Event;
 
-// Assuming ImageOverlay is in the same package and can be used directly
-import me.piitex.engine.overlays.ImageOverlay;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 /**

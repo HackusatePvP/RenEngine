@@ -1,21 +1,10 @@
 package me.piitex.engine.containers;
 
 import atlantafx.base.layout.ModalBox;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
-import me.piitex.engine.hanlders.events.LayoutRenderEvent;
-import me.piitex.engine.layouts.Layout;
-import me.piitex.engine.overlays.Overlay;
-
-import java.util.AbstractMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class ModalContainer extends Container {
     private final ModalBox modalBox;

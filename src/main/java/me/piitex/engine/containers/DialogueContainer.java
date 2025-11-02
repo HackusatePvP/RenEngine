@@ -9,11 +9,8 @@ import javafx.scene.layout.Pane;
 import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.overlays.ButtonOverlay;
-import me.piitex.engine.overlays.Overlay;
 
-import java.util.AbstractMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class DialogueContainer extends Container {
     private String header;

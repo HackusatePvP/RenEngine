@@ -1,12 +1,7 @@
 package me.piitex.engine.overlays;
 
 import atlantafx.base.controls.Notification;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.collections.ObservableList;
 import me.piitex.engine.hanlders.events.OverlayCloseEvent;
 import me.piitex.engine.overlays.events.IOverlayClose;
 

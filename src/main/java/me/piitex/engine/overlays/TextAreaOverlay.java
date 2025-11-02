@@ -8,8 +8,6 @@ import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.hanlders.events.TextAreaSubmitEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
-import me.piitex.engine.overlays.events.IOverlaySubmit;
-import me.piitex.engine.hanlders.events.OverlaySubmitEvent;
 import me.piitex.engine.overlays.events.ITextAreaSubmit;
 
 public class TextAreaOverlay extends Overlay implements Region {

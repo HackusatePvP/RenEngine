@@ -1,6 +1,5 @@
 package me.piitex.engine.hanlders.events;
 
-import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import me.piitex.engine.overlays.Overlay;
 

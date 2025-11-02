@@ -4,14 +4,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import me.piitex.engine.LimitedHashMap;
-import org.girod.javafx.svgimage.SVGImage;
-import org.girod.javafx.svgimage.SVGLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 /**
@@ -23,6 +22,7 @@ public class ImageLoader {
 
     public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
     private static final Map<String, Double> imageSizeCache = new LimitedHashMap<>(50);
+    private static final Logger logger = LoggerFactory.getLogger(ImageLoader.class);
 
     public static boolean useCache = true;
 
@@ -73,8 +73,8 @@ public class ImageLoader {
                 imageSizeCache.put(file.getPath(), width + height);
             }
             return image;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            logger.error("Could not find image '{}'", file.getAbsolutePath(), e);
             return null;
         }
     }
