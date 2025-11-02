@@ -21,7 +21,6 @@ public class ButtonOverlay extends Overlay implements Region {
     private Paint textFill;
 
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
 
     /**
      * Private constructor used by the {@link ButtonBuilder}.
@@ -39,8 +38,6 @@ public class ButtonOverlay extends Overlay implements Region {
         this.prefWidth = builder.getPrefWidth();
         this.maxWidth = builder.getMaxWidth();
         this.maxHeight = builder.getMaxHeight();
-        this.scaleWidth = builder.getScaleWidth();
-        this.scaleHeight = builder.getScaleHeight();
         this.images.addAll(builder.getImages());
         setX(builder.getX());
         setY(builder.getY());

@@ -13,7 +13,6 @@ public class ButtonBuilder {
     private FontLoader font;
     private Paint textFill;
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
     private double x, y;
     private boolean enabled = true;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
@@ -127,26 +126,6 @@ public class ButtonBuilder {
     }
 
     /**
-     * Sets the scale width of the button.
-     * @param scaleWidth The scale width.
-     * @return The builder instance.
-     */
-    public ButtonBuilder setScaleWidth(double scaleWidth) {
-        this.scaleWidth = scaleWidth;
-        return this;
-    }
-
-    /**
-     * Sets the scale height of the button.
-     * @param scaleHeight The scale height.
-     * @return The builder instance.
-     */
-    public ButtonBuilder setScaleHeight(double scaleHeight) {
-        this.scaleHeight = scaleHeight;
-        return this;
-    }
-
-    /**
      * Sets the X and Y position of the button.
      * @param x The X-axis position.
      * @param y The Y-axis position.
@@ -229,14 +208,6 @@ public class ButtonBuilder {
 
     public double getMaxHeight() {
         return maxHeight;
-    }
-
-    public double getScaleWidth() {
-        return scaleWidth;
-    }
-
-    public double getScaleHeight() {
-        return scaleHeight;
     }
 
     public double getX() {
