@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 public class SliderOverlay extends Overlay implements Region {
     private final Slider slider;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth = 1, scaleHeight = 1;
     private double maxValue, minValue, currentValue;
     private double blockIncrement;
 
