@@ -73,7 +73,7 @@ public abstract class Overlay extends Element {
     private final List<File> styleSheets = new ArrayList<>();
 
     // Style classes.
-    private List<String> styles = new LinkedList<>();
+    private final List<String> styles = new LinkedList<>();
 
     public double getX() {
         return x;
