@@ -77,7 +77,6 @@ public class FileCrypter {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException |
                  InvalidKeyException | InvalidAlgorithmParameterException |
                  IllegalBlockSizeException | BadPaddingException | IOException e) {
-            e.printStackTrace();
             throw new RuntimeException("Error encrypting file: " + e.getMessage(), e);
         }
     }
