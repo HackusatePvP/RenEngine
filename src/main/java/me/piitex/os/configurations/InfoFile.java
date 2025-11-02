@@ -358,7 +358,6 @@ public class InfoFile {
      */
     public void update() {
         if (file == null) {
-            logger.warn("Failed to write data! File is null.");
             return;
         }
         if (!file.exists()) {
