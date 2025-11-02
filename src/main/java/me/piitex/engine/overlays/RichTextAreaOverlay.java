@@ -23,6 +23,8 @@ import org.languagetool.JLanguageTool;
 import org.languagetool.Languages;
 import org.languagetool.rules.Category;
 import org.languagetool.rules.RuleMatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.BreakIterator;
@@ -49,6 +51,8 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     private ScheduledFuture<?> spellCheckFuture;
 
     private final JLanguageTool langTool = new JLanguageTool(Languages.getLanguageForShortCode("en-US"));
+
+    private static final Logger logger = LoggerFactory.getLogger(RichTextAreaOverlay.class);
 
     public RichTextAreaOverlay(String defaultInput, double width, double height) {
         this.defaultInput = defaultInput;
@@ -217,8 +221,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                     // Apply highlighting on the JavaFX Application Thread
                     Platform.runLater(() -> applyHighlighting(matches, newText.length(), textArea));
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    // Handle specific exception, e.g., logging
+                    logger.error("Error occurred during spell check executor.", e);
                 }
             }, 1000, TimeUnit.MILLISECONDS); // 500ms debounce
 
@@ -274,7 +277,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error occurred during spell check preview.", e);
                 }
             }
         });
@@ -299,7 +302,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                     List<RuleMatch> initialMatches = langTool.check(textArea.getText());
                     Platform.runLater(() -> applyHighlighting(initialMatches, textArea.getText().length(), textArea));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error occurred during initialization spell check.", e);
                 }
             }, 200, TimeUnit.MILLISECONDS);
         }
