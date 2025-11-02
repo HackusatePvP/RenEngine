@@ -1,5 +1,6 @@
 package me.piitex.os.configurations;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,9 @@ public class InfoFile {
         } else {
             // Load file
             Scanner scanner = null;
+            File output = null;
             try {
-                File output = Files.createTempFile(null, ".info").toFile();
+                output = Files.createTempFile(null, ".info").toFile();
                 if (encrypt && !dev) {
                     // Decrypt file
                     try {
@@ -72,21 +74,26 @@ public class InfoFile {
                     }
                 }
 
-                if (!output.delete()) {
-                    logger.warn("Unable to delete unencrypted file during initialization '{}'", output.getAbsolutePath());
-                    logger.info("Clearing initial output...");
-                    FileWriter writer = new FileWriter(output);
-                    writer.write("");
-                    writer.close();
-                }
-
             } catch (IOException e) {
                 logger.error("An occurred during the initial encryption process.", e);
             } finally {
                 if (scanner != null) {
                     scanner.close();
                 }
+                if (output != null && !output.delete()) {
+                    logger.warn("Unable to delete unencrypted file during initialization '{}'", output.getAbsolutePath());
+                    forceDelete(output);
+                }
             }
+        }
+    }
+
+    private void forceDelete(File file) {
+        logger.info("Attempting a forceful deletion of '{}'", file.getAbsolutePath());
+        try {
+            FileUtils.forceDelete(file);
+        } catch (IOException e) {
+            logger.error("Could not forcefully delete '{}'", file.getAbsolutePath(), e);
         }
     }
 
@@ -357,9 +364,11 @@ public class InfoFile {
         if (!file.exists()) {
             logger.warn("Failed to write data! '{}' Does not exist!", file.getName());
         }
+
+        File output = null;
         try {
             FileWriter writer;
-            File output = Files.createTempFile(null, ".info").toFile();
+            output = Files.createTempFile(null, ".info").toFile();
             if (encrypt && !dev) {
                 writer = new FileWriter(output);
             } else {
@@ -378,17 +387,15 @@ public class InfoFile {
                 // Replace output into the file
                 FileCrypter.encryptFile(output, file);
             }
-            if (output.exists()) {
-                if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
-                    logger.info("Clearing saved output...");
-                    FileWriter overwrite = new FileWriter(output);
-                    overwrite.write("");
-                    overwrite.close();
-                }
-            }
         } catch (IOException e) {
             logger.error("An error occurred during the encryption save process.", e);
+        } finally {
+            if (output != null && output.exists()) {
+                if (!output.delete()) {
+                    logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
+                    forceDelete(output);
+                }
+            }
         }
     }
 
