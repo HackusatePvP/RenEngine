@@ -73,11 +73,15 @@ public class InfoFile {
                 }
 
                 if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file during initialization '{}'", file.getAbsolutePath());
+                    logger.warn("Unable to delete unencrypted file during initialization '{}'", output.getAbsolutePath());
+                    logger.info("Clearing initial output...");
+                    FileWriter writer = new FileWriter(output);
+                    writer.write("");
+                    writer.close();
                 }
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("An occurred during the initial encryption process.", e);
             } finally {
                 if (scanner != null) {
                     scanner.close();
@@ -377,10 +381,14 @@ public class InfoFile {
             if (output.exists()) {
                 if (!output.delete()) {
                     logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
+                    logger.info("Clearing saved output...");
+                    FileWriter overwrite = new FileWriter(output);
+                    overwrite.write("");
+                    overwrite.close();
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("An error occurred during the encryption save process.", e);
         }
     }
 
