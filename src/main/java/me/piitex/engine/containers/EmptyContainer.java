@@ -2,7 +2,6 @@ package me.piitex.engine.containers;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import me.piitex.engine.Container;
 import me.piitex.engine.Window;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
 import me.piitex.engine.layouts.Layout;

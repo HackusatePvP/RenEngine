@@ -2,7 +2,6 @@ package me.piitex.engine.containers;
 
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
-import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Renderer;
 

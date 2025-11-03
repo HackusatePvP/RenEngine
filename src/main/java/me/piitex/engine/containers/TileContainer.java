@@ -3,7 +3,6 @@ package me.piitex.engine.containers;
 import atlantafx.base.controls.Tile;
 import javafx.scene.Node;
 
-import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 
 import java.util.LinkedList;

@@ -1,6 +1,6 @@
 package me.piitex.engine.hanlders.events;
 
-import me.piitex.engine.Container;
+import me.piitex.engine.containers.Container;
 
 public class ContainerClickEvent extends Event {
     private final Container container;

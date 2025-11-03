@@ -1,7 +1,8 @@
-package me.piitex.engine;
+package me.piitex.engine.containers;
 
 import javafx.scene.Node;
-import me.piitex.engine.containers.EmptyContainer;
+import me.piitex.engine.Renderer;
+import me.piitex.engine.Window;
 import me.piitex.engine.containers.handlers.IContainerClick;
 import me.piitex.engine.containers.handlers.IContainerRender;
 import me.piitex.engine.layouts.Layout;
