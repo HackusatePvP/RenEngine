@@ -1,5 +1,6 @@
 package me.piitex.os.configurations;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,9 @@ public class InfoFile {
         } else {
             // Load file
             Scanner scanner = null;
+            File output = null;
             try {
-                File output = Files.createTempFile(null, ".info").toFile();
+                output = Files.createTempFile(null, ".info").toFile();
                 if (encrypt && !dev) {
                     // Decrypt file
                     try {
@@ -72,17 +74,26 @@ public class InfoFile {
                     }
                 }
 
-                if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file during initialization '{}'", file.getAbsolutePath());
-                }
-
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("An occurred during the initial encryption process.", e);
             } finally {
                 if (scanner != null) {
                     scanner.close();
                 }
+                if (output != null && !output.delete()) {
+                    logger.warn("Unable to delete unencrypted file during initialization '{}'", output.getAbsolutePath());
+                    forceDelete(output);
+                }
             }
+        }
+    }
+
+    private void forceDelete(File file) {
+        logger.info("Attempting a forceful deletion of '{}'", file.getAbsolutePath());
+        try {
+            FileUtils.forceDelete(file);
+        } catch (IOException e) {
+            logger.error("Could not forcefully delete '{}'", file.getAbsolutePath(), e);
         }
     }
 
@@ -242,6 +253,34 @@ public class InfoFile {
     }
 
     /**
+     * Retrieves a treemap of strings associated with the specified key. The map is sorted by the string identifier.
+     * <p>
+     * The map is expected to be stored using the "!&'!" and "@!@" delimiters.
+     *
+     * @param key the key of the map to get.
+     * @return a {@link Map} of strings.
+     */
+    public TreeMap<String, String> getSortedStringMap(String key) {
+        TreeMap<String, String> toReturn = new TreeMap<>();
+        // !@!key@!@value!@!key@!@value2!@!
+
+        String value = entryMap.get(key);
+        if (!value.contains("!&'!")) {
+            return toReturn;
+        }
+
+        for (String s : value.split("!&'!")) {
+            // s = key@!@value
+            String[] split = s.split("@!@");
+            if (split.length > 1) {
+                toReturn.put(split[0], split[1]);
+            }
+        }
+
+        return toReturn;
+    }
+
+    /**
      * Checks if a key exists in the entry map.
      *
      * @param key the key to check for.
@@ -347,15 +386,16 @@ public class InfoFile {
      */
     public void update() {
         if (file == null) {
-            logger.warn("Failed to write data! File is null.");
             return;
         }
         if (!file.exists()) {
             logger.warn("Failed to write data! '{}' Does not exist!", file.getName());
         }
+
+        File output = null;
         try {
             FileWriter writer;
-            File output = Files.createTempFile(null, ".info").toFile();
+            output = Files.createTempFile(null, ".info").toFile();
             if (encrypt && !dev) {
                 writer = new FileWriter(output);
             } else {
@@ -374,13 +414,15 @@ public class InfoFile {
                 // Replace output into the file
                 FileCrypter.encryptFile(output, file);
             }
-            if (output.exists()) {
+        } catch (IOException e) {
+            logger.error("An error occurred during the encryption save process.", e);
+        } finally {
+            if (output != null && output.exists()) {
                 if (!output.delete()) {
                     logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
+                    forceDelete(output);
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

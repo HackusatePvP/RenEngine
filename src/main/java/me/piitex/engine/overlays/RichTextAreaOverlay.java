@@ -85,7 +85,7 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     }
 
     public BiConsumer<TextExt, String> applyTextStyle() {
-        BiConsumer<TextExt, String> applyTextStyle = (textExt, styleType) -> {
+        return (textExt, styleType) -> {
             textExt.setFill(textFill);
             if (styleType != null && styleType.equals("misspelled")) {
                 textExt.setUnderlineColor(Color.RED);
@@ -104,8 +104,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 textExt.setUnderlineCap(null);
             }
         };
-
-        return applyTextStyle;
     }
 
     public void setCurrentText(String currentText) {

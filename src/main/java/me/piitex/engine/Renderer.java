@@ -3,7 +3,9 @@ package me.piitex.engine;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import me.piitex.engine.hanlders.IRendererKey;
 import me.piitex.engine.hanlders.events.ContainerRenderEvent;
+import me.piitex.engine.hanlders.events.KeyPressEvent;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
@@ -27,6 +29,16 @@ public class Renderer extends Element {
     private double borderWidth = 1;
     private final List<String> styles = new ArrayList<>();
 
+    // Handlers for events
+    private IRendererKey iRendererKey;
+
+    public IRendererKey getiRendererKey() {
+        return iRendererKey;
+    }
+
+    public void onKeyPress(IRendererKey iRendererKey) {
+        this.iRendererKey = iRendererKey;
+    }
 
     public double getWidth() {
         return width;
@@ -328,6 +340,12 @@ public class Renderer extends Element {
         }
         if (this instanceof Layout layout) {
             node = layout.render();
+        }
+
+        if (node != null && iRendererKey != null) {
+            node.setOnKeyPressed(event -> {
+                iRendererKey.onKeyPress(new KeyPressEvent(event));
+            });
         }
 
         // Assemble existing elements.

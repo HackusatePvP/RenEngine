@@ -61,27 +61,40 @@ public class TabsContainer extends Container {
 
     /**
      * Method not supported with this container.
+     * @throws UnsupportedOperationException Use {@link #addTab(Tab)} instead.
      */
     @Override
     public void addElement(Element element) {
-        return;
+        throw new UnsupportedOperationException("Method unsupported. Use 'addTab()' instead.");
     }
 
     /**
      * Method not supported with this container.
+     * @throws UnsupportedOperationException Use {@link #addTab(Tab)} instead.
+     */
+    @Override
+    public void addElement(Element element, int index) {
+        throw new UnsupportedOperationException("Method unsupported. Use 'addTab()' instead.");
+    }
+
+    /**
+     * Method not supported with this container.
+     * @throws UnsupportedOperationException Use {@link #addTab(Tab)} instead.
      */
     @Override
     public void addElements(Element... elements) {
-        return;
+        throw new UnsupportedOperationException("Method unsupported. Use 'addTab()' instead.");
     }
 
     /**
      * Method not supported with this container.
+     * @throws UnsupportedOperationException Use {@link #addTab(Tab)} instead.
      */
     @Override
     public void addElements(LinkedList<Element> elements) {
-        return;
+        throw new UnsupportedOperationException("Method unsupported. Use 'addTab()' instead.");
     }
+
 
     @Override
     public Node build() {

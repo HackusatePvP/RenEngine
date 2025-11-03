@@ -4,6 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import me.piitex.engine.hanlders.events.SliderChangeEvent;
 import me.piitex.engine.overlays.events.ISliderChange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -13,8 +15,9 @@ public class SliderOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double maxValue, minValue, currentValue;
     private double blockIncrement;
-
     private ISliderChange sliderChange;
+
+    private static final Logger logger = LoggerFactory.getLogger(SliderOverlay.class);
 
     public SliderOverlay(double minValue, double maxValue, double currentValue) {
         this.minValue = minValue;
@@ -113,7 +116,7 @@ public class SliderOverlay extends Overlay implements Region {
         try {
             slider.getStylesheets().add(sliderCss.toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error("Could not css file for the slider.", e);
         }
         // Handle slider events
         slider.setOnMouseDragged(event -> {

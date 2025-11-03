@@ -8,10 +8,6 @@ import me.piitex.engine.hanlders.events.ContainerClickEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
 
-import java.util.AbstractMap;
-import java.util.LinkedList;
-import java.util.Map;
-
 // A default container which contains no special layout. Completely normal container.
 /**
  * The EmptyContainer is a default {@link Container} which houses {@link Overlay}s, {@link Layout}s, and sub-containers.
