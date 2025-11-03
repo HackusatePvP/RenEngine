@@ -253,6 +253,34 @@ public class InfoFile {
     }
 
     /**
+     * Retrieves a treemap of strings associated with the specified key. The map is sorted by the string identifier.
+     * <p>
+     * The map is expected to be stored using the "!&'!" and "@!@" delimiters.
+     *
+     * @param key the key of the map to get.
+     * @return a {@link Map} of strings.
+     */
+    public TreeMap<String, String> getSortedStringMap(String key) {
+        TreeMap<String, String> toReturn = new TreeMap<>();
+        // !@!key@!@value!@!key@!@value2!@!
+
+        String value = entryMap.get(key);
+        if (!value.contains("!&'!")) {
+            return toReturn;
+        }
+
+        for (String s : value.split("!&'!")) {
+            // s = key@!@value
+            String[] split = s.split("@!@");
+            if (split.length > 1) {
+                toReturn.put(split[0], split[1]);
+            }
+        }
+
+        return toReturn;
+    }
+
+    /**
      * Checks if a key exists in the entry map.
      *
      * @param key the key to check for.
