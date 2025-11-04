@@ -14,6 +14,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import me.piitex.engine.containers.Container;
 import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.hanlders.IWindowResize;
 import me.piitex.engine.hanlders.events.WindowResizeEvent;

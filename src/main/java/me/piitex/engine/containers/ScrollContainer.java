@@ -4,7 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 

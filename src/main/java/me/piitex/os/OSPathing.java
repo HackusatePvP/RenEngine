@@ -10,7 +10,7 @@ public class OSPathing {
 
     public static File getDocumentsDirectory() {
         String userHome = System.getProperty("user.home");
-        if (OSUtil.getOS().contains("Windows")) {
+        if (OSUtil.getOS().toLowerCase().contains("window")) {
             return new File(userHome + File.separator + "Documents");
         } else {
             return new File(userHome + File.separator + ".local" + File.separator + "share");

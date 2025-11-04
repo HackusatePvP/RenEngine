@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class MasterKeyManager {
-    private static final File MASTER_KEY_FILE = new File(System.getProperty("user.home"), ".ren.ff12.bin");
+    private static final File MASTER_KEY_FILE = new File(System.getProperty("user.home"), "ren" + System.getProperty("user.home").hashCode()+ ".bin");
     private static final int MASTER_KEY_LENGTH_BYTES = 64; // Use 64 bytes (512 bits) for a very strong master secret
 
     private static final Logger logger = LoggerFactory.getLogger(MasterKeyManager.class);
@@ -39,20 +39,17 @@ public class MasterKeyManager {
         random.nextBytes(keyBytes);
 
         try (FileOutputStream outputStream = new FileOutputStream(MASTER_KEY_FILE)) {
-            // Write data
             outputStream.write(keyBytes);
 
             Path filePath = MASTER_KEY_FILE.toPath();
             String os = System.getProperty("os.name").toLowerCase();
 
-            // Setup linux chmod permissions.
+            // Not sure if permissions are needed here.
              if (os.contains("nix") || os.contains("nux") || os.contains("aix") || os.contains("mac")) {
                 try {
-                    // "r--------" means Owner: Read | Group: None | Others: None
                     Set<PosixFilePermission> perms = PosixFilePermissions.fromString("r--------");
                     Files.setPosixFilePermissions(filePath, perms);
                 } catch (IOException e) {
-                    // This can happen if the OS doesn't support POSIX permissions or if the Java process lacks the permission to change them.
                     logger.error("Could not set POSIX permissions (chmod 400): {}", e.getMessage());
                 }
             }
@@ -68,7 +65,6 @@ public class MasterKeyManager {
         } catch (IOException e) {
             logger.error("Failed to save master key file.", e);
         } finally {
-            // Securely wipe the key from memory
             Arrays.fill(keyBytes, (byte) 0);
         }
     }

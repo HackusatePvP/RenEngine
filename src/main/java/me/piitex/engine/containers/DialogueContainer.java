@@ -6,7 +6,6 @@ import atlantafx.base.theme.Styles;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.overlays.ButtonOverlay;
 

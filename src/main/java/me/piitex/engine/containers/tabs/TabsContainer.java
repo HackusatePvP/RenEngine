@@ -2,7 +2,7 @@ package me.piitex.engine.containers.tabs;
 
 import javafx.scene.Node;
 import javafx.scene.control.TabPane;
-import me.piitex.engine.Container;
+import me.piitex.engine.containers.Container;
 import me.piitex.engine.Element;
 
 import java.util.LinkedHashMap;

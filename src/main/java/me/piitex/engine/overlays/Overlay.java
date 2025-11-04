@@ -8,7 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import me.piitex.engine.Container;
+import me.piitex.engine.containers.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Window;
 import me.piitex.engine.hanlders.events.*;

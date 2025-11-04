@@ -2,7 +2,6 @@ package me.piitex.engine.containers;
 
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import me.piitex.engine.Container;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
 
 public class StackContainer extends Container {

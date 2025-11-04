@@ -2,7 +2,6 @@ package me.piitex.engine.containers;
 
 import atlantafx.base.controls.Card;
 import javafx.scene.Node;
-import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.hanlders.events.ContainerClickEvent;
 

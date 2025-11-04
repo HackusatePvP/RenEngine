@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 
 /**
  * Utility used for encrypted all data. Privacy is taken very seriously. To further take this seriously please change the pass key.
@@ -51,7 +52,7 @@ public class FileCrypter {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_ALG);
             KeySpec spec = new PBEKeySpec(passKeyChars, salt, ITERATION_COUNT, KEY_LENGTH_BITS);
             SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-            java.util.Arrays.fill(passKeyChars, (char) 0);
+            Arrays.fill(passKeyChars, (char) 0);
 
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding"); // Use AES in GCM mode with no padding
             GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv); // Specify IV and tag length
@@ -104,7 +105,7 @@ public class FileCrypter {
             SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
 
             // *** IMPORTANT SECURITY STEP: Wipe the key from memory immediately after use ***
-            java.util.Arrays.fill(passKeyChars, (char) 0);
+            Arrays.fill(passKeyChars, (char) 0);
 
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding"); // Use AES in GCM mode with no padding
             GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv); // Specify IV and tag length

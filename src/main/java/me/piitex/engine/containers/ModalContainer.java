@@ -3,7 +3,6 @@ package me.piitex.engine.containers;
 import atlantafx.base.layout.ModalBox;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import me.piitex.engine.Container;
 import me.piitex.engine.Element;
 
 public class ModalContainer extends Container {
