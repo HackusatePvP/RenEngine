@@ -7,7 +7,7 @@ public class ToggleSwitchEvent extends Event {
     private final boolean newValue;
     private final boolean oldValue;
 
-    public ToggleSwitchEvent(ToggleSwitchOverlay overlay, boolean newValue, boolean oldValue) {
+    public ToggleSwitchEvent(ToggleSwitchOverlay overlay, boolean oldValue, boolean newValue) {
         this.overlay = overlay;
         this.newValue = newValue;
         this.oldValue = oldValue;

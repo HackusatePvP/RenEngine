@@ -6,7 +6,7 @@
 
     <groupId>me.piitex.engine</groupId>
     <artifactId>ren-engine</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <name>RenEngine</name>
 
     <properties>

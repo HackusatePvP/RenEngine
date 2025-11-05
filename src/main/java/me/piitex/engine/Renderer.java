@@ -267,7 +267,7 @@ public class Renderer extends Element {
     public void addToView(Node node, int index) {
         if (getNode() instanceof Pane pane) {
             if (!pane.getChildren().contains(node)) {
-                if (index < pane.getChildren().size()) {
+                if (index < pane.getChildren().size() && index != 0) {
                     pane.getChildren().add(index, node);
                 } else {
                     pane.getChildren().add(node);
