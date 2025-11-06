@@ -140,21 +140,16 @@ public class FileDownloader {
         return wasRunning;
     }
 
-    public long getRemoteFileSize(String fileUrl) {
-        try {
-            URL url = new URL(fileUrl);
-            URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(5000);
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection) connection).setRequestMethod("HEAD");
-            }
-            connection.connect();
-
-            return connection.getContentLengthLong();
-        } catch (Exception e) {
-            logger.error("Error fetching remote file size", e);
-            return -1;
+    public long getRemoteFileSize(String fileUrl) throws IOException {
+        URL url = new URL(fileUrl);
+        URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(5000);
+        if (connection instanceof HttpURLConnection) {
+            ((HttpURLConnection) connection).setRequestMethod("HEAD");
         }
+        connection.connect();
+
+        return connection.getContentLengthLong();
     }
 
     public void addDownloadListener(DownloadListener listener) {
