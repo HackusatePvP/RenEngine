@@ -301,6 +301,7 @@ public class Window {
             addContainer(current, i);
         }
         containers.put(index, container);
+        container.setWindow(this); // Store window reference.
 
         Node assemble = container.assemble();
 

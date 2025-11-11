@@ -29,6 +29,7 @@ public class Renderer extends Element {
     private Color borderColor;
     private double borderWidth = 1;
     private final List<String> styles = new ArrayList<>();
+    private Window window;
 
     // Handlers for events
     private IRendererKey iRendererKey;
@@ -145,6 +146,15 @@ public class Renderer extends Element {
     public void addStyle(String style) {
         styles.add(style);
     }
+
+    public Window getWindow() {
+        return window;
+    }
+
+    public void setWindow(Window window) {
+        this.window = window;
+    }
+
 
     public TreeMap<Integer, Element> getElements() {
         return elements;
