@@ -2,6 +2,7 @@ package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -11,6 +12,7 @@ public class TextOverlay extends Overlay {
     private String string;
     private Color textFillColor;
     private FontLoader fontLoader;
+    private FontSmoothingType fontSmoothingType;
     private boolean strikeout, underline;
 
 
@@ -66,6 +68,14 @@ public class TextOverlay extends Overlay {
         setY(y);
     }
 
+    public FontSmoothingType getFontSmoothingType() {
+        return fontSmoothingType;
+    }
+
+    public void setFontSmoothingType(FontSmoothingType fontSmoothingType) {
+        this.fontSmoothingType = fontSmoothingType;
+    }
+
     @Override
     public Node render() {
         if (node instanceof FontIcon icon) {
@@ -75,6 +85,7 @@ public class TextOverlay extends Overlay {
         } else if (node instanceof Text text) {
             // If text is set, render a Text node.
             text.setText(string);
+            text.setFontSmoothingType(fontSmoothingType);
             if (textFillColor != null) {
                 text.setFill(textFillColor);
             }

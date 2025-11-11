@@ -4,6 +4,7 @@ import atlantafx.base.util.BBCodeParser;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import me.piitex.engine.loaders.FontLoader;
@@ -16,6 +17,7 @@ public class TextFlowOverlay extends Overlay implements Region {
     private String text;
     private Color textFillColor;
     private FontLoader font;
+    private FontSmoothingType fontSmoothingType = FontSmoothingType.GRAY;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
 
@@ -88,6 +90,14 @@ public class TextFlowOverlay extends Overlay implements Region {
         }
     }
 
+    public FontSmoothingType getFontSmoothingType() {
+        return fontSmoothingType;
+    }
+
+    public void setFontSmoothingType(FontSmoothingType fontSmoothingType) {
+        this.fontSmoothingType = fontSmoothingType;
+    }
+
     public void add(Overlay overlay) {
         texts.add(overlay);
         textFlow.getChildren().add(overlay.assemble());
@@ -134,6 +144,9 @@ public class TextFlowOverlay extends Overlay implements Region {
                     }
                     if (textFillColor != null) {
                         text1.setTextFill(textFillColor);
+                    }
+                    if (fontSmoothingType != null) {
+                        text1.setFontSmoothingType(fontSmoothingType);
                     }
                 }
                 case HyperLinkOverlay hyperlink -> {
