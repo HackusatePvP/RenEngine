@@ -472,8 +472,12 @@ public class Window {
      * Closes the JavaFX Stage associated with this window.
      * A garbage collection hint is provided to the JVM.
      */
-    public void close() {
+    public void close(boolean handleEvent) {
         if (stage != null) {
+            if (!handleEvent) {
+                stage.setOnHidden(null);
+                stage.setOnCloseRequest(null);
+            }
             stage.close();
         }
     }
