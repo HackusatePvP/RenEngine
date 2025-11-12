@@ -7,9 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
 
@@ -19,6 +22,8 @@ public class FileDownloader {
     private final ConcurrentHashMap<String, DownloadInfo> activeDownloads = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, URLConnection> activeConnections = new ConcurrentHashMap<>();
     private final Set<DownloadListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+    private final Map<String, String> requestProperties = new HashMap<>();
 
     /**
      * Initializes the FileDownloader and its thread pool.
@@ -47,9 +52,11 @@ public class FileDownloader {
     private void performDownload(String fileUrl, File outputFile) {
         DownloadInfo info = null;
         try {
-            URL url = new URL(fileUrl);
+            URL url = new URI(fileUrl).toURL();
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(5000);
+            requestProperties.forEach(connection::setRequestProperty);
+
             activeConnections.put(fileUrl, connection); // Store the connection
 
             long fileSize = connection.getContentLengthLong();
@@ -150,6 +157,10 @@ public class FileDownloader {
         connection.connect();
 
         return connection.getContentLengthLong();
+    }
+
+    public void addRequestProperty(String key, String value) {
+        requestProperties.put(key, value);
     }
 
     public void addDownloadListener(DownloadListener listener) {
