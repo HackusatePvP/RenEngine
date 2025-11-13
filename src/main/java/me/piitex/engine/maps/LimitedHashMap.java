@@ -1,4 +1,4 @@
-package me.piitex.engine;
+package me.piitex.engine.maps;
 
 import java.util.Collection;
 import java.util.HashMap;

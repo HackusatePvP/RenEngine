@@ -16,6 +16,7 @@ public class FileChooserOverlay extends Overlay {
     private String text;
     private ButtonOverlay button;
     private FontLoader fontLoader;
+    private String[] fileExtensions;
 
     public FileChooserOverlay(Window window, String text) {
         this.window = window;
@@ -29,6 +30,10 @@ public class FileChooserOverlay extends Overlay {
 
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public ButtonOverlay getButton() {
@@ -51,6 +56,14 @@ public class FileChooserOverlay extends Overlay {
         this.directorySelect = iDirectorySelect;
     }
 
+    /**
+     * Set a specific file extension to be use used. You can set both a prefix and a subfix; *.png, filename.*, *.*
+     * @param fileExtensions The array of all valid file extensions.
+     */
+    public void setFileExtensions(String[] fileExtensions) {
+        this.fileExtensions = fileExtensions;
+    }
+
     @Override
     public Node render() {
         Button jfxButton;
@@ -64,7 +77,7 @@ public class FileChooserOverlay extends Overlay {
 
         jfxButton.setOnMouseClicked(event -> {
             FileChooser chooser = new FileChooser();
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Select character card", "*.png"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(text, fileExtensions));
             File directory = chooser.showOpenDialog(window.getStage());
 
             if (getFileSelect() != null) {

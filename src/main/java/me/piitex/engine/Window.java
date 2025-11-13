@@ -21,6 +21,8 @@ import me.piitex.engine.hanlders.events.WindowResizeEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -86,10 +88,13 @@ public class Window {
 
     private final boolean scale;
     private final boolean focused;
+    private boolean antialiasing;
 
     private TreeMap<Integer, Container> containers = new TreeMap<>();
     private Container currentPopup = null;
     private IWindowResize windowResize;
+
+    private static final Logger logger = LoggerFactory.getLogger(Window.class);
 
     /**
      * Constructs a Window instance using properties defined in a {@link WindowBuilder}.
@@ -125,6 +130,7 @@ public class Window {
         this.maximized = builder.isMaximized();
         this.focused = builder.isFocused();
         this.scale = builder.isScale();
+        this.antialiasing = builder.isAntialiasing();
         buildStage();
 
         // Display stage.
@@ -156,6 +162,11 @@ public class Window {
         if (scale) {
             Scale scale = new Scale(getWidthScale(), getHeightScale(), 0, 0);
             root.getTransforms().setAll(scale);
+        }
+        if (!antialiasing) {
+            logger.warn("Forced disabled anti-aliasing.");
+            System.setProperty("prism.lcdtext", "false");
+            System.setProperty("prism.subpixeltext", "false");
         }
 
         handleWindowScaling(stage);
@@ -301,6 +312,7 @@ public class Window {
             addContainer(current, i);
         }
         containers.put(index, container);
+        container.setWindow(this); // Store window reference.
 
         Node assemble = container.assemble();
 
@@ -460,8 +472,12 @@ public class Window {
      * Closes the JavaFX Stage associated with this window.
      * A garbage collection hint is provided to the JVM.
      */
-    public void close() {
+    public void close(boolean handleEvent) {
         if (stage != null) {
+            if (!handleEvent) {
+                stage.setOnHidden(null);
+                stage.setOnCloseRequest(null);
+            }
             stage.close();
         }
     }
