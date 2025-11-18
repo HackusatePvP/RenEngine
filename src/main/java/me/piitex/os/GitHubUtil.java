@@ -34,7 +34,7 @@ public class GitHubUtil {
     public JSONObject getLatestReleaseJson() throws IOException, URISyntaxException {
         URL url = new URI(repositoryUrl + "releases/latest").toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
+        connection.setConnectTimeout(1000);
         connection.setRequestMethod("GET");
 
         int responseCode = connection.getResponseCode();
