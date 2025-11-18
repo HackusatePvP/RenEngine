@@ -314,7 +314,12 @@ public class Window {
         containers.put(index, container);
         container.setWindow(this); // Store window reference.
 
-        Node assemble = container.assemble();
+        Node assemble;
+        if (container.getNode() != null) {
+            assemble = container.getNode();
+        } else {
+            assemble = container.assemble();
+        }
 
         if (index > 0) {
             if (root.getChildren().size() < index) {
