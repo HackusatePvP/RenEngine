@@ -1,11 +1,12 @@
 package me.piitex.os;
 
-import me.piitex.os.FileDownloader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -30,8 +31,8 @@ public class GitHubUtil {
      * @return {@link JSONObject} of the latest release.
      * @throws IOException If a connection cannot be made.
      */
-    public JSONObject getLatestReleaseJson() throws IOException {
-        URL url = new URL(repositoryUrl + "releases/latest");
+    public JSONObject getLatestReleaseJson() throws IOException, URISyntaxException {
+        URL url = new URI(repositoryUrl + "releases/latest").toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
@@ -51,13 +52,13 @@ public class GitHubUtil {
         return null;
     }
 
-    public int getLatestReleaseID() throws IOException {
+    public int getLatestReleaseID() throws IOException, URISyntaxException {
         JSONObject object = getLatestReleaseJson();
         return object.getInt("id");
     }
 
-    public JSONArray getReleaseAssets(int releaseID) throws IOException {
-        URL url = new URL(repositoryUrl + "releases/" + releaseID + "/assets");
+    public JSONArray getReleaseAssets(int releaseID) throws IOException, URISyntaxException {
+        URL url = new URI(repositoryUrl + "releases/" + releaseID + "/assets").toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
@@ -78,7 +79,7 @@ public class GitHubUtil {
         }
     }
 
-    public JSONObject getReleaseAsset(int releaseID, String pattern) throws IOException {
+    public JSONObject getReleaseAsset(int releaseID, String pattern) throws IOException, URISyntaxException {
         JSONArray array = getReleaseAssets(releaseID);
         for (int i = 0; i < array.length(); i++) {
             JSONObject asset = array.getJSONObject(i);
