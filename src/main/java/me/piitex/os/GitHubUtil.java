@@ -90,8 +90,9 @@ public class GitHubUtil {
         return null;
     }
 
-    public FileDownloader downloadAsset(int assetId, File output) throws IOException {
+    public FileDownloader downloadAsset(int assetId, File output, DownloadListener callback) {
         FileDownloader downloader = new FileDownloader();
+        downloader.addDownloadListener(callback);
         downloader.addRequestProperty("Accept", "application/octet-stream");
         downloader.startDownload(repositoryUrl + "releases/" + "assets/" + assetId, output);
         return downloader;
