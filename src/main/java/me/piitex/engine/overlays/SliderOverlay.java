@@ -1,5 +1,6 @@
 package me.piitex.engine.overlays;
 
+import atlantafx.base.controls.ProgressSliderSkin;
 import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import me.piitex.engine.hanlders.events.SliderChangeEvent;
@@ -7,15 +8,14 @@ import me.piitex.engine.overlays.events.ISliderChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 public class SliderOverlay extends Overlay implements Region {
     private final Slider slider;
-    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double maxValue, minValue, currentValue;
     private double blockIncrement;
+    private boolean tickLabels = false;
+    private ProgressSliderSkin sliderSkin;
     private ISliderChange sliderChange;
+    private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
 
     private static final Logger logger = LoggerFactory.getLogger(SliderOverlay.class);
 
@@ -34,6 +34,10 @@ public class SliderOverlay extends Overlay implements Region {
         setY(y);
         setWidth(width);
         setHeight(height);
+    }
+
+    public Slider getSlider() {
+        return slider;
     }
 
     public double getMaxValue() {
@@ -72,6 +76,22 @@ public class SliderOverlay extends Overlay implements Region {
         slider.setBlockIncrement(blockIncrement);
     }
 
+    public boolean isTickLabels() {
+        return tickLabels;
+    }
+
+    public void setTickLabels(boolean tickLabels) {
+        this.tickLabels = tickLabels;
+    }
+
+    public ProgressSliderSkin getSliderSkin() {
+        return sliderSkin;
+    }
+
+    public void setSliderSkin(ProgressSliderSkin sliderSkin) {
+        this.sliderSkin = sliderSkin;
+    }
+
     public ISliderChange getSliderChange() {
         return sliderChange;
     }
@@ -82,45 +102,14 @@ public class SliderOverlay extends Overlay implements Region {
 
     @Override
     public Node render() {
-        if (getWidth() > 0) {
-            slider.setMinWidth(width);
-        }
-
-        if (getHeight() > 0) {
-            slider.setMinHeight(height);
-        }
-
-        if (getPrefWidth() > 0) {
-            slider.setPrefWidth(prefWidth);
-        }
-
-        if (getPrefHeight() > 0) {
-            slider.setPrefHeight(prefHeight);
-        }
-
-        if (getMaxWidth() > 0) {
-            slider.setMaxWidth(maxWidth);
-        }
-
-        if (getMaxHeight() > 0) {
-            slider.setMaxHeight(maxHeight);
-        }
         slider.setTranslateX(getX());
         slider.setTranslateY(getY());
         slider.setBlockIncrement(blockIncrement);
-        // To design sliders we NEED a css file which contains the styling. I'm not able to inline this via code which sucks.
-        // Hopefully the slider gets improvements in JavaFX.
-
-        // Check if they have css files
-        File sliderCss = new File(System.getProperty("user.dir") + "/game/css/slider.css");
-        try {
-            slider.getStylesheets().add(sliderCss.toURI().toURL().toExternalForm());
-        } catch (MalformedURLException e) {
-            logger.error("Could not css file for the slider.", e);
-        }
-        // Handle slider events
-        slider.setOnMouseDragged(event -> {
-            sliderChange.onSliderChange(new SliderChangeEvent(this, slider.getValue()));
+        slider.setSkin(new ProgressSliderSkin(slider));
+        slider.valueProperty().addListener((_, oldValue, newValue) -> {
+            if (getSliderChange() != null) {
+                getSliderChange().onSliderChange(new SliderChangeEvent(this, newValue.doubleValue(), oldValue.doubleValue()));
+            }
         });
 
         return slider;
@@ -182,6 +171,7 @@ public class SliderOverlay extends Overlay implements Region {
 
     @Override
     public void setMaxWidth(double w) {
+        this.maxWidth = w;
         slider.setMaxWidth(w);
     }
 
