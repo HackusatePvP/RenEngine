@@ -21,7 +21,7 @@ public class Version implements Comparable {
      * @param version The version number as an Integer. Example `1234`
      * @param suffix Optional suffix for the version. `Example b`
      */
-    public Version(String prefix, double version, String suffix) {
+    public Version(String prefix, int version, String suffix) {
         this.prefix = prefix;
         this.version = version;
         this.suffix = suffix;
@@ -39,7 +39,7 @@ public class Version implements Comparable {
      *
      * @param version The version number as an Integer. Example `1234`
      */
-    public Version(double version) {
+    public Version(int version) {
         this.prefix = "";
         this.version = version;
         this.suffix = "";

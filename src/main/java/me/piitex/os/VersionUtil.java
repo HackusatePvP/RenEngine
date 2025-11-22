@@ -14,6 +14,7 @@ public class VersionUtil {
             // Version: 1.0
             // Suffix: snapshot
         }
+        version = version.replace(".", "");
 
         Matcher matcher = VERSION_PATTERN.matcher(version);
 
@@ -23,7 +24,7 @@ public class VersionUtil {
 
             // Group 2: Numerical Value (e.g., "12" from "v12.1.2a")
             // We use Integer.parseInt() on the string captured by this group.
-            double numericalValue = Double.parseDouble(matcher.group(2));
+            int numericalValue = Integer.parseInt(matcher.group(2));
 
             // Group 3: Suffix (e.g., "a" from "v12a")
             String suffix = matcher.group(3);
