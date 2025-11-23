@@ -42,6 +42,8 @@ public abstract class Container extends Renderer {
         setNode(view);
         this.x = x;
         this.y = y;
+        setX(x);
+        setY(y);
         setWidth(width);
         setHeight(height);
     }
@@ -50,6 +52,8 @@ public abstract class Container extends Renderer {
         setNode(view);
         this.x = x;
         this.y = y;
+        setX(x);
+        setY(y);
         setWidth(width);
         setHeight(height);
         setIndex(index);
@@ -68,6 +72,7 @@ public abstract class Container extends Renderer {
      */
     public void setX(double x) {
         this.x = x;
+        getNode().setTranslateX(x);
     }
 
     /**
@@ -83,6 +88,7 @@ public abstract class Container extends Renderer {
      */
     public void setY(double y) {
         this.y = y;
+        getNode().setTranslateY(y);
     }
 
     public IContainerClick getOnClick() {
