@@ -10,11 +10,7 @@ public class OSPathing {
 
     public static File getDocumentsDirectory() {
         String userHome = System.getProperty("user.home");
-        if (OSUtil.getOS().toLowerCase().contains("window")) {
-            return new File(userHome + File.separator + "Documents");
-        } else {
-            return new File(userHome + File.separator + ".local" + File.separator + "share");
-        }
+        return new File(userHome + File.separator + "Documents");
     }
 
     public static File getAppDataDirectory() {
@@ -28,7 +24,7 @@ public class OSPathing {
             }
         }
 
-        return new File(userHome + File.separator + ".local" + File.separator + "share");
+        return new File(userHome + "/");
     }
 
     public static File getHomeDirectory() {
