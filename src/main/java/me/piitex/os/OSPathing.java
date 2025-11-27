@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 public class OSPathing {
     private static final Logger logger = LoggerFactory.getLogger(OSPathing.class);
@@ -26,6 +27,16 @@ public class OSPathing {
             }
         } else if (os.contains("Linux")) {
             validateAppData();
+            File file = new File(userHome + "/.var/app/" + groupId + "/");
+            if (!file.exists()) {
+                try {
+                    if (file.createNewFile()) {
+                        logger.info("Created appdata directory...");
+                    }
+                } catch (IOException e) {
+                    logger.error("Could not create appdata folder!", e);
+                }
+            }
             return new File(userHome + "/.var/app/" + groupId + "/");
         }
 
