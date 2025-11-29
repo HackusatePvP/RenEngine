@@ -58,9 +58,7 @@ import java.util.List;
  */
 public abstract class Overlay extends Element {
     private double x,y;
-    private double scaleX, scaleY;
     private String tooltip;
-
     private IOverlayHover iOverlayHover;
     private IOverlayHoverExit iOverlayHoverExit;
     private IOverlayClick iOverlayClick;
@@ -105,22 +103,6 @@ public abstract class Overlay extends Element {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
-    }
-
-    public double getScaleX() {
-        return scaleX;
-    }
-
-    public void setScaleX(double scaleX) {
-        this.scaleX = scaleX;
-    }
-
-    public double getScaleY() {
-        return scaleY;
-    }
-
-    public void setScaleY(double scaleY) {
-        this.scaleY = scaleY;
     }
 
     public void onClick(IOverlayClick iOverlayClick) {
