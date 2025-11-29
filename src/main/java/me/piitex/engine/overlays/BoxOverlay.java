@@ -117,6 +117,14 @@ public class BoxOverlay extends Overlay implements Region {
         this.maxHeight = h;
     }
 
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        rectangle.setWidth(w);
+        rectangle.setHeight(h);
+    }
+
     public Rectangle getRectangle() {
         return rectangle;
     }

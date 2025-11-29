@@ -1,21 +1,26 @@
 package me.piitex.engine.overlays;
 
 import javafx.scene.paint.Paint;
+import me.piitex.engine.Element;
 import me.piitex.engine.loaders.FontLoader;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ButtonBuilder {
     private final String id;
     private String text;
     private FontIcon icon;
     private FontLoader font;
+    private Element graphic;
     private Paint textFill;
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
     private double x, y;
     private boolean enabled = true;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
+    private final List<String> styles = new ArrayList<>();
 
     /**
      * Initializes the builder with the mandatory button ID.
@@ -147,6 +152,11 @@ public class ButtonBuilder {
         return this;
     }
 
+    public ButtonBuilder addStyle(String style) {
+        this.styles.add(style);
+        return this;
+    }
+
     /**
      * Sets the enabled state of the button.
      * @param enabled True to enable the button, false to disable.
@@ -154,6 +164,11 @@ public class ButtonBuilder {
      */
     public ButtonBuilder setEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    public ButtonBuilder setGraphic(Element graphic) {
+        this.graphic = graphic;
         return this;
     }
 
@@ -179,6 +194,10 @@ public class ButtonBuilder {
 
     public FontLoader getFont() {
         return font;
+    }
+
+    public Element getGraphic() {
+        return graphic;
     }
 
     public Paint getTextFill() {
@@ -224,5 +243,9 @@ public class ButtonBuilder {
 
     public LinkedList<ImageOverlay> getImages() {
         return images;
+    }
+
+    public List<String> getStyles() {
+        return styles;
     }
 }

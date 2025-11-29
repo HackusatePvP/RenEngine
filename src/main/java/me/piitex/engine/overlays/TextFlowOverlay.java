@@ -162,7 +162,7 @@ public class TextFlowOverlay extends Overlay implements Region {
                         button.setTextFill(textFillColor);
                     }
                 }
-                case InputFieldOverlay inputField -> {
+                case TextFieldOverlay inputField -> {
                     if (font != null) {
                         inputField.setFont(font);
                     }
@@ -295,5 +295,12 @@ public class TextFlowOverlay extends Overlay implements Region {
     public void setMaxHeight(double h) {
         this.maxHeight = h;
         textFlow.setMaxHeight(h);
+    }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textFlow.setMaxSize(w, h);
     }
 }

@@ -21,4 +21,5 @@ public interface Region {
 
     void setMaxWidth(double w);
     void setMaxHeight(double h);
+    void setMaxSize(double w, double h);
 }

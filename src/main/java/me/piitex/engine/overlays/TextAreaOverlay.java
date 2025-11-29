@@ -175,6 +175,13 @@ public class TextAreaOverlay extends Overlay implements Region {
         textArea.setMaxHeight(h);
     }
 
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textArea.setMaxSize(w, h);
+    }
+
     public IInputSetEvent getiInputSetEvent() {
         return iInputSetEvent;
     }

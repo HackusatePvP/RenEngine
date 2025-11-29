@@ -180,4 +180,11 @@ public class SliderOverlay extends Overlay implements Region {
         this.maxHeight = h;
         slider.setMaxHeight(h);
     }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        slider.setMaxSize(w, h);
+    }
 }
