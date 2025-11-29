@@ -433,4 +433,13 @@ public class InfoFile {
     public void setEntryMap(Map<String, String> entryMap) {
         this.entryMap = entryMap;
     }
+
+    public static InfoFile copy(InfoFile input) {
+        InfoFile infoFile = new InfoFile();
+
+        input.getEntryMap().forEach((s, s2) -> infoFile.getEntryMap().put(s, s2));
+        infoFile.update();
+
+        return infoFile;
+    }
 }
