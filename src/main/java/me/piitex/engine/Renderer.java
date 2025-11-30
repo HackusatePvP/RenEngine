@@ -31,6 +31,8 @@ public class Renderer extends Element {
     private final List<String> styles = new ArrayList<>();
     private Window window;
 
+    private final Properties properties = new Properties();
+
     // Handlers for events
     private IRendererKey iRendererKey;
 
@@ -383,5 +385,17 @@ public class Renderer extends Element {
         }
 
         return node;
+    }
+
+    public void addProperties(String key, String data) {
+        properties.setProperty(key, data);
+    }
+
+    public String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public boolean hasProperty(String key) {
+        return properties.containsKey(key);
     }
 }
