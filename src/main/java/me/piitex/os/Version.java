@@ -2,7 +2,7 @@ package me.piitex.os;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Version implements Comparable {
+public class Version implements Comparable<Version> {
     private final String prefix;
     private final double version;
     private final String suffix;
@@ -10,12 +10,26 @@ public class Version implements Comparable {
     /**
      * Constructor for creating a version object. Used for comparing and updating third party software.
      * <p>
-     *     Version Example: a1234b
+     *     Version Examples"
+     *     <ul>
+     *         1.0
+     *     </ul>
+     *     <ul>
+     *         v1.0
+     *     </ul>
+     *     <ul>
+     *         1.0-SNAPSHOT
+     *     </ul>
+     *     <ul>
+     *         v1.0-SNAPSHOT
+     *     </ul>
      * </p>
      *
      * The comparison of versions works by the order of the letters and numbers.
      * Letters will be sorted ascended by alphabetical order. A is 0 and B is 1.
      * The higher the number the greater the version. The version `0` will be the seen as the earliest possible version. The version `a0a` is the same as `0`.
+     * <p>
+     * Versions schemes cannot change for the comparison. v1.0 /= 1.0-SNAPSHOT /= 1.0. Any changes made to versions schemes must be validated before parsing.
      *
      * @param prefix Optional prefix for the version. Example `a`
      * @param version The version number as an Integer. Example `1234`
@@ -30,12 +44,26 @@ public class Version implements Comparable {
     /**
      * Constructor for creating a version object. Used for comparing and updating third party software.
      * <p>
-     *     Version Example: 1234
+     *     Version Examples"
+     *     <ul>
+     *         1.0
+     *     </ul>
+     *     <ul>
+     *         v1.0
+     *     </ul>
+     *     <ul>
+     *         1.0-SNAPSHOT
+     *     </ul>
+     *     <ul>
+     *         v1.0-SNAPSHOT
+     *     </ul>
      * </p>
      *
      * The comparison of versions works by the order of the letters and numbers.
      * Letters will be sorted ascended by alphabetical order. A is 0 and B is 1.
      * The higher the number the greater the version. The version `0` will be the seen as the earliest possible version. The version `a0a` is the same as `0`.
+     * <p>
+     * Versions schemes cannot change for the comparison. v1.0 /= 1.0-SNAPSHOT /= 1.0. Any changes made to versions schemes must be validated before parsing.
      *
      * @param version The version number as an Integer. Example `1234`
      */
@@ -70,9 +98,7 @@ public class Version implements Comparable {
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        Version other = (Version) o;
-
+    public int compareTo(@NotNull Version other) {
         return getCalculatedVersion() - other.getCalculatedVersion();
     }
 
