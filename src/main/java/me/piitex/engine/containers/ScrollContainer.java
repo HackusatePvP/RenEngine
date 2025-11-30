@@ -18,6 +18,10 @@ public class ScrollContainer extends Container {
     private boolean pannable = false;
     private double scrollPosition;
 
+    public ScrollContainer(Layout layout, double width, double height) {
+        this(layout, 0, 0, width, height);
+    }
+
     public ScrollContainer(Layout layout, double x, double y, double width, double height) {
         ScrollPane tempPane = new ScrollPane();
         this.scrollPane = tempPane;
@@ -47,6 +51,11 @@ public class ScrollContainer extends Container {
 
     public void setHorizontalScroll(boolean horizontalScroll) {
         this.horizontalScroll = horizontalScroll;
+        if (!horizontalScroll && !scrollWhenNeeded) {
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        } else if (horizontalScroll && !scrollWhenNeeded) {
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        }
     }
 
     public boolean isVerticalScroll() {
@@ -55,6 +64,11 @@ public class ScrollContainer extends Container {
 
     public void setVerticalScroll(boolean verticalScroll) {
         this.verticalScroll = verticalScroll;
+        if (!verticalScroll && !scrollWhenNeeded) {
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        } else if (verticalScroll && !scrollWhenNeeded) {
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        }
     }
 
     public boolean isScrollWhenNeeded() {
