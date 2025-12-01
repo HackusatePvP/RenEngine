@@ -36,6 +36,8 @@ public class TextFieldOverlay extends Overlay implements Region {
         this.width = width;
         this.height = height;
         setNode(textField);
+        textField.setText(defaultInput);
+        textField.setPromptText(hintText);
         setX(x);
         setY(y);
     }
@@ -86,11 +88,7 @@ public class TextFieldOverlay extends Overlay implements Region {
         if (getMaxWidth() > 0 || getMaxHeight() > 0) {
             textField.setMaxSize(getMaxWidth(), getMaxHeight());
         }
-        textField.setPromptText(hintText);
-        textField.setText(defaultInput);
         textField.setAlignment(Pos.TOP_LEFT);
-
-
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
