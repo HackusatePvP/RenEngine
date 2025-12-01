@@ -17,7 +17,6 @@ public class ZipUtil {
         }
         try (ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(zip)))) {
             ZipEntry entry = zipIn.getNextEntry();
-            System.out.println("Entry: " + entry);
             // iterates over entries in the zip file
             while (entry != null) {
                 if (!entry.isDirectory()) {
@@ -26,7 +25,6 @@ public class ZipUtil {
                 } else {
                     // if the entry is a directory, create the directory
                     File dir = new File(outDirectory, entry.getName());
-                    System.out.println("Making Directory: " + dir);
                     dir.mkdir();
                 }
                 zipIn.closeEntry();
@@ -36,8 +34,6 @@ public class ZipUtil {
     }
 
     private static void extractFile(String name, ZipInputStream zipIn, File output) throws IOException {
-        System.out.println("Output: " + output.getAbsolutePath());
-        System.out.println("File name: " + name);
         File newFile = new File(output, name);
         newFile.getParentFile().mkdirs();
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile))) {
