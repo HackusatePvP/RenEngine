@@ -33,7 +33,7 @@ public class MasterKeyManager {
     }
 
     private static void generateAndSaveMasterKey() {
-        System.out.println("Generating new persistent master key...");
+        logger.info("Generating a new security key...");
         SecureRandom random = new SecureRandom();
         byte[] keyBytes = new byte[MASTER_KEY_LENGTH_BYTES];
         random.nextBytes(keyBytes);
