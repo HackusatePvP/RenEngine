@@ -10,6 +10,8 @@ import me.piitex.engine.hanlders.events.KeyPressEvent;
 import me.piitex.engine.hanlders.events.LayoutRenderEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -30,8 +32,9 @@ public class Renderer extends Element {
     private double borderWidth = 1;
     private final List<String> styles = new ArrayList<>();
     private Window window;
-
     private final Properties properties = new Properties();
+
+    private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
 
     // Handlers for events
     private IRendererKey iRendererKey;
@@ -192,9 +195,10 @@ public class Renderer extends Element {
      */
     public void addElement(Element element, int index) {
         Element current = elements.get(index);
-        if (current != null) {
+        if (current != null && current != element) {
             int i = index + 1;
             addElement(getElementAt(index), i);
+            elements.remove(index);
         }
         element.setIndex(index);
         elements.put(index, element);
@@ -279,12 +283,29 @@ public class Renderer extends Element {
     public void addToView(Node node, int index) {
         if (getNode() instanceof Pane pane) {
             if (!pane.getChildren().contains(node)) {
-                if (index < pane.getChildren().size() && index != 0) {
+                if (index >= 0 && index <= pane.getChildren().size()) {
                     pane.getChildren().add(index, node);
                 } else {
+                    // Fallback for an invalid index
                     pane.getChildren().add(node);
                 }
+            } else {
+                pane.getChildren().remove(node);
+
+                // Check index again after removing it.
+                if (index <= pane.getChildren().size()) {
+                    logger.warn("Replacing '{}' with '{}'", index, node.getClass().toString());
+                    pane.getChildren().add(index, node);
+                } else {
+                    // If the new index is out of bounds, add it to the end.
+                    logger.debug("Could not allocate space. Node will be rendered first.");
+                    pane.getChildren().add(node);
+                }
+                pane.requestLayout();
+                logger.debug("Node already exists in renderer. Shuffling '{}' forward.", node.getClass().toString());
             }
+        } else {
+            logger.error("Invalid renderer type!", new RuntimeException());
         }
     }
 
