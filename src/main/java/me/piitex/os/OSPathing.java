@@ -20,7 +20,7 @@ public class OSPathing {
         String userHome = System.getProperty("user.home");
         String os = OSUtil.getOS();
 
-        if (os.equalsIgnoreCase("Windows")) {
+        if (os.contains("Windows")) {
             String localAppData = System.getenv("APPDATA");
             if (localAppData != null) {
                 return new File(localAppData);
