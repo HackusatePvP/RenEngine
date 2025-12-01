@@ -8,6 +8,8 @@ import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import me.piitex.engine.loaders.FontLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
@@ -19,7 +21,7 @@ public class TextFlowOverlay extends Overlay implements Region {
     private FontLoader font;
     private FontSmoothingType fontSmoothingType = FontSmoothingType.GRAY;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
+    private static final Logger logger = LoggerFactory.getLogger(TextFlowOverlay.class);
 
     public TextFlowOverlay(String text, double width, double height) {
         this.textFlow = new TextFlow();
@@ -167,7 +169,7 @@ public class TextFlowOverlay extends Overlay implements Region {
                         inputField.setFont(font);
                     }
                 }
-                default -> System.out.println("Unsupported overlay in TextFlow. {}" + overlay.toString());
+                default -> logger.error("Unsupported overlay in TextFlow. {}", overlay.toString());
             }
 
             Node node = overlay.assemble();
