@@ -1,6 +1,7 @@
 package me.piitex.engine.overlays;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -12,7 +13,7 @@ public class IconOverlay extends Overlay {
     private final FontIcon fontIcon;
     private String iconCode;
     private int iconSize = 16;
-    private Paint color;
+    private Paint color = Color.WHITE;
 
     public IconOverlay() {
         this.fontIcon = new FontIcon();
