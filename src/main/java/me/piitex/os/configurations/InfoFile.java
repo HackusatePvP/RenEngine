@@ -48,7 +48,7 @@ public class InfoFile {
                     logger.warn("Unable to create file '{}'", file.getAbsolutePath());
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("IO exception occurred while creating character info!", e);
             }
         } else {
             // Load file
