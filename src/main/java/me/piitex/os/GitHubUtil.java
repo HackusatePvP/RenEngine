@@ -2,6 +2,8 @@ package me.piitex.os;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -14,7 +16,7 @@ import java.net.URL;
  */
 public class GitHubUtil {
     private final String repositoryUrl; //https://api.github.com/repos/owner/repo/
-
+    private static final Logger logger = LoggerFactory.getLogger(GitHubUtil.class);
     /**
      * Initializes the base url for the repository. To get the repository link, use the following format.
      * <pre>
@@ -33,6 +35,7 @@ public class GitHubUtil {
      */
     public JSONObject getLatestReleaseJson() throws IOException, URISyntaxException {
         URL url = new URI(repositoryUrl + "releases/latest").toURL();
+        logger.info("Fetching latest release request '{}'", url.toString());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setConnectTimeout(1000);
         connection.setRequestMethod("GET");
@@ -59,6 +62,7 @@ public class GitHubUtil {
 
     public JSONArray getReleaseAssets(int releaseID) throws IOException, URISyntaxException {
         URL url = new URI(repositoryUrl + "releases/" + releaseID + "/assets").toURL();
+        logger.info("Fetching release asset '{}' '{}'", releaseID, url.toString());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
