@@ -1,5 +1,6 @@
 package me.piitex.os;
 
+import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,17 @@ public class ZipUtil {
                 bos.write(bytesIn, 0, read);
             }
         }
+    }
+
+    public static void unzipTarGzFile(File tarGz, File outDirectory) {
+        if (!outDirectory.exists()) {
+            outDirectory.mkdir();
+        }
+
+        TarGZipUnArchiver unArchiver = new TarGZipUnArchiver();
+        unArchiver.setSourceFile(tarGz);
+        unArchiver.setDestDirectory(outDirectory);
+        unArchiver.extract();
     }
 
     public static void zipDirectory(File zipFile, File directory) {
