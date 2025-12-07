@@ -3,7 +3,6 @@ package me.piitex.engine.overlays;
 import javafx.scene.paint.Paint;
 import me.piitex.engine.Element;
 import me.piitex.engine.loaders.FontLoader;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.List;
 public class ButtonBuilder {
     private final String id;
     private String text;
-    private FontIcon icon;
+    private IconOverlay icon;
     private FontLoader font;
     private Element graphic;
     private Paint textFill;
@@ -45,7 +44,7 @@ public class ButtonBuilder {
      * @param icon The FontIcon to display on the button.
      * @return The builder instance.
      */
-    public ButtonBuilder setIcon(FontIcon icon) {
+    public ButtonBuilder setIcon(IconOverlay icon) {
         this.icon = icon;
         return this;
     }
@@ -188,7 +187,7 @@ public class ButtonBuilder {
         return text;
     }
 
-    public FontIcon getIcon() {
+    public IconOverlay getIcon() {
         return icon;
     }
 

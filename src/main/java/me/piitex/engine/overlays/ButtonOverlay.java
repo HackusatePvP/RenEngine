@@ -18,7 +18,7 @@ public class ButtonOverlay extends Overlay implements Region {
     private String text;
     private FontLoader font;
     private Element graphic;
-    private final FontIcon icon;
+    private final IconOverlay icon;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
     private Paint textFill;
     private Pos alignment;
@@ -117,7 +117,8 @@ public class ButtonOverlay extends Overlay implements Region {
         }
 
         if (icon != null) {
-            button.setGraphic(icon);
+            Node graphic = icon.assemble();
+            button.setGraphic(graphic);
         }
         if (text != null && !text.isEmpty()) {
             button.setText(text);
