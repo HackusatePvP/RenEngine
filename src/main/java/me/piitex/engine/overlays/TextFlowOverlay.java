@@ -139,7 +139,7 @@ public class TextFlowOverlay extends Overlay implements Region {
             // Check node type
             switch (overlay) {
                 case TextOverlay text1 -> {
-                    text1.setText(text1.getText().replace("\\n", System.lineSeparator()));
+                    text1.setText(text1.getTextNode().replace("\\n", System.lineSeparator()));
                     if (font != null && text1.getFontLoader() == null) {
                         // Passes
                         text1.setFont(font);

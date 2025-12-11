@@ -4,13 +4,16 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import me.piitex.engine.loaders.FontLoader;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class TextOverlay extends Overlay {
     private String string;
     private Color textFillColor;
     private FontLoader fontLoader;
     private FontSmoothingType fontSmoothingType;
+    private TextAlignment textAlignment;
     private boolean strikeout, underline;
     private final Text textNode;
 
@@ -84,6 +87,9 @@ public class TextOverlay extends Overlay {
         if (getTextFillColor() != null) {
             textNode.setFill(getTextFillColor());
         }
+        if (textAlignment != null) {
+            textNode.setTextAlignment(textAlignment);
+        }
         textNode.setStrikethrough(strikeout);
         textNode.setUnderline(underline);
 
@@ -138,6 +144,11 @@ public class TextOverlay extends Overlay {
     public void setTextFill(Color textFillColor) {
         this.textFillColor = textFillColor;
         textNode.setFill(textFillColor);
+    }
+
+    public void setTextAlignment(TextAlignment textAlignment) {
+        this.textAlignment = textAlignment;
+        textNode.setTextAlignment(textAlignment);
     }
 
 }
