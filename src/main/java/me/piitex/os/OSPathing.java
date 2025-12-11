@@ -9,8 +9,6 @@ import java.io.IOException;
 public class OSPathing {
     private static final Logger logger = LoggerFactory.getLogger(OSPathing.class);
 
-    public static String groupId = "me.piitex.app.App"; // Only used for linux
-
     public static File getDocumentsDirectory() {
         String userHome = System.getProperty("user.home");
         return new File(userHome + File.separator + "Documents");
@@ -26,18 +24,7 @@ public class OSPathing {
                 return new File(localAppData);
             }
         } else if (os.contains("Linux")) {
-            validateAppData();
-            File file = new File(userHome + "/.var/app/" + groupId + "/");
-            if (!file.exists()) {
-                try {
-                    if (file.createNewFile()) {
-                        logger.info("Created appdata directory...");
-                    }
-                } catch (IOException e) {
-                    logger.error("Could not create appdata folder!", e);
-                }
-            }
-            return new File(userHome + "/.var/app/" + groupId + "/");
+            return new File(userHome + "/.local/share/");
         }
 
         return new File(userHome + "/");
@@ -74,11 +61,4 @@ public class OSPathing {
             }
         }
     }
-
-    private static void validateAppData() {
-        if (OSUtil.getOS().contains("Linux") && groupId.equals("me.piitex.app.App")) {
-            throw new RuntimeException("You must set the linux group id for the application! OSPathing.groupId = \"your.group.app\"");
-        }
-    }
-
 }
