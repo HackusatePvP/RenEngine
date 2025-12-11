@@ -5,55 +5,48 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import me.piitex.engine.loaders.FontLoader;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 public class TextOverlay extends Overlay {
-    private final Node node;
     private String string;
     private Color textFillColor;
     private FontLoader fontLoader;
     private FontSmoothingType fontSmoothingType;
     private boolean strikeout, underline;
-
+    private final Text textNode;
 
     public TextOverlay(String text) {
         this.string = text;
-        this.node = new Text();
-        setNode(node);
-    }
-
-    public TextOverlay(FontIcon icon) {
-        this.node = icon;
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
     }
 
     public TextOverlay(String text, FontLoader fontLoader) {
         this.string = text;
         this.fontLoader = fontLoader;
-        this.node = new Text();
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
     }
 
     public TextOverlay(String text, Color textFillColor) {
         this.string = text;
         this.textFillColor = textFillColor;
-        this.node = new Text();
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
     }
 
     public TextOverlay(String text, Color textFillColor, FontLoader fontLoader) {
         this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
-        this.node = new Text();
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
     }
 
     public TextOverlay(String text, FontLoader fontLoader, double x, double y) {
         this.string = text;
         this.fontLoader = fontLoader;
-        this.node = new Text();
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
         setX(x);
         setY(y);
     }
@@ -62,8 +55,8 @@ public class TextOverlay extends Overlay {
         this.string = text;
         this.textFillColor = textFillColor;
         this.fontLoader = fontLoader;
-        this.node = new Text();
-        setNode(node);
+        this.textNode = new Text();
+        setNode(textNode);
         setX(x);
         setY(y);
     }
@@ -78,47 +71,37 @@ public class TextOverlay extends Overlay {
 
     @Override
     public Node render() {
-        if (node instanceof FontIcon icon) {
-            if (textFillColor != null) {
-                icon.setIconColor(textFillColor);
-            }
-        } else if (node instanceof Text text) {
-            // If text is set, render a Text node.
-            text.setText(string);
-            text.setFontSmoothingType(fontSmoothingType);
-            if (textFillColor != null) {
-                text.setFill(textFillColor);
-            }
-
-            if (fontLoader != null) {
-                text.setFont(fontLoader.getFont());
-            }
-            if (getTextFillColor() != null) {
-                text.setFill(getTextFillColor());
-            }
-            text.setStrikethrough(strikeout);
-            text.setUnderline(underline);
+        // If text is set, render a Text node.
+        textNode.setText(string);
+        textNode.setFontSmoothingType(fontSmoothingType);
+        if (textFillColor != null) {
+            textNode.setFill(textFillColor);
         }
 
-        if (node != null) {
-            node.setTranslateX(getX());
-            node.setTranslateY(getY());
-            node.getStyleClass().addAll(getStyles());
+        if (fontLoader != null) {
+            textNode.setFont(fontLoader.getFont());
         }
+        if (getTextFillColor() != null) {
+            textNode.setFill(getTextFillColor());
+        }
+        textNode.setStrikethrough(strikeout);
+        textNode.setUnderline(underline);
 
-        return node;
+
+        textNode.setTranslateX(getX());
+        textNode.setTranslateY(getY());
+        textNode.getStyleClass().addAll(getStyles());
+
+        return textNode;
     }
 
-    public String getText() {
+    public String getTextNode() {
         return string;
     }
 
     public void setText(String text) {
         this.string = text;
-
-        if (node instanceof Text t) {
-            t.setText(text);
-        }
+        textNode.setText(text);
     }
 
     public boolean isStrikeout() {
@@ -127,10 +110,7 @@ public class TextOverlay extends Overlay {
 
     public void setStrikeout(boolean strikeout) {
         this.strikeout = strikeout;
-
-        if (node instanceof Text t) {
-            t.setStrikethrough(strikeout);
-        }
+        textNode.setStrikethrough(strikeout);
     }
 
     public boolean isUnderline() {
@@ -139,10 +119,7 @@ public class TextOverlay extends Overlay {
 
     public void setUnderline(boolean underline) {
         this.underline = underline;
-
-        if (node instanceof Text t) {
-            t.setUnderline(strikeout);
-        }
+        textNode.setUnderline(strikeout);
     }
 
     public FontLoader getFontLoader() {
@@ -151,10 +128,7 @@ public class TextOverlay extends Overlay {
 
     public void setFont(FontLoader fontLoader) {
         this.fontLoader = fontLoader;
-
-        if (node instanceof Text t) {
-            t.setFont(fontLoader.getFont());
-        }
+        textNode.setFont(fontLoader.getFont());
     }
 
     public Color getTextFillColor() {
@@ -163,10 +137,7 @@ public class TextOverlay extends Overlay {
 
     public void setTextFill(Color textFillColor) {
         this.textFillColor = textFillColor;
-
-        if (node instanceof Text t) {
-            t.setFill(textFillColor);
-        }
+        textNode.setFill(textFillColor);
     }
 
 }
