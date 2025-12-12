@@ -81,6 +81,7 @@ public class ScrollContainer extends Container {
 
     public void setScrollPosition(double scrollPosition) {
         this.scrollPosition = scrollPosition;
+        scrollPane.setVvalue(scrollPosition);
     }
 
     public void setScrollToBottom(boolean scrollToBottom) {
