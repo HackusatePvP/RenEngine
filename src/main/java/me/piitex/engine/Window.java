@@ -21,6 +21,7 @@ import me.piitex.engine.hanlders.events.WindowResizeEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
+import me.piitex.os.OSUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +154,18 @@ public class Window {
         stage.setTitle(title);
         stage.initStyle(stageStyle);
         stage.setWidth(width);
-        stage.setHeight(height);
+
+        // Linux, Windows, and Mac handle sizing of windows differently.
+        // With the top control bar enabled, the height will be off.
+        // Offset the height by subtracting the height of the top bar.
+        if (OSUtil.getOS().contains("Windows")) {
+            stage.setHeight(height + 40);
+        } else if (OSUtil.getOS().contains("Linux")) {
+            stage.setHeight(height);
+        } else {
+            stage.setHeight(height);
+        }
+
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
 
@@ -296,7 +308,6 @@ public class Window {
     public void addContainer(Container container, Node node) {
         addContainer(container, node, container.getIndex());
     }
-
 
     /**
      * Adds a {@link Container} to the window at a specific index. If a container already exists at the given index,
