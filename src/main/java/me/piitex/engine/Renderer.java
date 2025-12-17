@@ -150,6 +150,7 @@ public class Renderer extends Element {
 
     public void addStyle(String style) {
         styles.add(style);
+        getNode().getStyleClass().add(style);
     }
 
     public Window getWindow() {
