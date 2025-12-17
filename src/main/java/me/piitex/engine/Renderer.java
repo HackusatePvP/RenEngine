@@ -248,6 +248,14 @@ public class Renderer extends Element {
         }
     }
 
+    public void removeFirstElement() {
+        removeElement(elements.firstKey());
+    }
+
+    public void removeLastElement() {
+        removeElement(elements.lastKey());
+    }
+
     public void removeAllElement(Element element) {
         LinkedHashMap<Integer, Element> toRemove = new LinkedHashMap<>(elements);
         toRemove.forEach((integer, e) -> {
