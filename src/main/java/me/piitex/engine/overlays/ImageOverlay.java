@@ -53,17 +53,6 @@ public class ImageOverlay extends Overlay {
         setNode(imageView);
     }
 
-    public ImageOverlay(String directory, String imagePath) {
-        ImageLoader loader = new ImageLoader(directory, imagePath);
-        this.image = loader.build();
-        this.path = loader.getFile().getAbsolutePath();
-        this.fileName = loader.getFile().getName();
-        this.fitWidth = image.getWidth();
-        this.fitHeight = image.getHeight();
-        this.imageView = new ImageView();
-        setNode(imageView);
-    }
-
     public ImageOverlay(Image image, double x, double y) {
         this.image = image;
         this.fitWidth = image.getWidth();
