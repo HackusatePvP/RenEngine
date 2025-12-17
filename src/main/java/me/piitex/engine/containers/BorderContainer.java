@@ -8,7 +8,7 @@ import me.piitex.engine.hanlders.events.ContainerClickEvent;
 public class BorderContainer extends Container {
     private final BorderPane pane;
 
-    private Element top, bottom, right, left, center, border;
+    private Element top, bottom, right, left, center;
 
     public BorderContainer(double x, double y, double width, double height, int index) {
         BorderPane tempPane = new BorderPane();
@@ -38,6 +38,7 @@ public class BorderContainer extends Container {
 
     public void setTop(Element top) {
         this.top = top;
+        pane.setTop(top.assemble());
     }
 
     public Element getBottom() {
@@ -46,6 +47,7 @@ public class BorderContainer extends Container {
 
     public void setBottom(Element bottom) {
         this.bottom = bottom;
+        pane.setBottom(bottom.assemble());
     }
 
     public Element getRight() {
@@ -54,6 +56,7 @@ public class BorderContainer extends Container {
 
     public void setRight(Element right) {
         this.right = right;
+        pane.setRight(right.assemble());
     }
 
     public Element getLeft() {
@@ -62,6 +65,7 @@ public class BorderContainer extends Container {
 
     public void setLeft(Element left) {
         this.left = left;
+        pane.setLeft(left.assemble());
     }
 
     public Element getCenter() {
@@ -70,14 +74,7 @@ public class BorderContainer extends Container {
 
     public void setCenter(Element center) {
         this.center = center;
-    }
-
-    public Element getBorder() {
-        return border;
-    }
-
-    public void setBorder(Element border) {
-        this.border = border;
+        pane.setCenter(center.assemble());
     }
 
     @Override
@@ -103,25 +100,6 @@ public class BorderContainer extends Container {
         }
         if (getMaxHeight() > 0) {
             pane.setMaxHeight(getMaxHeight());
-        }
-
-        if (top != null) {
-            pane.setTop(top.assemble());
-        }
-        if (bottom != null) {
-            pane.setBottom(bottom.assemble());
-        }
-        if (right != null) {
-            pane.setRight(right.assemble());
-        }
-        if (left != null) {
-            pane.setLeft(left.assemble());
-        }
-        if (center != null) {
-            pane.setCenter(center.assemble());
-        }
-        if (border != null) {
-            pane.setBottom(border.assemble());
         }
 
         setStyling(pane);
