@@ -55,9 +55,6 @@ public class HyperLinkOverlay extends Overlay {
         hyperlink.setPadding(new Insets(4,0,4,0));
         hyperlink.setTranslateX(getX());
         hyperlink.setTranslateY(getY());
-        hyperlink.setOnMouseClicked(event -> {
-
-        });
         return hyperlink;
     }
 }
