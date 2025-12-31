@@ -344,7 +344,26 @@ public class Window {
     }
 
     /**
-     * Adds a pre-compiled {@link Container} to the window. Use {@link Container#assemble()} to build the {@link Node}.
+     * Adds a pre-compiled {@link Container} to the window. Use {@link Container#assemble()} to build the {@link Node}. Nodes are automatically assembled when the base container is drawn to the screen.
+     * If a Container is large or executes long task it might freeze or lock the UI. You can assemble the Container asynchronously to prevent the UI from freezing.
+     *
+     * <pre>
+     *     {@code
+     *     Container container = new EmptyContainer(100, 100);
+     *     // add elements to the container.
+     *     runTaskAsynchronously(() -> {
+     *         Node assemble = container.assemble();
+     *         // To draw nodes to the screen it must be called in the JavaFX thread.
+     *         Platform.runLater(() -> {
+     *          window.addContainer(container, assemble, 0); // Specifying the index is optional.
+     *         });
+     *     });
+     *
+     *     // Display a loading view which can be removed in the task above.
+     *     }
+     * </pre>
+     *
+     * </pre>
      * @param container The container to add.
      * @param node The pre-compiled node to add.
      * @param index The desired rendering index for the container.
