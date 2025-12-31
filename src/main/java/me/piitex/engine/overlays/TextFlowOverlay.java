@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import me.piitex.engine.loaders.FontLoader;
 import org.slf4j.Logger;
@@ -20,24 +21,12 @@ public class TextFlowOverlay extends Overlay implements Region {
     private Color textFillColor;
     private FontLoader font;
     private FontSmoothingType fontSmoothingType = FontSmoothingType.GRAY;
+    private TextAlignment textAlignment;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private static final Logger logger = LoggerFactory.getLogger(TextFlowOverlay.class);
 
     public TextFlowOverlay(String text, double width, double height) {
-        this.textFlow = new TextFlow();
-        this.width = width;
-        this.height = height;
-        this.text = text;
-        setNode(textFlow);
-    }
-
-    public TextFlowOverlay(String text, FontLoader fontLoader, double width, double height) {
-        this.textFlow = new TextFlow();
-        this.texts.add(new TextOverlay(text));
-        this.font = fontLoader;
-        this.width = width;
-        this.height = height;
-        setNode(textFlow);
+       this(text, null, width, height);
     }
 
     public TextFlowOverlay(TextOverlay text, double width, double height) {
@@ -55,6 +44,16 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.texts = texts;
         setNode(textFlow);
     }
+
+    public TextFlowOverlay(String text, FontLoader fontLoader, double width, double height) {
+        this.textFlow = new TextFlow();
+        this.font = fontLoader;
+        this.width = width;
+        this.height = height;
+        setNode(textFlow);
+        setText(text);
+    }
+
 
     public LinkedList<Overlay> getTexts() {
         return texts;
@@ -122,6 +121,14 @@ public class TextFlowOverlay extends Overlay implements Region {
         }
     }
 
+    public TextAlignment getTextAlignment() {
+        return textAlignment;
+    }
+
+    public void setTextAlignment(TextAlignment textAlignment) {
+        this.textAlignment = textAlignment;
+    }
+
     public TextFlow getTextFlow() {
         return textFlow;
     }
@@ -130,6 +137,10 @@ public class TextFlowOverlay extends Overlay implements Region {
     public Node render() {
         // Creates text that overflows over the box.
         textFlow.getChildren().clear();
+
+        if (textAlignment != null) {
+            textFlow.setTextAlignment(textAlignment);
+        }
 
         if (text != null) {
             setText(text);
