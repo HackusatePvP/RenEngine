@@ -30,7 +30,7 @@ public class VersionUtil {
             String suffix = matcher.group(3);
             return new Version(prefix, numericalValue, suffix);
         } else {
-            return null;
+            return new Version("", Integer.parseInt(version), "");
         }
     }
 }
