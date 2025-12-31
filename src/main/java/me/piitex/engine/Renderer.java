@@ -298,6 +298,7 @@ public class Renderer extends Element {
                     // Fallback for an invalid index
                     pane.getChildren().add(node);
                 }
+                pane.requestLayout();
             } else {
                 pane.getChildren().remove(node);
 
