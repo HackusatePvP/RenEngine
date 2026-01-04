@@ -128,12 +128,6 @@ public class CardContainer extends Container {
             atlantafxCard.setMaxHeight(getMaxHeight());
         }
 
-        if (getOnClick() != null) {
-            atlantafxCard.setOnMouseClicked(mouseEvent -> {
-                getOnClick().onClick(new ContainerClickEvent(this));
-            });
-        }
-
         atlantafxCard.getStyleClass().addAll(getStyles());
 
 

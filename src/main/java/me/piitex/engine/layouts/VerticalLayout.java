@@ -57,14 +57,6 @@ public class VerticalLayout extends Layout {
             pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
         }
 
-        if (getClickEvent() != null) {
-            pane.setOnMousePressed(mouseEvent -> {
-                getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent, this));
-            });
-        } else {
-            pane.setOnMousePressed(null);
-        }
-
         setStyling(pane);
         return pane;
     }

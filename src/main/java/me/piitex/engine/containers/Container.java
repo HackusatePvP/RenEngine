@@ -3,7 +3,6 @@ package me.piitex.engine.containers;
 import javafx.scene.Node;
 import me.piitex.engine.Renderer;
 import me.piitex.engine.Window;
-import me.piitex.engine.containers.handlers.IContainerClick;
 import me.piitex.engine.containers.handlers.IContainerRender;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.Overlay;
@@ -35,7 +34,6 @@ import java.util.*;
 public abstract class Container extends Renderer {
     private double x, y;
     private final List<String> stylesheets = new ArrayList<>();
-    private IContainerClick click;
     private final List<IContainerRender> renderEvents = new LinkedList<>();
 
     public Container(Node view, double x, double y, double width, double height) {
@@ -89,14 +87,6 @@ public abstract class Container extends Renderer {
     public void setY(double y) {
         this.y = y;
         getNode().setTranslateY(y);
-    }
-
-    public IContainerClick getOnClick() {
-        return click;
-    }
-
-    public void onClick(IContainerClick click) {
-        this.click = click;
     }
 
     public void addRenderEvent(IContainerRender renderEvent) {

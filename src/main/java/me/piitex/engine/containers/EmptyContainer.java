@@ -74,10 +74,6 @@ public class EmptyContainer extends Container {
 
         setStyling(pane);
 
-        if (getOnClick() != null) {
-            pane.setOnMouseClicked(event -> getOnClick().onClick(new ContainerClickEvent(this)));
-        }
-
         return pane;
     }
 }

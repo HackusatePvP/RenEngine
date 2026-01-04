@@ -8,7 +8,6 @@ public class SeparatorOverlay extends Overlay implements Region {
     private final Separator separator;
     private Orientation orientation;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
 
     public SeparatorOverlay(Orientation orientation) {
         this.separator = new Separator(orientation);

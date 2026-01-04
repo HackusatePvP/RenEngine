@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * An overlay is a visual element which can be rendered. The overlay class is the JavaFX equivalent of a {@link Node}.
- * All overlays have generic events that are fired. For example, the {@link OverlayClickEvent} is fired if the overlay is clicked.
+ * All overlays have generic events that are fired. For example, the {@link ElementClickEvent} is fired if the overlay is clicked.
  *
  * <p>
  * To render an overlay you first need to add it to a {@link Container}. The container will have to be managed to a {@link Window}.
@@ -105,44 +105,8 @@ public abstract class Overlay extends Element {
         this.tooltip = tooltip;
     }
 
-    public void onClick(IOverlayClick iOverlayClick) {
-        this.iOverlayClick = iOverlayClick;
-    }
-
-    public void onHover(IOverlayHover iOverlayHover) {
-        this.iOverlayHover = iOverlayHover;
-    }
-
-    public void onClickRelease(IOverlayClickRelease iOverlayClickRelease) {
-        this.iOverlayClickRelease = iOverlayClickRelease;
-    }
-
-    public void onHoverExit(IOverlayHoverExit iOverlayHoverExit) {
-        this.iOverlayHoverExit = iOverlayHoverExit;
-    }
-
     public void onOverlaySubmit(IOverlaySubmit iOverlaySubmit) {
         this.iOverlaySubmit = iOverlaySubmit;
-    }
-
-    public IOverlayClick getOnClick() {
-        return iOverlayClick;
-    }
-
-    public IOverlayHover getOnHover() {
-        return iOverlayHover;
-    }
-
-    public IOverlayHoverExit getOnHoverExit() {
-        return iOverlayHoverExit;
-    }
-
-    public IOverlayClickRelease getOnRelease() {
-        return iOverlayClickRelease;
-    }
-
-    public IOverlayClick getiOverlayClick() {
-        return iOverlayClick;
     }
 
     public List<File> getStyleSheets() {
@@ -216,37 +180,6 @@ public abstract class Overlay extends Element {
             } else {
                 Tooltip.install(node, tooltip);
             }
-        }
-
-        if (node.getOnDragEntered() == null) {
-            node.setOnMouseEntered(event -> {
-                //RenJava.getEventHandler().callEvent(new OverlayHoverEvent(this, event));
-                if (getOnHover() != null) {
-                    getOnHover().onHover(new OverlayHoverEvent(this, event));
-                }
-            });
-        }
-        if (node.getOnMouseClicked() == null) {
-            node.setOnMouseClicked(event -> {
-                OverlayClickEvent overlayClickEvent = new OverlayClickEvent(this, event, event.getSceneX(), event.getSceneY());
-                if (getOnClick() != null) {
-                    getOnClick().onClick(overlayClickEvent);
-                }
-            });
-        }
-        if (node.getOnMouseExited() == null) {
-            node.setOnMouseExited(event -> {
-                if (getOnHoverExit() != null) {
-                    getOnHoverExit().onHoverExit(new OverlayExitEvent(this, event));
-                }
-            });
-        }
-        if (node.getOnMouseReleased() == null) {
-            node.setOnMouseReleased(event -> {
-                if (getOnRelease() != null) {
-                    getOnRelease().onClickRelease(new OverlayClickReleaseEvent(this, event));
-                }
-            });
         }
 
         if (node instanceof TextArea textArea) {

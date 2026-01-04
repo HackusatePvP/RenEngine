@@ -1,15 +1,21 @@
 package me.piitex.engine;
 
 
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import me.piitex.engine.containers.Container;
 import me.piitex.engine.exceptions.NodeNotDefinedException;
+import me.piitex.engine.hanlders.events.*;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.overlays.ImageOverlay;
 import me.piitex.engine.overlays.Overlay;
 import me.piitex.engine.overlays.TextOverlay;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Consumer;
 
 /**
  * Represents a graphical element that can be rendered to the {@link Window} or a {@link Container}.
@@ -26,7 +32,12 @@ import org.slf4j.LoggerFactory;
 public abstract class Element {
     private int index = 0;
     private boolean enabled = true;
-    private Node node; // Underlying JavaFX component
+    @Nullable private Node node; // Underlying JavaFX component
+    private Cursor cursor;
+    private Consumer<ElementHoverEvent> hoverConsumer;
+    private Consumer<ElementClickEvent> clickConsumer;
+    private Consumer<ElementExitEvent> mouseExitConsumer;
+    private Consumer<ElementClickReleaseEvent> clickReleaseConsumer;
 
     private static final Logger logger = LoggerFactory.getLogger(Element.class);
 
@@ -74,6 +85,65 @@ public abstract class Element {
         this.node = node;
     }
 
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        this.cursor = cursor;
+        if (node != null) {
+            node.setCursor(cursor);
+        }
+    }
+
+    public void onClick(Consumer<ElementClickEvent> clickConsumer) {
+        this.clickConsumer = clickConsumer;
+
+        if (node != null) {
+            if (clickConsumer != null) {
+                node.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                    clickConsumer.accept(new ElementClickEvent(this, mouseEvent, mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+                });
+            }
+        }
+    }
+
+    public void onClickRelease(Consumer<ElementClickReleaseEvent> clickReleaseConsumer) {
+        this.clickReleaseConsumer = clickReleaseConsumer;
+
+        if (node != null) {
+            if (clickReleaseConsumer != null) {
+                node.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseEvent -> {
+                    clickReleaseConsumer.accept(new ElementClickReleaseEvent(this, mouseEvent));
+                });
+            }
+        }
+    }
+
+    public void onHover(Consumer<ElementHoverEvent> hoverConsumer) {
+        this.hoverConsumer = hoverConsumer;
+
+        if (node != null) {
+            if (hoverConsumer != null) {
+                node.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseEvent -> {
+                    hoverConsumer.accept(new ElementHoverEvent(this, mouseEvent));
+                });
+            }
+        }
+    }
+
+    public void onMouseExit(Consumer<ElementExitEvent> mouseExitConsumer) {
+        this.mouseExitConsumer = mouseExitConsumer;
+
+        if (node != null) {
+            if (mouseExitConsumer != null) {
+                node.addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
+                    mouseExitConsumer.accept(new ElementExitEvent(this, mouseEvent));
+                });
+            }
+        }
+    }
+
     /**
      * Assembles the element into its JavaFX {@link Node}.
      *
@@ -89,4 +159,5 @@ public abstract class Element {
      * @return The constructed node.
      */
     public abstract Node assemble();
+
 }

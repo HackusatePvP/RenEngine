@@ -1,8 +1,8 @@
 package me.piitex.engine.overlays.events;
 
-import me.piitex.engine.hanlders.events.OverlayClickReleaseEvent;
+import me.piitex.engine.hanlders.events.ElementClickReleaseEvent;
 
 public interface IOverlayClickRelease {
 
-    void onClickRelease(OverlayClickReleaseEvent event);
+    void onClickRelease(ElementClickReleaseEvent event);
 }

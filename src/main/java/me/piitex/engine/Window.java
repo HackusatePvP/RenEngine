@@ -161,7 +161,7 @@ public class Window {
         if (OSUtil.getOS().contains("Windows")) {
             stage.setHeight(height + 40);
         } else if (OSUtil.getOS().contains("Linux")) {
-            stage.setHeight(height);
+            stage.setHeight(height + 35);
         } else {
             stage.setHeight(height);
         }
@@ -184,8 +184,11 @@ public class Window {
         handleWindowScaling(stage);
 
         scene = new Scene(root);
-
         stage.setScene(scene);
+
+        if (backgroundColor != null) {
+            updateBackground(backgroundColor);
+        }
     }
 
     /**
