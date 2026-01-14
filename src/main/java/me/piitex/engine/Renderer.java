@@ -175,6 +175,14 @@ public class Renderer extends Element {
         return elements.get(index);
     }
 
+    public Element getFirstElement() {
+        return elements.firstEntry().getValue();
+    }
+
+    public Element getLastElement() {
+        return elements.lastEntry().getValue();
+    }
+
     /**
      * Adds an element to the container. The added element will be indexed to the front of the container.
      * @param element The {@link Element} to be added.
