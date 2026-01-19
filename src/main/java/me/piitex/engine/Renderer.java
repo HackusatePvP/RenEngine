@@ -297,6 +297,14 @@ public class Renderer extends Element {
         }
     }
 
+    public boolean containsElement(int index) {
+        return elements.containsKey(index);
+    }
+
+    public boolean containsElement(Element element) {
+        return elements.containsValue(element);
+    }
+
     public void addToView(Node node, int index) {
         if (getNode() instanceof Pane pane) {
             if (!pane.getChildren().contains(node)) {
