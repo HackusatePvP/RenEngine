@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,34 +23,47 @@ public class FileDownloader {
     private final ConcurrentHashMap<String, DownloadInfo> activeDownloads = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, URLConnection> activeConnections = new ConcurrentHashMap<>();
     private final Set<DownloadListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
-
     private final Map<String, String> requestProperties = new HashMap<>();
+    private final ExecutorService executorService;
 
     /**
      * Initializes the FileDownloader and its thread pool.
      */
     public FileDownloader() {
-
+        // Creates a thread pool that reuses previously constructed threads when they are available
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     /**
-     * Starts the download task asynchronously.
+     * Starts the download task asynchronously without hash checking.
      * @param fileUrl The URL of the file to download.
      * @param outputFile The destination of the file.
      */
     public void startDownload(String fileUrl, File outputFile) {
+        startDownload(fileUrl, outputFile, null, null);
+    }
+
+    /**
+     * Starts the download task asynchronously with security hash checking.
+     * @param fileUrl The URL of the file to download.
+     * @param outputFile The destination of the file.
+     * @param expectedHash The expected checksum hash of the file (e.g., SHA-256).
+     * @param hashAlgorithm The algorithm used for the hash (e.g., "SHA-256", "MD5"). Defaults to SHA-256 if null.
+     */
+    public void startDownload(String fileUrl, File outputFile, String expectedHash, String hashAlgorithm) {
         logger.info("Submitting download task for: {}", fileUrl);
 
+        // Call on the FX Thread
         if (Platform.isFxApplicationThread()) {
             Exception exception = new InvalidDownloadThreadException();
             logger.error(exception.getMessage(), exception);
             return;
         }
 
-        performDownload(fileUrl, outputFile);
+        executorService.submit(() -> performDownload(fileUrl, outputFile, expectedHash, hashAlgorithm));
     }
 
-    private void performDownload(String fileUrl, File outputFile) {
+    private void performDownload(String fileUrl, File outputFile, String expectedHash, String hashAlgorithm) {
         DownloadInfo info = null;
         try {
             URL url = new URI(fileUrl).toURL();
@@ -57,17 +71,23 @@ public class FileDownloader {
             connection.setConnectTimeout(5000);
             requestProperties.forEach(connection::setRequestProperty);
 
-            activeConnections.put(fileUrl, connection); // Store the connection
+            activeConnections.put(fileUrl, connection);
 
             long fileSize = connection.getContentLengthLong();
             String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
 
-            // Initialize Info and Report Start
             info = new DownloadInfo(fileName, fileSize, fileUrl);
-            activeDownloads.put(fileUrl, info); // Track active download
+            activeDownloads.put(fileUrl, info);
             handleStart(info);
 
-            //
+            // Ensure the parent directories exist before writing
+            File parentDir = outputFile.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                if (!parentDir.mkdirs()) {
+                    throw new IOException("Failed to create parent directories for output file.");
+                }
+            }
+
             try (InputStream inputStream = connection.getInputStream();
                  FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 
@@ -76,39 +96,47 @@ public class FileDownloader {
                 long totalBytesDownloaded = 0;
                 long lastNotificationTime = System.currentTimeMillis();
 
-                // Loop the download bytes until completed.
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
                     totalBytesDownloaded += bytesRead;
                     info.setDownloadedBytes(totalBytesDownloaded);
 
-                    // Throttle progress updates
                     if (System.currentTimeMillis() - lastNotificationTime > 200) {
                         handleProgress(info);
                         lastNotificationTime = System.currentTimeMillis();
                     }
                 }
 
-                info.setComplete(true);
-                handleProgress(info); // Final progress update
-                handleComplete(info, outputFile);
-
             } catch (IOException e) {
                 String message = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
 
-                // Check for controlled cancellation errors (stream/socket closure)
-                // These messages signal that the stream was closed by cancelDownload(url)
                 if (message.contains("socket closed") || message.contains("stream closed") || message.contains("operation canceled")) {
-                    // This is a controlled stop. We don't treat it as a failure.
-                    // The handleCancel event has already fired.
                     logger.info("Download task for {} stopped by user or interruption.", info.getFileName());
+                    return; // Exit early since it was cancelled
                 } else {
-                    handleError(info, e);
+                    throw e; // Rethrow to be caught by the outer catch block
                 }
             }
 
+            if (expectedHash != null && !expectedHash.trim().isEmpty()) {
+                String algorithm = (hashAlgorithm != null && !hashAlgorithm.trim().isEmpty()) ? hashAlgorithm : "SHA-256";
+                logger.info("Verifying file integrity using {}...", algorithm);
+
+                boolean isHashValid = verifyFileHash(outputFile, expectedHash, algorithm);
+                if (!isHashValid) {
+                    if (outputFile.exists() && !outputFile.delete()) {
+                        logger.warn("Failed to delete tampered file: {}", outputFile.getAbsolutePath());
+                    }
+                    throw new SecurityException("Hash mismatch! The file may be corrupted or maliciously altered.");
+                }
+                logger.info("File integrity verified successfully.");
+            }
+
+            info.setComplete(true);
+            handleProgress(info); // Final progress update
+            handleComplete(info, outputFile);
+
         } catch (Exception e) {
-            // URL/Connection setup error
             if (info == null) {
                 info = new DownloadInfo("Unknown", -1, fileUrl);
             }
@@ -121,30 +149,53 @@ public class FileDownloader {
         }
     }
 
+    /**
+     * Verifies the cryptographic hash of a downloaded file.
+     */
+    private boolean verifyFileHash(File file, String expectedHash, String algorithm) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+
+        try (InputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+
+        byte[] hashBytes = digest.digest();
+        StringBuilder hexString = new StringBuilder();
+
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+
+        return hexString.toString().equalsIgnoreCase(expectedHash);
+    }
+
     public boolean cancelDownload(String fileUrl) {
         DownloadInfo info = activeDownloads.remove(fileUrl);
         URLConnection connection = activeConnections.remove(fileUrl);
 
-        // Force the stream/connection to close to unstick the I/O thread
         if (connection != null) {
             try {
                 if (connection instanceof HttpURLConnection) {
                     ((HttpURLConnection) connection).disconnect();
                 }
             } catch (Exception ignored) {
-                // Ignore any exception on forced close
             }
         }
 
-        // Interrupt the thread
-        boolean wasRunning = false;
-
-        // Call the cancel listeners
         if (info != null) {
             handleCancel(info);
+            return true;
         }
 
-        return wasRunning;
+        return false;
     }
 
     public long getRemoteFileSize(String fileUrl) throws IOException {
@@ -175,7 +226,7 @@ public class FileDownloader {
 
     private void handleStart(DownloadInfo info) {
         logger.info("Download Started: {}", info.getFileName());
-        logger.info("Total Size: {}", (info.getTotalFileSize() > 0 ? info.getTotalFileSize() + "bytes" : "Unknown"));
+        logger.info("Total Size: {} bytes", (info.getTotalFileSize() > 0 ? info.getTotalFileSize() : "Unknown"));
         for (DownloadListener listener : listeners) {
             listener.onDownloadStart(info);
         }
@@ -209,18 +260,10 @@ public class FileDownloader {
         }
     }
 
-    /**
-     * Gathers and returns the download info for a specific file URL.
-     * @param fileUrl The unique identifier (URL) of the download task.
-     * @return The DownloadInfo object for that task, or null if it was never started.
-     */
     public DownloadInfo getDownloadInfo(String fileUrl) {
         return activeDownloads.get(fileUrl);
     }
 
-    /**
-     * @return A map of all tracked downloads (active, completed, or failed).
-     */
     public ConcurrentHashMap<String, DownloadInfo> getAllDownloadStatuses() {
         return activeDownloads;
     }
@@ -231,6 +274,12 @@ public class FileDownloader {
     public void shutdown() {
         activeDownloads.clear();
         listeners.clear();
+
+        // Shut down the thread pool to prevent application hang on exit
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdownNow();
+        }
+
         logger.info("Downloader service shut down.");
     }
 }
