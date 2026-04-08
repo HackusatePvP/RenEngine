@@ -8,22 +8,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import me.piitex.engine.Element;
 import me.piitex.engine.loaders.FontLoader;
-import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ButtonOverlay extends Overlay implements Region {
     private final Button button;
     private final String id;
     private String text;
     private FontLoader font;
-    private Element graphic;
+    private final Element graphic;
     private final IconOverlay icon;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
     private Paint textFill;
     private Pos alignment;
-
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
+
+    public static List<String> cssFiles = new ArrayList<>();
 
     /**
      * Private constructor used by the {@link ButtonBuilder}.
@@ -120,6 +122,9 @@ public class ButtonOverlay extends Overlay implements Region {
             Node graphic = icon.assemble();
             button.setGraphic(graphic);
         }
+        if (graphic != null) {
+            button.setGraphic(graphic.assemble());
+        }
         if (text != null && !text.isEmpty()) {
             button.setText(text);
         }
@@ -128,9 +133,6 @@ public class ButtonOverlay extends Overlay implements Region {
         }
         if (textFill != null) {
             button.setTextFill(textFill);
-        }
-        if (graphic != null) {
-            button.setGraphic(graphic.assemble());
         }
         if (alignment != null) {
             button.setAlignment(alignment);
@@ -152,6 +154,11 @@ public class ButtonOverlay extends Overlay implements Region {
 
         button.setTranslateX(getX());
         button.setTranslateY(getY());
+
+        for (String file : cssFiles) {
+            button.getStylesheets().add(file);
+        }
+
         return button;
     }
 
