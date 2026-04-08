@@ -35,6 +35,16 @@ public class FileDownloader {
     }
 
     /**
+     * Initializes the FileDownloader and adds GitHub API support.
+     * @param githubUrl Set to true to use GitHub API streams.
+     */
+    public FileDownloader(boolean githubUrl) {
+        // Creates a thread pool that reuses previously constructed threads when they are available
+        this.executorService = Executors.newCachedThreadPool();
+        addRequestProperty("Accept", "application/octet-stream");
+    }
+
+    /**
      * Starts the download task asynchronously without hash checking.
      * @param fileUrl The URL of the file to download.
      * @param outputFile The destination of the file.
@@ -76,7 +86,7 @@ public class FileDownloader {
             long fileSize = connection.getContentLengthLong();
             String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
 
-            info = new DownloadInfo(fileName, fileSize, fileUrl);
+            info = new DownloadInfo(fileName, outputFile, fileSize, fileUrl);
             activeDownloads.put(fileUrl, info);
             handleStart(info);
 
@@ -138,7 +148,7 @@ public class FileDownloader {
 
         } catch (Exception e) {
             if (info == null) {
-                info = new DownloadInfo("Unknown", -1, fileUrl);
+                info = new DownloadInfo("Unknown", outputFile, -1, fileUrl);
             }
             handleError(info, e);
         } finally {
@@ -260,12 +270,17 @@ public class FileDownloader {
         }
     }
 
+
     public DownloadInfo getDownloadInfo(String fileUrl) {
         return activeDownloads.get(fileUrl);
     }
 
     public ConcurrentHashMap<String, DownloadInfo> getAllDownloadStatuses() {
         return activeDownloads;
+    }
+
+    public Set<DownloadListener> getListeners() {
+        return listeners;
     }
 
     /**

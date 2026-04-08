@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 
 /**
  * Utility for GitHub REST API. Used for automatically updating and pulling information from releases and assets.
@@ -78,6 +75,30 @@ public class GitHubUtil {
         return null;
     }
 
+    public JSONObject getAsset(int assetId) throws IOException, URISyntaxException {
+        URL url = new URI(repositoryUrl + "releases/assets/" + assetId).toURL();
+        logger.info("Fetching asset '{}' '{}'", assetId, url.toString());
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                return new JSONObject(response.toString());
+            }
+        } else {
+            throw new RuntimeException("GitHub API request failed. Response Code: " + connection.getResponseCode());
+        }
+    }
+
+    public long getAssetFileSize(int assetId) throws URISyntaxException, IOException {
+        return getAsset(assetId).getLong("size");
+    }
+
     /**
      * Downloads an asset by ID. Extracts the hash directly from the asset's "digest" JSON field.
      */
@@ -106,7 +127,7 @@ public class GitHubUtil {
                     JSONObject assetJson = new JSONObject(response.toString());
                     String digest = assetJson.optString("digest", "");
 
-                    if (!digest.isEmpty() && digest.contains(":")) {
+                    if (digest.contains(":")) {
                         String[] parts = digest.split(":", 2);
                         hashAlgorithm = formatAlgorithm(parts[0]);
                         expectedHash = parts[1];
@@ -117,15 +138,25 @@ public class GitHubUtil {
             logger.warn("Failed to retrieve digest via GitHub API for asset ID {}. Proceeding without verification.", assetId, e);
         }
 
-        if (expectedHash != null && hashAlgorithm != null) {
-            logger.info("Found {} hash for asset {}: {}", hashAlgorithm, assetId, expectedHash);
-            downloader.startDownload(repositoryUrl + "releases/assets/" + assetId, output, expectedHash, hashAlgorithm);
-        } else {
-            logger.warn("No digest found for asset {}. Downloading without verification.", assetId);
-            downloader.startDownload(repositoryUrl + "releases/assets/" + assetId, output);
+        // Only start download if a callback is present.
+        if (callback != null) {
+            if (expectedHash != null) {
+                logger.info("Found {} hash for asset {}: {}", hashAlgorithm, assetId, expectedHash);
+                downloader.startDownload(repositoryUrl + "releases/assets/" + assetId, output, expectedHash, hashAlgorithm);
+            } else {
+                logger.warn("No digest found for asset {}. Downloading without verification.", assetId);
+                downloader.startDownload(repositoryUrl + "releases/assets/" + assetId, output);
+            }
         }
 
         return downloader;
+    }
+
+    /**
+     * Prepares a GitHub asset for download.
+     */
+    public DownloadInfo downloadAsset(int assetId, File output) throws URISyntaxException, IOException {
+        return new DownloadInfo(output.getName(), output, getAssetFileSize(assetId), repositoryUrl + "releases/assets/" + assetId);
     }
 
     /**
@@ -133,9 +164,11 @@ public class GitHubUtil {
      */
     private String formatAlgorithm(String rawAlg) {
         String upperAlg = rawAlg.toUpperCase();
-        if (upperAlg.equals("SHA256")) return "SHA-256";
-        if (upperAlg.equals("SHA512")) return "SHA-512";
-        if (upperAlg.equals("SHA1")) return "SHA-1";
-        return upperAlg; // Fallback to whatever was provided
+        return switch (upperAlg) {
+            case "SHA256" -> "SHA-256";
+            case "SHA512" -> "SHA-512";
+            case "SHA1" -> "SHA-1";
+            default -> upperAlg;
+        };
     }
 }
