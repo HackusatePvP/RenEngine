@@ -473,16 +473,6 @@ public class Window {
     }
 
     /**
-     * Clears all child nodes from the root pane and re-sets the scene's root.
-     * The stage is then shown.
-     */
-    public void clean() {
-        root.getChildren().clear();
-        scene.setRoot(root);
-        stage.show();
-    }
-
-    /**
      * Clears all containers and resets the window's root pane and scene.
      * The stage is not automatically shown after this operation.
      */
