@@ -59,10 +59,6 @@ import java.util.List;
 public abstract class Overlay extends Element {
     private double x,y;
     private String tooltip;
-    private IOverlayHover iOverlayHover;
-    private IOverlayHoverExit iOverlayHoverExit;
-    private IOverlayClick iOverlayClick;
-    private IOverlayClickRelease iOverlayClickRelease;
     private IOverlaySubmit iOverlaySubmit;
     private Cursor cursor;
 
