@@ -34,7 +34,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElements(Element... elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -42,7 +42,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElements(LinkedList<Element> elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -50,7 +50,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElement(Element element) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -58,7 +58,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElement(Element element, int index) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     public void setHeader(Element element) {
