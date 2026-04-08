@@ -144,6 +144,22 @@ public abstract class Element {
         }
     }
 
+    public Consumer<ElementClickEvent> getOnClick() {
+        return clickConsumer;
+    }
+
+    public Consumer<ElementClickReleaseEvent> getOnRelease() {
+        return clickReleaseConsumer;
+    }
+
+    public Consumer<ElementExitEvent> getOnMouseExit() {
+        return mouseExitConsumer;
+    }
+
+    public Consumer<ElementHoverEvent> getOnHover() {
+        return hoverConsumer;
+    }
+
     /**
      * Assembles the element into its JavaFX {@link Node}.
      *
