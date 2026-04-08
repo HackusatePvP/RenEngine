@@ -26,8 +26,22 @@ public class ImageLoader {
 
     public static boolean useCache = true;
 
-    public ImageLoader(String path) {
-        this.file = new File(path);
+    /**
+     * Loads an image via a filename from the base directory.
+     * @param name Name of the image file.
+     */
+    public ImageLoader(String name) {
+        File directory = new File(System.getProperty("user.dir") + "/game/images/");
+        this.file = new File(directory, name);
+    }
+
+    public ImageLoader(String directory, String name) {
+        File fileDirectory = new File(System.getProperty("user.dir") + "/" + directory + "/");
+        this.file = new File(fileDirectory, name);
+    }
+
+    public ImageLoader(File directory, String name) {
+        this.file = new File(directory, name);
     }
 
     public ImageLoader(File file) {
