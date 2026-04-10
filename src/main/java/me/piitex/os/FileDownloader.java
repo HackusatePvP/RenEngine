@@ -30,7 +30,6 @@ public class FileDownloader {
      * Initializes the FileDownloader and its thread pool.
      */
     public FileDownloader() {
-        // Creates a thread pool that reuses previously constructed threads when they are available
         this.executorService = Executors.newCachedThreadPool();
     }
 
@@ -39,7 +38,6 @@ public class FileDownloader {
      * @param githubUrl Set to true to use GitHub API streams.
      */
     public FileDownloader(boolean githubUrl) {
-        // Creates a thread pool that reuses previously constructed threads when they are available
         this.executorService = Executors.newCachedThreadPool();
         addRequestProperty("Accept", "application/octet-stream");
     }
