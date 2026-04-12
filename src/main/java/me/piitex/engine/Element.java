@@ -1,6 +1,5 @@
 package me.piitex.engine;
 
-
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -18,13 +17,19 @@ import org.slf4j.LoggerFactory;
 import java.util.function.Consumer;
 
 /**
- * Represents a graphical element that can be rendered to the {@link Window} or a {@link Container}.
+ * Represents the foundational graphical element that can be rendered inside a {@link Renderer}
+ * (which includes {@link Container} and {@link Layout}).
  * <p>
- * This is an abstract base class for all renderable elements in the GUI framework.
- * Elements are organized by their rendering index, which determines the order in which
- * they are drawn. A lower index means the element will be rendered earlier (underneath others).
+ * This abstract base class provides the core lifecycle, state management, and event handling for all
+ * renderable components within the GUI framework. It acts as a bridge between the engine's logical
+ * representations and the underlying JavaFX {@link Node}.
+ * </p>
+ * <p>
+ * Elements are heavily dependent on their rendering index (Z-order). A lower index dictates that the
+ * element is drawn earlier, placing it underneath elements with a higher index.
  * </p>
  *
+ * @see Renderer
  * @see Container
  * @see Overlay
  * @see Layout
@@ -42,19 +47,21 @@ public abstract class Element {
     private static final Logger logger = LoggerFactory.getLogger(Element.class);
 
     /**
-     * Retrieves the rendering index of this element.
+     * Retrieves the rendering index (Z-order) of this element.
      *
-     * @return The rendering index of the element. A lower value means the element is rendered earlier. An index of 0 results in automatic assignment. Use '1' as the lowest layer.
+     * @return The rendering index. A lower value indicates the element is rendered earlier (closer to the background).
+     * An index of 0 indicates automatic assignment by the engine. The lowest manual layer should generally be 1.
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * Sets the rendering index of this element.
+     * Sets the rendering index (Z-order) of this element.
      * <p>
-     * An index of 1 will cause the element to be rendered first (at the bottom layer).
-     * Higher index values will render the element on top of those with lower indices. An index of 0 results in automatic assignment.
+     * Modifying this value allows you to control the depth of the element on the screen. Higher index values
+     * will render the element on top of those with lower indices. Set to 0 to let the engine automatically
+     * assign the index based on insertion order.
      * </p>
      *
      * @param index The new rendering index for the element.
@@ -63,6 +70,16 @@ public abstract class Element {
         this.index = index;
     }
 
+    /**
+     * Toggles the interactive state of the element.
+     * <p>
+     * When disabled, the underlying JavaFX node will no longer process user inputs or events.
+     * If the underlying {@link Node} has not been assembled or set yet, this will log an error
+     * rather than crashing the application.
+     * </p>
+     *
+     * @param enabled {@code true} to enable interactions, {@code false} to disable them.
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (getNode() != null) {
@@ -73,22 +90,55 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Checks if the element is currently enabled for user interaction.
+     *
+     * @return {@code true} if the element is enabled, {@code false} otherwise.
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Retrieves the cached JavaFX {@link Node} associated with this element.
+     * <p>
+     * This cache is typically populated when the engine invokes the {@link #assemble()} method.
+     * If the element has not been assembled yet, this method will return null.
+     * </p>
+     *
+     * @return The cached JavaFX node if present, {@code null} otherwise.
+     */
+    @Nullable
     public Node getNode() {
         return node;
     }
 
+    /**
+     * Manually assigns the underlying JavaFX {@link Node} for this element.
+     *
+     * @param node The JavaFX node to associate with this engine element.
+     */
     public void setNode(Node node) {
         this.node = node;
     }
 
+    /**
+     * Retrieves the currently assigned mouse cursor for this element.
+     *
+     * @return The JavaFX {@link Cursor} applied to this element when hovered, or {@code null} if default.
+     */
     public Cursor getCursor() {
         return cursor;
     }
 
+    /**
+     * Sets a specific mouse cursor to display when the user hovers over this element.
+     * <p>
+     * This automatically applies the cursor to the underlying JavaFX {@link Node} if it is currently cached.
+     * </p>
+     *
+     * @param cursor The JavaFX {@link Cursor} to display.
+     */
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
         if (node != null) {
@@ -96,6 +146,14 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Registers a callback to be fired when the user clicks on this element.
+     * <p>
+     * This wraps the native JavaFX {@link MouseEvent#MOUSE_CLICKED} event into a framework-specific {@link ElementClickEvent}.
+     * </p>
+     *
+     * @param clickConsumer The consumer to accept the click event logic.
+     */
     public void onClick(Consumer<ElementClickEvent> clickConsumer) {
         this.clickConsumer = clickConsumer;
 
@@ -108,6 +166,14 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Registers a callback to be fired when the user releases a mouse click on this element.
+     * <p>
+     * This wraps the native JavaFX {@link MouseEvent#MOUSE_RELEASED} event into a framework-specific {@link ElementClickReleaseEvent}.
+     * </p>
+     *
+     * @param clickReleaseConsumer The consumer to accept the click release event logic.
+     */
     public void onClickRelease(Consumer<ElementClickReleaseEvent> clickReleaseConsumer) {
         this.clickReleaseConsumer = clickReleaseConsumer;
 
@@ -120,6 +186,14 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Registers a callback to be fired when the user's mouse pointer enters the bounds of this element.
+     * <p>
+     * This wraps the native JavaFX {@link MouseEvent#MOUSE_ENTERED} event into a framework-specific {@link ElementHoverEvent}.
+     * </p>
+     *
+     * @param hoverConsumer The consumer to accept the hover event logic.
+     */
     public void onHover(Consumer<ElementHoverEvent> hoverConsumer) {
         this.hoverConsumer = hoverConsumer;
 
@@ -132,6 +206,14 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Registers a callback to be fired when the user's mouse pointer exits the bounds of this element.
+     * <p>
+     * This wraps the native JavaFX {@link MouseEvent#MOUSE_EXITED} event into a framework-specific {@link ElementExitEvent}.
+     * </p>
+     *
+     * @param mouseExitConsumer The consumer to accept the mouse exit event logic.
+     */
     public void onMouseExit(Consumer<ElementExitEvent> mouseExitConsumer) {
         this.mouseExitConsumer = mouseExitConsumer;
 
@@ -144,36 +226,51 @@ public abstract class Element {
         }
     }
 
+    /**
+     * Retrieves the registered click event consumer.
+     * @return The consumer handling click events, or {@code null} if none is set.
+     */
     public Consumer<ElementClickEvent> getOnClick() {
         return clickConsumer;
     }
 
+    /**
+     * Retrieves the registered click release event consumer.
+     * @return The consumer handling click release events, or {@code null} if none is set.
+     */
     public Consumer<ElementClickReleaseEvent> getOnRelease() {
         return clickReleaseConsumer;
     }
 
+    /**
+     * Retrieves the registered mouse exit event consumer.
+     * @return The consumer handling mouse exit events, or {@code null} if none is set.
+     */
     public Consumer<ElementExitEvent> getOnMouseExit() {
         return mouseExitConsumer;
     }
 
+    /**
+     * Retrieves the registered mouse hover event consumer.
+     * @return The consumer handling mouse hover events, or {@code null} if none is set.
+     */
     public Consumer<ElementHoverEvent> getOnHover() {
         return hoverConsumer;
     }
 
     /**
-     * Assembles the element into its JavaFX {@link Node}.
+     * Compiles and constructs the engine element into a standard JavaFX {@link Node}.
+     * <p>
+     * This method is called by the engine during the rendering phase to translate custom elements
+     * into the native scene graph.
+     * </p>
+     * <ul>
+     * <li>For {@link Overlay} instances, this invokes their specific rendering functions (e.g., {@link TextOverlay#render()}).</li>
+     * <li>For {@link Layout} instances, this invokes {@link Layout#render()}.</li>
+     * <li>For {@link Container} instances, this invokes {@link Container#build()}.</li>
+     * </ul>
      *
-     * <p>
-     *     For {@link Overlay}'s it will return the render functions. Examples: {@link TextOverlay#render()}, {@link ImageOverlay#render()}
-     * </p>
-     * <p>
-     *     For {@link Layout}'s it will return the {@link Layout#render()} result.
-     * </p>
-     * <p>
-     *     For {@link Container}'s it will return the {@link Container#build()} result.
-     * </p>
-     * @return The constructed node.
+     * @return The fully constructed JavaFX node ready for the scene graph.
      */
     public abstract Node assemble();
-
 }
