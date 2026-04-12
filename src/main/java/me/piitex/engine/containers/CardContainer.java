@@ -16,8 +16,6 @@ public class CardContainer extends Container {
     private Element footer;
 
     public CardContainer(double x, double y, double width, double height) {
-        // Java 25 Update: You can now call code before the super() method
-        // I think this is slightly better than confusing casting.
         Card card = new Card();
         this.atlantafxCard = card;
         super(card, x, y, width, height);
