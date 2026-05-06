@@ -39,7 +39,9 @@ public class FileDownloader {
      */
     public FileDownloader(boolean githubUrl) {
         this.executorService = Executors.newCachedThreadPool();
-        addRequestProperty("Accept", "application/octet-stream");
+        if (githubUrl) {
+            addRequestProperty("Accept", "application/octet-stream");
+        }
     }
 
     /**
