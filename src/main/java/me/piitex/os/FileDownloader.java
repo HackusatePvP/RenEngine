@@ -80,10 +80,6 @@ public class FileDownloader {
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(5000);
 
-            // Disable automatic redirects to handle them manually
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
-            }
             requestProperties.forEach(connection::setRequestProperty);
 
             // GitHub decided to change their entire storage api and switch to Azure
@@ -91,6 +87,11 @@ public class FileDownloader {
             // Not the best fix, but it works.
             // Another reason why we call it Microslop
             if (fileUrl.contains("github.com")) {
+                // Disable automatic redirects to handle them manually
+                if (connection instanceof HttpURLConnection) {
+                    ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
+                }
+
                 int redirects = 0;
                 while (connection instanceof HttpURLConnection) {
                     HttpURLConnection httpConn = (HttpURLConnection) connection;
