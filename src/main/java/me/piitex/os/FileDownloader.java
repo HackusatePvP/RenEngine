@@ -86,34 +86,52 @@ public class FileDownloader {
             }
             requestProperties.forEach(connection::setRequestProperty);
 
-            // Handle potential redirects (e.g., GitHub API -> Azure Blob Storage)
-            int redirects = 0;
-            while (connection instanceof HttpURLConnection httpConn) {
-                int status = httpConn.getResponseCode();
+            // GitHub decided to change their entire storage api and switch to Azure
+            // This completely breaks this api
+            // Not the best fix, but it works.
+            // Another reason why we call it Microslop
+            if (fileUrl.contains("github.com")) {
+                int redirects = 0;
+                while (connection instanceof HttpURLConnection) {
+                    HttpURLConnection httpConn = (HttpURLConnection) connection;
+                    int status = httpConn.getResponseCode();
 
-                // Check for HTTP 301, 302, 303, 307, or 308
-                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                        status == HttpURLConnection.HTTP_MOVED_PERM ||
-                        status == HttpURLConnection.HTTP_SEE_OTHER ||
-                        status == 307 || status == 308) {
+                    if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                            status == HttpURLConnection.HTTP_MOVED_PERM ||
+                            status == HttpURLConnection.HTTP_SEE_OTHER ||
+                            status == 307 || status == 308) {
 
-                    String redirectUrl = httpConn.getHeaderField("Location");
-                    httpConn.disconnect();
+                        String redirectUrl = httpConn.getHeaderField("Location");
+                        httpConn.disconnect();
 
-                    url = new URI(redirectUrl).toURL();
-                    connection = url.openConnection();
-                    connection.setConnectTimeout(5000);
+                        // Standard JDK URI parsing can mangle the Azure SAS token's '+' and '%20' characters.
+                        // While new URL(String) is deprecated in modern Java, it is required here
+                        // to preserve the exact cryptographic string provided by GitHub.
+                        @SuppressWarnings("deprecation")
+                        URL newUrl = new URL(redirectUrl);
+                        url = newUrl; // Update the outer scope url variable
 
-                    if (connection instanceof HttpURLConnection) {
-                        ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
+                        connection = url.openConnection();
+                        connection.setConnectTimeout(5000);
+
+                        if (connection instanceof HttpURLConnection) {
+                            HttpURLConnection newHttpConn = (HttpURLConnection) connection;
+                            newHttpConn.setInstanceFollowRedirects(false);
+
+                            // Override System JDK defaults and carry over the required Accept header
+                            newHttpConn.setRequestProperty("User-Agent", "Mozilla/5.0");
+                            if (requestProperties.containsKey("Accept")) {
+                                newHttpConn.setRequestProperty("Accept", requestProperties.get("Accept"));
+                            }
+                        }
+
+                        redirects++;
+                        if (redirects > 5) {
+                            throw new IOException("Too many redirects");
+                        }
+                    } else {
+                        break;
                     }
-                    redirects++;
-                    if (redirects > 5) {
-                        throw new IOException("Too many redirects");
-                    }
-                } else {
-                    // Not a redirect, break the loop and proceed
-                    break;
                 }
             }
 
