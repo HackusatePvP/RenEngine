@@ -79,10 +79,45 @@ public class FileDownloader {
             URL url = new URI(fileUrl).toURL();
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(5000);
+
+            // Disable automatic redirects to handle them manually
+            if (connection instanceof HttpURLConnection) {
+                ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
+            }
             requestProperties.forEach(connection::setRequestProperty);
 
-            activeConnections.put(fileUrl, connection);
+            // Handle potential redirects (e.g., GitHub API -> Azure Blob Storage)
+            int redirects = 0;
+            while (connection instanceof HttpURLConnection httpConn) {
+                int status = httpConn.getResponseCode();
 
+                // Check for HTTP 301, 302, 303, 307, or 308
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                        status == HttpURLConnection.HTTP_MOVED_PERM ||
+                        status == HttpURLConnection.HTTP_SEE_OTHER ||
+                        status == 307 || status == 308) {
+
+                    String redirectUrl = httpConn.getHeaderField("Location");
+                    httpConn.disconnect();
+
+                    url = new URI(redirectUrl).toURL();
+                    connection = url.openConnection();
+                    connection.setConnectTimeout(5000);
+
+                    if (connection instanceof HttpURLConnection) {
+                        ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
+                    }
+                    redirects++;
+                    if (redirects > 5) {
+                        throw new IOException("Too many redirects");
+                    }
+                } else {
+                    // Not a redirect, break the loop and proceed
+                    break;
+                }
+            }
+
+            // Connection is now finalized on the actual binary file
             long fileSize = connection.getContentLengthLong();
             String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
 
