@@ -6,8 +6,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import me.piitex.engine.loaders.FontLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
@@ -18,24 +21,12 @@ public class TextFlowOverlay extends Overlay implements Region {
     private Color textFillColor;
     private FontLoader font;
     private FontSmoothingType fontSmoothingType = FontSmoothingType.GRAY;
+    private TextAlignment textAlignment;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
+    private static final Logger logger = LoggerFactory.getLogger(TextFlowOverlay.class);
 
     public TextFlowOverlay(String text, double width, double height) {
-        this.textFlow = new TextFlow();
-        this.width = width;
-        this.height = height;
-        this.text = text;
-        setNode(textFlow);
-    }
-
-    public TextFlowOverlay(String text, FontLoader fontLoader, double width, double height) {
-        this.textFlow = new TextFlow();
-        this.texts.add(new TextOverlay(text));
-        this.font = fontLoader;
-        this.width = width;
-        this.height = height;
-        setNode(textFlow);
+       this(text, null, width, height);
     }
 
     public TextFlowOverlay(TextOverlay text, double width, double height) {
@@ -53,6 +44,16 @@ public class TextFlowOverlay extends Overlay implements Region {
         this.texts = texts;
         setNode(textFlow);
     }
+
+    public TextFlowOverlay(String text, FontLoader fontLoader, double width, double height) {
+        this.textFlow = new TextFlow();
+        this.font = fontLoader;
+        this.width = width;
+        this.height = height;
+        setNode(textFlow);
+        setText(text);
+    }
+
 
     public LinkedList<Overlay> getTexts() {
         return texts;
@@ -120,6 +121,14 @@ public class TextFlowOverlay extends Overlay implements Region {
         }
     }
 
+    public TextAlignment getTextAlignment() {
+        return textAlignment;
+    }
+
+    public void setTextAlignment(TextAlignment textAlignment) {
+        this.textAlignment = textAlignment;
+    }
+
     public TextFlow getTextFlow() {
         return textFlow;
     }
@@ -129,6 +138,10 @@ public class TextFlowOverlay extends Overlay implements Region {
         // Creates text that overflows over the box.
         textFlow.getChildren().clear();
 
+        if (textAlignment != null) {
+            textFlow.setTextAlignment(textAlignment);
+        }
+
         if (text != null) {
             setText(text);
         }
@@ -137,7 +150,7 @@ public class TextFlowOverlay extends Overlay implements Region {
             // Check node type
             switch (overlay) {
                 case TextOverlay text1 -> {
-                    text1.setText(text1.getText().replace("\\n", System.lineSeparator()));
+                    text1.setText(text1.getTextNode().replace("\\n", System.lineSeparator()));
                     if (font != null && text1.getFontLoader() == null) {
                         // Passes
                         text1.setFont(font);
@@ -162,12 +175,12 @@ public class TextFlowOverlay extends Overlay implements Region {
                         button.setTextFill(textFillColor);
                     }
                 }
-                case InputFieldOverlay inputField -> {
+                case TextFieldOverlay inputField -> {
                     if (font != null) {
                         inputField.setFont(font);
                     }
                 }
-                default -> System.out.println("Unsupported overlay in TextFlow. {}" + overlay.toString());
+                default -> logger.error("Unsupported overlay in TextFlow. {}", overlay.toString());
             }
 
             Node node = overlay.assemble();
@@ -295,5 +308,12 @@ public class TextFlowOverlay extends Overlay implements Region {
     public void setMaxHeight(double h) {
         this.maxHeight = h;
         textFlow.setMaxHeight(h);
+    }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textFlow.setMaxSize(w, h);
     }
 }

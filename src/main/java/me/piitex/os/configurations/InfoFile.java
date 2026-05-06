@@ -32,7 +32,7 @@ public class InfoFile {
      * Constructs a new {@code InfoFile} instance and associates it with a physical file.
      * <p>
      * If the file does not exist, it will be created. If the file exists, its contents
-     * will be loaded into memory. The file's contents will be decrypted if
+     * will be loaded into memory via a binary stream. The file's contents will be decrypted if
      * encryption is enabled.
      *
      * @param file    the file to read from and write to.
@@ -48,41 +48,45 @@ public class InfoFile {
                     logger.warn("Unable to create file '{}'", file.getAbsolutePath());
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("IO exception occurred while creating info file!", e);
             }
         } else {
-            // Load file
-            Scanner scanner = null;
             File output = null;
             try {
                 output = Files.createTempFile(null, ".info").toFile();
+                File targetFile = file;
+
                 if (encrypt && !dev) {
-                    // Decrypt file
                     try {
                         FileCrypter.decryptFile(file, output);
-                        scanner = new Scanner(new FileInputStream(output));
+                        targetFile = output;
                     } catch (IllegalBlockSizeException | IOException ignored) {
-                        scanner = new Scanner(new FileInputStream(file));
-                    }
-                } else {
-                    scanner = new Scanner(new FileInputStream(file));
-                }
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    if (line.split("=").length > 1) {
-                        entryMap.put(line.split("=")[0], line.split("=")[1].replace("!@!", "\n"));
+                        // Fallback or ignore if decryption fails
                     }
                 }
 
-            } catch (IOException e) {
-                logger.error("An occurred during the initial encryption process.", e);
-            } finally {
-                if (scanner != null) {
-                    scanner.close();
+                // Safeguard: Only attempt to read if the file actually has data
+                if (targetFile.length() > 0) {
+                    try (DataInputStream dis = new DataInputStream(new FileInputStream(targetFile))) {
+                        int mapSize = dis.readInt();
+                        for (int i = 0; i < mapSize; i++) {
+                            String key = dis.readUTF();
+                            String value = dis.readUTF();
+                            entryMap.put(key, value);
+                        }
+                    } catch (EOFException e) {
+                        logger.warn("Reached EOF while reading info file '{}'", file.getName());
+                    } catch (UTFDataFormatException e) {
+                        logger.error("Data format error in info file '{}'. The file may be an old text version. Please delete it.", file.getName(), e);
+                    }
                 }
-                if (output != null && !output.delete()) {
-                    logger.warn("Unable to delete unencrypted file during initialization '{}'", output.getAbsolutePath());
-                    forceDelete(output);
+            } catch (IOException e) {
+                logger.error("An error occurred during the initial read process.", e);
+            } finally {
+                if (output != null && output.exists()) {
+                    if (!output.delete()) {
+                        forceDelete(output);
+                    }
                 }
             }
         }
@@ -195,12 +199,10 @@ public class InfoFile {
     public List<String> getList(String key) {
         String value = entryMap.get(key);
         List<String> toReturn = new ArrayList<>();
-        if (!value.contains("!@!")) {
+        if (value == null || !value.contains("!@!")) {
             return toReturn;
         }
-
         toReturn.addAll(Arrays.asList(value.split("!@!")));
-
         return toReturn;
     }
 
@@ -215,12 +217,10 @@ public class InfoFile {
     public LinkedList<String> getLinkedList(String key) {
         String value = entryMap.get(key);
         LinkedList<String> toReturn = new LinkedList<>();
-        if (!value.contains("!@!")) {
+        if (value == null || !value.contains("!@!")) {
             return toReturn;
         }
-
         toReturn.addAll(Arrays.asList(value.split("!@!")));
-
         return toReturn;
     }
 
@@ -234,21 +234,16 @@ public class InfoFile {
      */
     public Map<String, String> getStringMap(String key) {
         Map<String, String> toReturn = new HashMap<>();
-        // !@!key@!@value!@!key@!@value2!@!
-
         String value = entryMap.get(key);
-        if (!value.contains("!&'!")) {
+        if (value == null || !value.contains("!&'!")) {
             return toReturn;
         }
-
         for (String s : value.split("!&'!")) {
-            // s = key@!@value
             String[] split = s.split("@!@");
             if (split.length > 1) {
                 toReturn.put(split[0], split[1]);
             }
         }
-
         return toReturn;
     }
 
@@ -262,21 +257,16 @@ public class InfoFile {
      */
     public TreeMap<String, String> getSortedStringMap(String key) {
         TreeMap<String, String> toReturn = new TreeMap<>();
-        // !@!key@!@value!@!key@!@value2!@!
-
         String value = entryMap.get(key);
-        if (!value.contains("!&'!")) {
+        if (value == null || !value.contains("!&'!")) {
             return toReturn;
         }
-
         for (String s : value.split("!&'!")) {
-            // s = key@!@value
             String[] split = s.split("@!@");
             if (split.length > 1) {
                 toReturn.put(split[0], split[1]);
             }
         }
-
         return toReturn;
     }
 
@@ -293,13 +283,12 @@ public class InfoFile {
     /**
      * Sets a key-value pair.
      * <p>
-     * Newline characters in the value will be replaced with the "!@!" delimiter.
+     * Using binary serialization natively supports newline characters, meaning they no longer need to be delimited.
      *
      * @param key   the key to set.
      * @param value the string value to set.
      */
     public void set(String key, String value) {
-        value = value.replace("\n", "!@!");
         entryMap.put(key, value);
         update();
     }
@@ -380,7 +369,7 @@ public class InfoFile {
      * Writes the current entry map to the associated file.
      * <p>
      * This method is called automatically after every {@link #set(String, String)} operation.
-     * The file will be encrypted if encryption is enabled.
+     * The file will be written using a binary stream and encrypted if encryption is enabled.
      *
      * @throws RuntimeException if an {@link IOException} occurs during file writing.
      */
@@ -394,32 +383,29 @@ public class InfoFile {
 
         File output = null;
         try {
-            FileWriter writer;
             output = Files.createTempFile(null, ".info").toFile();
-            if (encrypt && !dev) {
-                writer = new FileWriter(output);
-            } else {
-                writer = new FileWriter(file);
-            }
-            entryMap.forEach((s, s2) -> {
-                s2 = s2.replace("\n", "!@!");
-                try {
-                    writer.write(s + "=" + s2 + "\n");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            File targetFile = (encrypt && !dev) ? output : file;
+
+            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(targetFile))) {
+                dos.writeInt(entryMap.size());
+                for (Map.Entry<String, String> entry : entryMap.entrySet()) {
+                    dos.writeUTF(entry.getKey());
+
+                    // Safeguard against null values breaking the binary stream
+                    String value = entry.getValue() == null ? "" : entry.getValue();
+                    dos.writeUTF(value);
                 }
-            });
-            writer.close();
+            }
+
             if (encrypt && !dev) {
-                // Replace output into the file
                 FileCrypter.encryptFile(output, file);
             }
         } catch (IOException e) {
-            logger.error("An error occurred during the encryption save process.", e);
+            logger.error("An error occurred during the save process.", e);
         } finally {
             if (output != null && output.exists()) {
                 if (!output.delete()) {
-                    logger.error("Unable to delete unencrypted file after writing. '{}'", file.getAbsolutePath());
+                    logger.error("Unable to delete temp file after writing. '{}'", output.getAbsolutePath());
                     forceDelete(output);
                 }
             }
@@ -432,5 +418,12 @@ public class InfoFile {
 
     public void setEntryMap(Map<String, String> entryMap) {
         this.entryMap = entryMap;
+    }
+
+    public static InfoFile copy(InfoFile input) {
+        InfoFile infoFile = new InfoFile();
+        input.getEntryMap().forEach((s, s2) -> infoFile.getEntryMap().put(s, s2));
+        infoFile.update();
+        return infoFile;
     }
 }

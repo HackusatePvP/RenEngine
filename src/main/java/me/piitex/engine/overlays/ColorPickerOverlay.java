@@ -116,4 +116,11 @@ public class ColorPickerOverlay extends Overlay implements Region {
         colorPicker.setMaxHeight(h);
     }
 
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        colorPicker.setMaxSize(w, h);
+    }
+
 }

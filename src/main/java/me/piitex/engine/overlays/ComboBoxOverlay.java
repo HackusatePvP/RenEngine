@@ -183,4 +183,11 @@ public class ComboBoxOverlay extends Overlay implements Region {
         this.maxHeight = h;
         comboBox.setMaxHeight(h);
     }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        comboBox.setMaxSize(w, h);
+    }
 }

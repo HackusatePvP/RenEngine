@@ -73,7 +73,7 @@ public class DialogueContainer extends Container {
      */
     @Override
     public void addElement(Element element) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type! Use 'setHeader(), setBody()'");
     }
 
     /**
@@ -81,7 +81,7 @@ public class DialogueContainer extends Container {
      */
     @Override
     public void addElement(Element element, int index) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type! Use 'setHeader(), setBody()'");
     }
 
     /**
@@ -89,7 +89,7 @@ public class DialogueContainer extends Container {
      */
     @Override
     public void addElements(Element... elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type! Use 'setHeader(), setBody()'");
     }
 
     /**
@@ -97,9 +97,8 @@ public class DialogueContainer extends Container {
      */
     @Override
     public void addElements(LinkedList<Element> elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type! Use 'setHeader(), setBody()'");
     }
-
 
     @Override
     public Node build() {

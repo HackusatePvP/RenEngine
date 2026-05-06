@@ -1,88 +1,32 @@
 package me.piitex.engine.maps;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 // A map with a limited size. This will also remove old entries when the limit is hit.
-public class LimitedHashMap<K, V> implements Map<K, V> {
-    private final Map<K, V> map;
+public class LimitedHashMap<K, V> extends HashMap<K, V> {
     private final int limit;
 
     public LimitedHashMap(int limit) {
-        map = new HashMap<>();
         this.limit = limit;
     }
 
     @Override
-    public int size() {
-        return map.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return map.isEmpty();
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        return map.containsKey(key);
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-        return map.containsValue(value);
-    }
-
-    @Override
-    public V get(Object key) {
-        return map.get(key);
-    }
-
-    @Override
     public V put(K key, V value) {
-        if (map.size() < limit) {
-            map.put(key, value);
-        } else {
-            map.entrySet().stream().findFirst().ifPresent(remove -> map.remove(remove.getKey()));
+        if (size() > limit) {
+            // Remove first entry not last
+            remove(keySet().stream().findFirst());
         }
+        super.put(key, value);
         return value;
     }
 
     @Override
-    public V remove(Object key) {
-       return map.remove(key);
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        m.forEach((k, v) -> {
-            if (size() < limit) {
-                map.put(k, v);
-            } else {
-                map.entrySet().stream().findFirst().ifPresent(remove -> map.remove(remove.getKey()));
-            }
-        });
-    }
-
-    @Override
-    public void clear() {
-        map.clear();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return map.keySet();
-    }
-
-    @Override
-    public Collection<V> values() {
-        return map.values();
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return map.entrySet();
+    public V putIfAbsent(K key, V value) {
+        if (size() > limit) {
+            // Remove first entry not last
+            remove(keySet().stream().findFirst());
+        }
+        super.putIfAbsent(key, value);
+        return value;
     }
 }

@@ -1,16 +1,16 @@
 package me.piitex.engine.overlays;
 
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressBar;
 
-public class ProgressBarOverlay extends Overlay implements Region {
+public class RingProgressOverlay extends Overlay implements Region {
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
     private double scaleWidth, scaleHeight;
-    private final ProgressBar progressBar;
+    private final RingProgressIndicator progressBar;
 
-    public ProgressBarOverlay() {
-        this.progressBar = new ProgressBar();
+    public RingProgressOverlay() {
+        this.progressBar = new RingProgressIndicator();
         setNode(progressBar);
     }
 
@@ -38,7 +38,7 @@ public class ProgressBarOverlay extends Overlay implements Region {
         return progressBar;
     }
 
-    public ProgressBar getProgressBar() {
+    public RingProgressIndicator getProgressBar() {
         return progressBar;
     }
 

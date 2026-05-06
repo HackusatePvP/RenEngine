@@ -117,6 +117,14 @@ public class BoxOverlay extends Overlay implements Region {
         this.maxHeight = h;
     }
 
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        rectangle.setWidth(w);
+        rectangle.setHeight(h);
+    }
+
     public Rectangle getRectangle() {
         return rectangle;
     }
@@ -125,11 +133,7 @@ public class BoxOverlay extends Overlay implements Region {
     public Node render() {
         rectangle.setX(getX());
         rectangle.setY(getY());
-        if (getFillColor() != null) {
-            rectangle.setFill(getFillColor());
-        }
         rectangle.setStroke(strokeColor);
-
         return rectangle;
     }
 }

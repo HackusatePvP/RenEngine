@@ -22,14 +22,16 @@ public class TextAreaOverlay extends Overlay implements Region {
     private IInputSetEvent iInputSetEvent;
     private ITextAreaSubmit iTextAreaSubmit;
 
-    public TextAreaOverlay(String defaultInput, double x, double y, double width, double height) {
-        this.textArea = new TextArea(defaultInput);
-        this.defaultInput = defaultInput;
-        this.width = width;
-        this.height = height;
-        setNode(textArea);
-        setX(x);
-        setY(y);
+    public TextAreaOverlay(String defaultInput) {
+        this(defaultInput, "", 0, 0, 0, 0);
+    }
+
+    public TextAreaOverlay(String defaultInput, String hintText) {
+        this(defaultInput, hintText, 0, 0, 0, 0);
+    }
+
+    public TextAreaOverlay(String defaultInput, String hintText, double width, double height) {
+        this(defaultInput, hintText, 0, 0, width, height);
     }
 
     public TextAreaOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
@@ -173,6 +175,13 @@ public class TextAreaOverlay extends Overlay implements Region {
     public void setMaxHeight(double h) {
         this.maxHeight = h;
         textArea.setMaxHeight(h);
+    }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textArea.setMaxSize(w, h);
     }
 
     public IInputSetEvent getiInputSetEvent() {

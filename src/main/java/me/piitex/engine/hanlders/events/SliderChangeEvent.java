@@ -4,22 +4,24 @@ import me.piitex.engine.overlays.SliderOverlay;
 
 public class SliderChangeEvent extends Event {
     private final SliderOverlay sliderOverlay;
-    private double value;
+    private final double newValue;
+    private final double oldValue;
 
-    public SliderChangeEvent(SliderOverlay sliderOverlay, double value) {
+    public SliderChangeEvent(SliderOverlay sliderOverlay, double newValue, double oldValue) {
         this.sliderOverlay = sliderOverlay;
-        this.value = value;
+        this.newValue = newValue;
+        this.oldValue = oldValue;
     }
 
     public SliderOverlay getSliderOverlay() {
         return sliderOverlay;
     }
 
-    public double getValue() {
-        return value;
+    public double getNewValue() {
+        return newValue;
     }
 
-    public void setValue(double value) {
-        this.value = value;
+    public double getOldValue() {
+        return oldValue;
     }
 }

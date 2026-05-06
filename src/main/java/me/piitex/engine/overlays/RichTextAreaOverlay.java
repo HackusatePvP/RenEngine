@@ -166,6 +166,16 @@ public class RichTextAreaOverlay extends Overlay implements Region {
 
     public void onSubmit(ITextAreaSubmit iOverlaySubmit) {
         this.iOverlaySubmit = iOverlaySubmit;
+        textArea.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyEvent.consume();
+                if (keyEvent.isShiftDown()) {
+                    textArea.insertText(textArea.getCaretPosition(), "\n");
+                } else {
+                    getiOverlaySubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
+                }
+            }
+        });
     }
 
     @Override
@@ -304,20 +314,6 @@ public class RichTextAreaOverlay extends Overlay implements Region {
                 }
             }, 200, TimeUnit.MILLISECONDS);
         }
-
-        if (getiOverlaySubmit() != null) {
-            textArea.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    keyEvent.consume();
-                    if (keyEvent.isShiftDown()) {
-                        textArea.insertText(textArea.getCaretPosition(), "\n");
-                    } else {
-                        getiOverlaySubmit().onSubmit(new TextAreaSubmitEvent(this, textArea.getText()));
-                    }
-                }
-            });
-        }
-
 
         return textArea;
     }
@@ -479,5 +475,12 @@ public class RichTextAreaOverlay extends Overlay implements Region {
     public void setMaxHeight(double h) {
         this.maxHeight = h;
         textArea.setMaxHeight(h);
+    }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textArea.setMaxSize(w, h);
     }
 }

@@ -21,6 +21,7 @@ import me.piitex.engine.hanlders.events.WindowResizeEvent;
 import me.piitex.engine.layouts.Layout;
 import me.piitex.engine.loaders.ImageLoader;
 import me.piitex.engine.overlays.*;
+import me.piitex.os.OSUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,8 @@ import java.util.TreeMap;
 
 /**
  * The Window serves as the primary GUI component, managing the rendering process for the engine.
- * It houses and manages three core components: {@link Container}, {@link Overlay}, and {@link Layout}.
+ * Instead of directly tracking arbitrary elements, the Window strictly houses and manages
+ * top-level {@link Container} objects.
  *
  * <p>Multiple windows can be created and rendered simultaneously. The window's title serves as its process name and label.
  * The stage style dictates the window's appearance, with {@link StageStyle#DECORATED} providing standard
@@ -46,8 +48,8 @@ import java.util.TreeMap;
  * }</pre>
  *
  * <p>
- * To display elements within a window, a {@link Container} must first be created and added to the window.
- * Multiple containers can be added and positioned within a single window.</p>
+ * To display UI elements within a window, a {@link Container} must first be created and populated.
+ * Then, that container is added directly to the window's managed collection.</p>
  * <pre>{@code
  * Window window = application.getWindow();
  * Container container = new EmptyContainer(x, y, width, height);
@@ -56,17 +58,17 @@ import java.util.TreeMap;
  *
  * <p>
  * All GUI-related functions, especially those involving scene graph modifications,
- * must be executed on the JavaFX Application Thread.</p>
+ * must be executed on the JavaFX Application Thread.</p> This example uses a native {@link Thread} for simplicity.
  * <pre>{@code
- *     new Thread( () -> {
- *         // Code to be ran asynchronously
- *         loadBackend();
+ * new Thread( () -> {
+ * // Code to be executed asynchronously
+ * loadBackend();
  *
- *         Platform.runLater( () -> {
- *             // Any gui related code.
- *             initializeProgressIndicator();
- *         })
- *     })
+ * Platform.runLater( () -> {
+ * // Any gui related code.
+ * initializeProgressIndicator();
+ * })
+ * });
  * }</pre>
  *
  * @see Container
@@ -96,12 +98,17 @@ public class Window {
 
     private static final Logger logger = LoggerFactory.getLogger(Window.class);
 
+    // -------- OS Specific Values ----------
+    // JavaFX does not take into account the window title bar height.
+    // This causes alignment issues with various operating systems.
+    private static final int LINUX_WINDOW_HEIGHT = 35;
+    private static final int WIN_WINDOW_HEIGHT = 40;
+    private static final int MAC_WINDOW_HEIGHT = 40;
+
+
     /**
      * Constructs a Window instance using properties defined in a {@link WindowBuilder}.
      * This allows for a flexible and readable way to configure window properties.
-     *
-     * <p>Common styles include {@link StageStyle#DECORATED}, which provides standard
-     * window controls, and {@link StageStyle#UNDECORATED} for a borderless window.</p>
      *
      * <p>Example usage:</p>
      * <pre>{@code
@@ -139,7 +146,9 @@ public class Window {
 
     /**
      * Initializes the JavaFX Stage with the configured properties from the `WindowBuilder`.
-     * This method sets up the title, style, dimensions, icon, and initial scene.
+     * This method applies the title, style, dimensions, icon, scaling behaviors,
+     * anti-aliasing preferences, and initializes the root scene. Handles OS-specific
+     * window height discrepancies internally.
      */
     protected void buildStage() {
         stage = new Stage();
@@ -153,10 +162,21 @@ public class Window {
         stage.setTitle(title);
         stage.initStyle(stageStyle);
         stage.setWidth(width);
-        stage.setHeight(height);
+
+        // Linux, Windows, and Mac handle sizing of windows differently.
+        // With the top control bar enabled, the height will be off.
+
+        if (OSUtil.getOS().toLowerCase().contains("linux")) {
+            stage.setHeight(height + LINUX_WINDOW_HEIGHT);
+        } else if (OSUtil.getOS().toLowerCase().contains("window")) {
+            stage.setHeight(height + WIN_WINDOW_HEIGHT);
+        } else if (OSUtil.getOS().toLowerCase().contains("mac")) {
+            stage.setHeight(height + MAC_WINDOW_HEIGHT);
+        } else {
+            stage.setHeight(height);
+        }
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
-
         root.setPrefSize(width, height);
 
         if (scale) {
@@ -172,13 +192,16 @@ public class Window {
         handleWindowScaling(stage);
 
         scene = new Scene(root);
-
         stage.setScene(scene);
+
+        if (backgroundColor != null) {
+            updateBackground(backgroundColor);
+        }
     }
 
     /**
      * Updates the background color of the window's root pane and scene.
-     * @param color The new background color.
+     * @param color The new background color to apply.
      */
     public void updateBackground(Color color) {
         this.backgroundColor = color;
@@ -209,6 +232,7 @@ public class Window {
     public Scene getScene() {
         return scene;
     }
+
     /**
      * Retrieves the root Pane of the window's scene graph.
      * @return The root Pane.
@@ -218,13 +242,18 @@ public class Window {
     }
 
     /**
-     * Retrieves the configured width of the window.
+     * Retrieves the currently configured width of the window.
      * @return The window width.
      */
     public double getWidth() {
         return width;
     }
 
+    /**
+     * Sets a new width for the window. Updates the initial width tracker and clears any existing
+     * scaling transformations from the root pane.
+     * @param width The new width in pixels.
+     */
     public void setWidth(double width) {
         this.width = width;
         this.initialWidth = width;
@@ -232,6 +261,11 @@ public class Window {
         root.getTransforms().clear();
     }
 
+    /**
+     * Sets a new height for the window. Updates the initial height tracker and clears any existing
+     * scaling transformations from the root pane.
+     * @param height The new height in pixels.
+     */
     public void setHeight(double height) {
         this.height = height;
         this.initialHeight = height;
@@ -240,23 +274,34 @@ public class Window {
     }
 
     /**
-     * Retrieves the configured height of the window.
+     * Retrieves the currently configured height of the window.
      * @return The window height.
      */
     public double getHeight() {
         return height;
     }
 
+    /**
+     * Calculates the horizontal scale factor by dividing the current width by the initial width.
+     * Useful for dynamic resizing and responsive UI adjustments.
+     * @return The horizontal scaling multiplier.
+     */
     public double getWidthScale() {
         return width / initialWidth;
     }
 
+    /**
+     * Calculates the vertical scale factor by dividing the current height by the initial height.
+     * Useful for dynamic resizing and responsive UI adjustments.
+     * @return The vertical scaling multiplier.
+     */
     public double getHeightScale() {
         return height / initialHeight;
     }
 
     /**
      * Toggles the window between full-screen and windowed modes.
+     * Reverts to the explicitly set width and height if exiting full-screen mode.
      * @param fullscreen True to set to full-screen, false for windowed.
      */
     public void setFullscreen(boolean fullscreen) {
@@ -272,6 +317,7 @@ public class Window {
 
     /**
      * Toggles the window between maximized and normal states.
+     * Reverts to the explicitly set width and height if exiting the maximized state.
      * @param maximized True to maximize the window, false for normal size.
      */
     public void setMaximized(boolean maximized) {
@@ -286,23 +332,28 @@ public class Window {
     }
 
     /**
-     * Adds a {@link Container} to the window using its intrinsic index.
+     * Adds a {@link Container} to the window using its intrinsically defined index.
      * @param container The container to add.
      */
     public void addContainer(Container container) {
         addContainer(container, container.getIndex());
     }
 
+    /**
+     * Adds a {@link Container} to the window using its intrinsic index, but associates it
+     * with a pre-compiled JavaFX Node. Useful for performance optimizations.
+     * @param container The container metadata and reference.
+     * @param node The pre-compiled JavaFX Node to render.
+     */
     public void addContainer(Container container, Node node) {
         addContainer(container, node, container.getIndex());
     }
 
-
     /**
      * Adds a {@link Container} to the window at a specific index. If a container already exists at the given index,
-     * it attempts to shift existing containers to accommodate the new one.
+     * it recursively shifts existing containers up one index to accommodate the new one.
      * @param container The container to add.
-     * @param index The desired rendering index for the container.
+     * @param index The desired rendering index (z-order) for the container.
      */
     public void addContainer(Container container, int index) {
         Container current = containers.get(index);
@@ -314,7 +365,13 @@ public class Window {
         containers.put(index, container);
         container.setWindow(this); // Store window reference.
 
-        Node assemble = container.assemble();
+        Node assemble;
+        // Check for cached node.
+        if (container.getNode() != null) {
+            assemble = container.getNode();
+        } else {
+            assemble = container.assemble();
+        }
 
         if (index > 0) {
             if (root.getChildren().size() < index) {
@@ -328,10 +385,30 @@ public class Window {
     }
 
     /**
-     * Adds a pre-compiled {@link Container} to the window. Use {@link Container#assemble()} to build the {@link Node}.
-     * @param container The container to add.
-     * @param node The pre-compiled node to add.
-     * @param index The desired rendering index for the container.
+     * Adds a pre-compiled {@link Container} to the window at a specific index.
+     * Use {@link Container#assemble()} to build the {@link Node}. Nodes are automatically
+     * assembled when the base container is drawn to the screen.
+     * If a Container is large or executes a long task, it might freeze or lock the UI.
+     * You can assemble the Container asynchronously to prevent UI freezing.
+     *
+     * <pre>
+     * {@code
+     * Container container = new EmptyContainer(100, 100);
+     * // Add elements to the container.
+     *
+     * runTaskAsynchronously(() -> {
+     * Node assemble = container.assemble();
+     * Platform.runLater(() -> {
+     * window.addContainer(container, assemble, 0);
+     * });
+     * });
+     * // Display a loading view which can be removed in the task above.
+     * }
+     * </pre>
+     *
+     * @param container The container context to track.
+     * @param node The pre-compiled node to visually add.
+     * @param index The desired rendering index (z-order) for the container.
      */
     public void addContainer(Container container, Node node, int index) {
         Container current = containers.get(index);
@@ -345,8 +422,8 @@ public class Window {
     }
 
     /**
-     * Adds all containers from the given TreeMap to this window's container collection.
-     * Existing containers with matching indices will be overwritten.
+     * Adds a collection of containers from the given TreeMap to this window.
+     * Existing containers with matching indices will be overwritten in the internal map.
      * @param con The TreeMap of containers to add.
      */
     public void addContainers(TreeMap<Integer, Container> con) {
@@ -355,15 +432,15 @@ public class Window {
 
     /**
      * Replaces the entire set of containers in the window with a new TreeMap of containers.
-     * @param containers The new TreeMap of containers.
+     * @param containers The new TreeMap of containers to track.
      */
     public void setContainers(TreeMap<Integer, Container> containers) {
         this.containers = containers;
     }
 
     /**
-     * Replaces an old container instance with a new container instance, preserving its original index.
-     * The old container must already exist in the window's collection.
+     * Replaces an existing container instance with a new container instance, preserving its original index.
+     * The old container must already exist in the window's collection for the replacement to occur.
      * @param oldContainer The container instance to be replaced.
      * @param newContainer The new container instance to take its place.
      */
@@ -375,7 +452,7 @@ public class Window {
 
     /**
      * Replaces the container at a specific index with a new container.
-     * The window is then re-rendered to reflect this change.
+     * The window is then re-rendered to reflect this visual change.
      * @param index The index at which to replace the container.
      * @param container The new container to place at the specified index.
      */
@@ -387,9 +464,9 @@ public class Window {
 
     /**
      * Removes a specific {@link Container} instance from the window's collection.
-     * Note: This only removes the container from the internal map,
-     * it does not automatically remove its corresponding JavaFX Node from the scene graph.
-     * A subsequent `render()` call would be needed to update the display.
+     * Note: This removes the container from the internal map and its corresponding JavaFX
+     * Node from the root's children, but a subsequent `render()` call might be needed to
+     * ensure structural consistency depending on execution context.
      * @param container The container instance to remove.
      */
     public void removeContainer(Container container) {
@@ -409,8 +486,7 @@ public class Window {
     }
 
     /**
-     * Clears all containers from the window.
-     * A garbage collection hint is provided to the JVM.
+     * Clears all containers currently tracked by the window and removes them from the view.
      */
     public void clearContainers() {
         new LinkedList<>(containers.values()).forEach(this::removeContainer);
@@ -418,7 +494,7 @@ public class Window {
     }
 
     /**
-     * Removes the container at a specific index from the window and re-renders the display.
+     * Removes the container at a specific index from the window and triggers a re-render.
      * @param index The index of the container to remove.
      */
     public void clearContainer(int index) {
@@ -427,7 +503,7 @@ public class Window {
     }
 
     /**
-     * Retrieves the TreeMap of all containers currently managed by the window.
+     * Retrieves the TreeMap of all containers currently managed by the window, ordered by index.
      * @return A TreeMap mapping container indices to Container objects.
      */
     public TreeMap<Integer, Container> getContainers() {
@@ -435,17 +511,7 @@ public class Window {
     }
 
     /**
-     * Clears all child nodes from the root pane and re-sets the scene's root.
-     * The stage is then shown.
-     */
-    public void clean() {
-        root.getChildren().clear();
-        scene.setRoot(root);
-        stage.show();
-    }
-
-    /**
-     * Clears all containers and resets the window's root pane and scene.
+     * Clears all containers and resets the window's root pane and scene entirely.
      * The stage is not automatically shown after this operation.
      */
     public void clear() {
@@ -453,8 +519,8 @@ public class Window {
     }
 
     /**
-     * Clears all containers and resets the window's root pane and scene.
-     * Optionally shows the stage after clearing.
+     * Clears all containers and resets the window's root pane and scene entirely.
+     * Optionally shows the stage after the clearance process is complete.
      * @param render True to show the stage after clearing, false otherwise.
      */
     public void clear(boolean render) {
@@ -470,7 +536,7 @@ public class Window {
 
     /**
      * Closes the JavaFX Stage associated with this window.
-     * A garbage collection hint is provided to the JVM.
+     * @param handleEvent If false, unbinds the window's hidden and close request event listeners before closing.
      */
     public void close(boolean handleEvent) {
         if (stage != null) {
@@ -483,23 +549,15 @@ public class Window {
     }
 
     /**
-     * Clears the root pane's children, creates a new Stage, and hides it.
-     * This method essentially resets the visual state of the window without closing it.
+     * Resets the visual state of the window by creating a new Stage with the original configuration parameters.
      */
     public void resetStage() {
         buildStage();
     }
 
-    /**
-     * Shows the window's stage.
-     * Note: This method is named "hide" but performs "show". This might be a naming inconsistency.
-     */
-    public void hide() {
-        stage.show();
-    }
 
     /**
-     * Builds the JavaFX Stage and then renders all active nodes on the screen.
+     * Fully constructs the JavaFX Stage structure and renders all active nodes onto the screen.
      */
     public void buildAndRender() {
         buildStage();
@@ -507,10 +565,11 @@ public class Window {
     }
 
     /**
-     * Builds and displays all active nodes on the screen. This function translates the engine's API into JavaFX and updates the stage and scene.
+     * Builds and displays all active nodes on the screen. This function translates the engine's API
+     * into JavaFX nodes and updates the stage and scene. Focus is requested if the window is configured for it.
      * <p>
      * Calling this excessively can cause visual flicker. It must be called after adding,
-     * modifying, or removing {@link Overlay} or {@link Container} to update the display.
+     * modifying, or removing {@link Overlay} or {@link Container} objects to update the display state.
      * </p>
      */
     public void render() {
@@ -522,8 +581,9 @@ public class Window {
     }
 
     /**
-     * Builds the engine's API onto the JavaFX framework without displaying the built nodes on the screen.
-     * For most use cases, {@link #render()} is recommended as it also shows the updated display.
+     * Translates the engine's container definitions into JavaFX nodes without immediately showing
+     * the stage, provided there is at least one active container.
+     * For most use cases, {@link #render()} is recommended.
      */
     public void build() {
         if (!containers.isEmpty()) {
@@ -532,9 +592,10 @@ public class Window {
     }
 
     /**
-     * Builds the engine's API onto the JavaFX framework, optionally resetting the scene.
-     * This method processes and prepares containers for display but does not automatically show them.
-     * @param reset True to reset the scene (clears and initialises the root pane and scene), false to only clear children.
+     * Iterates through active containers and applies them to the JavaFX root pane.
+     * This method processes and prepares containers for display.
+     * @param reset If true, fully reinitializes the root pane and scene graph (can cause flickering, but clears stale cache).
+     * If false, simply clears existing children and stylesheets before reapplying containers.
      */
     public void build(boolean reset) {
         root.getChildren().clear();
@@ -551,9 +612,9 @@ public class Window {
     }
 
     /**
-     * Renders a specific container by adding it on top of the current window's content.
-     * The container is automatically assigned an index that places it at the highest layer.
-     * @param container The container to render.
+     * Adds a specific container on top of the current window's content stack.
+     * The container is dynamically assigned an index representing the highest available layer.
+     * @param container The container to assign and render.
      */
     public void render(Container container) {
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
@@ -563,9 +624,9 @@ public class Window {
     }
 
     /**
-     * Renders a single {@link Container} instance by building its corresponding JavaFX Node
-     * and adding it to the window's root pane.
-     * @param container The container to render.
+     * Assembles a single {@link Container} instance into a JavaFX Node and appends it to the window's root pane.
+     * Removes the previous node instance from the root if it existed.
+     * @param container The container to translate and render.
      */
     private void renderContainer(Container container) {
         if (container.getNode() != null) {
@@ -576,11 +637,9 @@ public class Window {
     }
 
     /**
-     * Renders a popup container, ensuring that only one popup is active at a time.
-     * If a previous popup exists, its Node is removed from the scene graph before the new one is added.
-     * This method does not apply translation (X, Y) from the container's properties directly to the node,
-     * assuming these are handled by the calling `renderPopup` method.
-     * @param container The container to render as a popup.
+     * Internal handler to render a container explicitly as a singular active popup.
+     * Removes the currently tracked popup container before registering the new one.
+     * @param container The container functioning as the popup layout.
      */
     private void renderPopupContainer(Container container) {
         if (currentPopup != null) {
@@ -591,16 +650,27 @@ public class Window {
         addContainer(container);
     }
 
+    /**
+     * Computes positioning and renders a basic popup overlay dynamically onto the screen.
+     * @param overlay The {@link Overlay} content to embed inside the popup.
+     * @param position A predefined {@link PopupPosition} layout value.
+     * @param width The targeted width of the popup frame.
+     * @param height The targeted height of the popup frame.
+     * @param autoClose If true, the popup automatically dismisses itself after a set duration.
+     */
     public void renderPopup(Overlay overlay, PopupPosition position, double width, double height, boolean autoClose) {
         renderPopup(overlay, position, width, height, autoClose, null);
     }
 
     /**
-     * Renders a popup with an overlay content, and desired position.
-     * This method calculates the popup's position based on window dimensions and scaling,
-     * then creates and renders a {@link Container} to house the overlay.
-     * @param overlay The {@link Overlay} content to display within the popup.
-     * @param position The desired position of the popup on the screen.
+     * Computes the X and Y coordinate logic for a popup based on the window's dimensions and scaling parameters,
+     * then delegates the drawing instructions to absolute coordinate rendering.
+     * @param overlay The {@link Overlay} logic.
+     * @param position The geographical screen layout {@link PopupPosition} logic.
+     * @param width Desired popup width.
+     * @param height Desired popup height.
+     * @param autoClose True if the popup should auto-dismiss on a timer.
+     * @param label An optional {@link TextOverlay} to accompany the popup.
      */
     public void renderPopup(Overlay overlay, PopupPosition position, double width, double height, boolean autoClose, TextOverlay label) {
         // Get current window dimensions (these are in the logical, unscaled coordinate system)
@@ -648,6 +718,17 @@ public class Window {
         renderPopup(overlay, calculatedX, calculatedY, width, height, autoClose, label);
     }
 
+    /**
+     * Encapsulates an overlay into a dynamically constructed {@link EmptyContainer} positioned at exact coordinates,
+     * registering it as the active top-level popup element. Assigns lifecycle event hooks based on overlay types.
+     * @param overlay The {@link Overlay} element to draw.
+     * @param x The specific scaled horizontal X coordinate.
+     * @param y The specific scaled vertical Y coordinate.
+     * @param width The overall width boundary of the popup constraint container.
+     * @param height The overall height boundary of the popup constraint container.
+     * @param autoClose True to queue a removal thread via JavaFX timeline after 10,000 milliseconds.
+     * @param label Optional text overlay addition.
+     */
     public void renderPopup(Overlay overlay, double x, double y, double width, double height, boolean autoClose, TextOverlay label) {
         EmptyContainer container = new EmptyContainer(x, y, width, height);
         container.setPrefSize(width, height);
@@ -694,6 +775,14 @@ public class Window {
         addContainer(container);
     }
 
+    /**
+     * Evaluates a pre-existing container directly into the application space as an exclusive top-level popup at specific coordinates.
+     * @param container The assembled container logic to set as active.
+     * @param x Translated X coordinate.
+     * @param y Translated Y coordinate.
+     * @param width Bounding box width.
+     * @param height Bounding box height.
+     */
     public void renderPopup(Container container, double x, double y, double width, double height) {
         if (currentPopup != null) {
             removeContainer(currentPopup);
@@ -709,6 +798,14 @@ public class Window {
         addContainer(container);
     }
 
+    /**
+     * Handles complex inverse scaling math and layout configuration to translate a requested predefined {@link PopupPosition}
+     * onto exact coordinate mappings, then delegates the raw drawing instructions to the coordinate popup renderer.
+     * @param container The container acting as a custom popup view.
+     * @param position The conceptual mapping for the popup on screen.
+     * @param width The target display width.
+     * @param height The target display height.
+     */
     public void renderPopup(Container container, PopupPosition position, double width, double height) {
         double windowWidth = this.width;
         double windowHeight = this.height;
@@ -750,23 +847,46 @@ public class Window {
 
     }
 
+    /**
+     * Halts application workflow to trigger and display a system-level Alert dialog.
+     * @param alertOverlay The overlay containing the configured {@link Alert} structure.
+     */
     public void renderAlert(AlertOverlay alertOverlay) {
         Alert alert = alertOverlay.getAlert();
         alert.showAndWait();
     }
 
+    /**
+     * Retrieves the instance of the current active popup container traversing the engine window layer.
+     * @return The currently displaying popup {@link Container}, or null if none exist.
+     */
     public Container getCurrentPopup() {
         return currentPopup;
     }
 
+    /**
+     * Injects a custom window resize handler logic into the application window lifecycle.
+     * Overrides any previously configured resize hooks.
+     * @param windowResize The implementation defining custom resize handling logic.
+     */
     public void onWindowResize(IWindowResize windowResize) {
         this.windowResize = windowResize;
     }
 
+    /**
+     * Retrieves the custom window resize handler currently bound to the window.
+     * @return The active {@link IWindowResize} implementation, or null if unassigned.
+     */
     public IWindowResize getWindowResize() {
         return windowResize;
     }
 
+    /**
+     * Listens to the core JavaFX Stage dimensions to maintain structural integrity.
+     * If the scaling config is set to true, this dynamically applies affine transforms directly to the root pane
+     * to stretch the application content smoothly. Otherwise, it delegates resolution changes to a custom event dispatcher.
+     * @param stage The primary JavaFX Stage generating width/height property changes.
+     */
     private void handleWindowScaling(Stage stage) {
         // This scales the application to the desired width and height that it is running at.
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {

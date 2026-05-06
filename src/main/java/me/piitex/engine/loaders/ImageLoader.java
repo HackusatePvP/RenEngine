@@ -40,6 +40,10 @@ public class ImageLoader {
         this.file = new File(fileDirectory, name);
     }
 
+    public ImageLoader(File directory, String name) {
+        this.file = new File(directory, name);
+    }
+
     public ImageLoader(File file) {
         this.file = file;
     }

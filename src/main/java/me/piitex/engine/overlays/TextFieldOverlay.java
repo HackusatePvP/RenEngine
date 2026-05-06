@@ -7,33 +7,37 @@ import me.piitex.engine.hanlders.events.InputSetEvent;
 import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IInputSetEvent;
 
-public class InputFieldOverlay extends Overlay implements Region {
+public class TextFieldOverlay extends Overlay implements Region {
     private final TextField textField;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
     private final String defaultInput;
     private FontLoader fontLoader;
     private String hintText = "";
 
     private IInputSetEvent iInputSetEvent;
 
-    public InputFieldOverlay(String defaultInput, double x, double y, double width, double height) {
-        this.textField = new TextField();
-        this.defaultInput = defaultInput;
-        this.width = width;
-        this.height = height;
-        setNode(textField);
-        setX(x);
-        setY(y);
+    public TextFieldOverlay(String defaultInput, String hintText) {
+        this(defaultInput, hintText, 0, 0, 0, 0);
     }
 
-    public InputFieldOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
+
+    public TextFieldOverlay(String defaultInput, String hintText, double width, double height) {
+        this(defaultInput, hintText, 0, 0, width, height);
+    }
+
+    public TextFieldOverlay(String defaultInput, double x, double y, double width, double height) {
+        this(defaultInput, "", x, y, width, height);
+    }
+
+    public TextFieldOverlay(String defaultInput, String hintText, double x, double y, double width, double height) {
         this.textField = new TextField();
         this.defaultInput = defaultInput;
         this.hintText = hintText;
         this.width = width;
         this.height = height;
         setNode(textField);
+        textField.setText(defaultInput);
+        textField.setPromptText(hintText);
         setX(x);
         setY(y);
     }
@@ -84,11 +88,7 @@ public class InputFieldOverlay extends Overlay implements Region {
         if (getMaxWidth() > 0 || getMaxHeight() > 0) {
             textField.setMaxSize(getMaxWidth(), getMaxHeight());
         }
-        textField.setPromptText(hintText);
-        textField.setText(defaultInput);
         textField.setAlignment(Pos.TOP_LEFT);
-
-
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
@@ -163,11 +163,22 @@ public class InputFieldOverlay extends Overlay implements Region {
         textField.setMaxHeight(h);
     }
 
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        textField.setMaxSize(w, h);
+    }
+
     public IInputSetEvent getiInputSetEvent() {
         return iInputSetEvent;
     }
 
     public void onInputSetEvent(IInputSetEvent iInputSetEvent) {
         this.iInputSetEvent = iInputSetEvent;
+    }
+
+    public TextField getTextField() {
+        return textField;
     }
 }

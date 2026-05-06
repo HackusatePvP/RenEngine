@@ -1,6 +1,10 @@
 package me.piitex.os.configurations;
 
 
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
@@ -33,10 +37,13 @@ public class FileCrypter {
     private static final int GCM_IV_LENGTH_BYTES = 12;
     private static final int GCM_TAG_LENGTH_BITS = 128;
 
-    // RECOMMENDED TO CHANGE
-    private static final String passKey = System.getProperty("user.name") + System.getProperty("user.home") + System.getProperty("os.name");
+    private static final Logger logger = LoggerFactory.getLogger(FileCrypter.class);
 
-    public static void encryptFile(File file, File outputFile) {
+    public static void encryptFile(File newFile, File outputFile) {
+        encryptFile(newFile, outputFile, null);
+    }
+
+    public static void encryptFile(File newFile, File outputFile, @Nullable String key) {
         SecureRandom secureRandom = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH_BYTES];
         secureRandom.nextBytes(salt); // Generate a unique salt for each encryption
@@ -44,9 +51,14 @@ public class FileCrypter {
         byte[] iv = new byte[GCM_IV_LENGTH_BYTES]; // Generate a unique IV for each encryption
         secureRandom.nextBytes(iv);
 
-        char[] passKeyChars = MasterKeyManager.getPersistentPassKey();
+        char[] passKeyChars;
+        if (key == null) {
+            passKeyChars = MasterKeyManager.getPersistentPassKey();
+        } else {
+            passKeyChars = key.toCharArray();
+        }
 
-        try (FileInputStream inputStream = new FileInputStream(file);
+        try (FileInputStream inputStream = new FileInputStream(newFile);
              FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 
             SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_ALG);
@@ -78,12 +90,23 @@ public class FileCrypter {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException |
                  InvalidKeyException | InvalidAlgorithmParameterException |
                  IllegalBlockSizeException | BadPaddingException | IOException e) {
-            throw new RuntimeException("Error encrypting file: " + e.getMessage(), e);
+            logger.error("Error occurred while encrypting '{}'.", newFile.getAbsolutePath(), e);
         }
     }
 
     public static void decryptFile(File file, File outputFile) throws IllegalBlockSizeException, IOException {
-        char[] passKeyChars = MasterKeyManager.getPersistentPassKey();
+        decryptFile(file, outputFile, null);
+    }
+
+    public static void decryptFile(File file, File outputFile, @Nullable String key) throws IllegalBlockSizeException, IOException {
+
+        char[] passKeyChars;
+        if (key == null) {
+            passKeyChars = MasterKeyManager.getPersistentPassKey();
+        } else {
+            passKeyChars = key.toCharArray();
+        }
+
         try (FileInputStream inputStream = new FileInputStream(file);
              FileOutputStream outputStream = new FileOutputStream(outputFile)) {
 
@@ -124,7 +147,7 @@ public class FileCrypter {
                 outputStream.write(outputBytes);
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException e) {
-            throw new RuntimeException("Error decrypting file: " + e.getMessage(), e);
+            logger.error("Error occurred while decrypting '{}'.", file.getAbsolutePath(), e);
         }
     }
 }

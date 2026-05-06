@@ -73,6 +73,21 @@ public class PaginationContainer extends Container {
      */
     @Override
     public void addElement(Element element) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
+    }
+
+    @Override
+    public void addElement(Element element, int index) {
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
+    }
+
+    @Override
+    public void addElements(Element... elements) {
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
+    }
+
+    @Override
+    public void addElements(LinkedList<Element> elements) {
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 }

@@ -193,4 +193,11 @@ public class ChoiceBoxOverlay extends Overlay implements Region {
         this.maxHeight = h;
         choiceBox.setMaxHeight(h);
     }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        choiceBox.setMaxSize(w, h);
+    }
 }

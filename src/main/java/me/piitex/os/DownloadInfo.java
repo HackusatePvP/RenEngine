@@ -1,15 +1,19 @@
 package me.piitex.os;
 
+import java.io.File;
+
 public class DownloadInfo {
     private final String fileName;
+    private final File output;
     private final long totalFileSize; // Total size in bytes
     private long downloadedBytes;
     private double downloadProgress; // Between 0.0 and 1.0
     private final String downloadUrl;
     private boolean isComplete;
 
-    public DownloadInfo(String fileName, long totalFileSize, String downloadUrl) {
+    public DownloadInfo(String fileName, File output, long totalFileSize, String downloadUrl) {
         this.fileName = fileName;
+        this.output = output;
         this.totalFileSize = totalFileSize;
         this.downloadUrl = downloadUrl;
         this.downloadedBytes = 0;
@@ -19,6 +23,10 @@ public class DownloadInfo {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public File getOutput() {
+        return output;
     }
 
     public long getTotalFileSize() {

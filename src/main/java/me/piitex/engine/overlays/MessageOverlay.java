@@ -217,4 +217,11 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         this.maxHeight = h;
         atlantafxMessage.setMaxHeight(h);
     }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        atlantafxMessage.setMaxSize(w, h);
+    }
 }

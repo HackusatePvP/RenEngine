@@ -16,8 +16,6 @@ public class CardContainer extends Container {
     private Element footer;
 
     public CardContainer(double x, double y, double width, double height) {
-        // Java 25 Update: You can now call code before the super() method
-        // I think this is slightly better than confusing casting.
         Card card = new Card();
         this.atlantafxCard = card;
         super(card, x, y, width, height);
@@ -34,7 +32,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElements(Element... elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -42,7 +40,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElements(LinkedList<Element> elements) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -50,7 +48,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElement(Element element) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     /**
@@ -58,7 +56,7 @@ public class CardContainer extends Container {
      */
     @Override
     public void addElement(Element element, int index) {
-        return;
+        throw new UnsupportedOperationException("Method is not supported with this container type!");
     }
 
     public void setHeader(Element element) {
@@ -126,12 +124,6 @@ public class CardContainer extends Container {
         }
         if (getMaxHeight() > 0) {
             atlantafxCard.setMaxHeight(getMaxHeight());
-        }
-
-        if (getOnClick() != null) {
-            atlantafxCard.setOnMouseClicked(mouseEvent -> {
-                getOnClick().onClick(new ContainerClickEvent(this));
-            });
         }
 
         atlantafxCard.getStyleClass().addAll(getStyles());

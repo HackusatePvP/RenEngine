@@ -60,12 +60,6 @@ public class HorizontalLayout extends Layout {
             pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
         }
 
-        if (getClickEvent() != null) {
-            pane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent,this));
-            });
-        }
-
         setStyling(pane);
         return pane;
     }

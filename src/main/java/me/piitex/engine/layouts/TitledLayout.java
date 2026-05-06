@@ -100,16 +100,6 @@ public class TitledLayout extends VerticalLayout {
             }
         }
 
-
-        if (getClickEvent() != null) {
-            pane.setOnMousePressed(mouseEvent -> {
-                getClickEvent().onLayoutClick(new LayoutClickEvent(mouseEvent, this));
-            });
-        } else {
-            pane.setOnMousePressed(null);
-        }
-
-
         setStyling(pane);
         titledPane.setContent(pane);
         return titledPane;

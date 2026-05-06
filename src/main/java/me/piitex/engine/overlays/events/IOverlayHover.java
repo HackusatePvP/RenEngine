@@ -1,8 +1,8 @@
 package me.piitex.engine.overlays.events;
 
-import me.piitex.engine.hanlders.events.OverlayHoverEvent;
+import me.piitex.engine.hanlders.events.ElementHoverEvent;
 
 public interface IOverlayHover {
 
-    void onHover(OverlayHoverEvent event);
+    void onHover(ElementHoverEvent event);
 }

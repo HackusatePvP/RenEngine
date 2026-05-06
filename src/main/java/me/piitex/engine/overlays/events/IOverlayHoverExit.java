@@ -1,8 +1,8 @@
 package me.piitex.engine.overlays.events;
 
-import me.piitex.engine.hanlders.events.OverlayExitEvent;
+import me.piitex.engine.hanlders.events.ElementExitEvent;
 
 public interface IOverlayHoverExit {
 
-    void onHoverExit(OverlayExitEvent event);
+    void onHoverExit(ElementExitEvent event);
 }

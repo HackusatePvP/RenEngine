@@ -4,13 +4,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import me.piitex.engine.Window;
-import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.hanlders.events.DirectorySelectEvent;
+import me.piitex.engine.loaders.FontLoader;
 import me.piitex.engine.overlays.events.IDirectorySelect;
 
 import java.io.File;
 
-public class FileChooserOverlay extends Overlay {
+public class FileSaveOverlay extends Overlay {
     private final Window window;
     private IDirectorySelect directorySelect;
     private String text;
@@ -19,12 +19,12 @@ public class FileChooserOverlay extends Overlay {
     private String[] fileExtensions;
     private String defaultFileName;
 
-    public FileChooserOverlay(Window window, String text) {
+    public FileSaveOverlay(Window window, String text) {
         this.window = window;
         this.text = text;
     }
 
-    public FileChooserOverlay(Window window, ButtonOverlay button) {
+    public FileSaveOverlay(Window window, ButtonOverlay button) {
         this.window = window;
         this.button = button;
     }
@@ -89,7 +89,7 @@ public class FileChooserOverlay extends Overlay {
             FileChooser chooser = new FileChooser();
             chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(text, fileExtensions));
             chooser.setInitialFileName(getDefaultFileName());
-            File directory = chooser.showOpenDialog(window.getStage());
+            File directory = chooser.showSaveDialog(window.getStage());
 
             if (getFileSelect() != null) {
                 if (directory != null) {

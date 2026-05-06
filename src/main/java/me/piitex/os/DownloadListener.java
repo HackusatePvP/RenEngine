@@ -31,7 +31,7 @@ public interface DownloadListener {
     void onDownloadError(DownloadInfo info, Exception e);
 
     /**
-     * Called when the download is explicitly cancelled by the user via cancelDownload(url).
+     * Called when the download is explicitly canceled by the user via cancelDownload(url).
      * @param info The state of the download at the time of cancellation.
      */
     void onDownloadCancel(DownloadInfo info);

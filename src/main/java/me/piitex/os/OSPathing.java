@@ -4,31 +4,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 public class OSPathing {
     private static final Logger logger = LoggerFactory.getLogger(OSPathing.class);
 
     public static File getDocumentsDirectory() {
         String userHome = System.getProperty("user.home");
-        if (OSUtil.getOS().toLowerCase().contains("window")) {
-            return new File(userHome + File.separator + "Documents");
-        } else {
-            return new File(userHome + File.separator + ".local" + File.separator + "share");
-        }
+        return new File(userHome + File.separator + "Documents");
     }
 
     public static File getAppDataDirectory() {
         String userHome = System.getProperty("user.home");
         String os = OSUtil.getOS();
 
-        if (os.equalsIgnoreCase("Windows")) {
+        if (os.contains("Windows")) {
             String localAppData = System.getenv("APPDATA");
             if (localAppData != null) {
                 return new File(localAppData);
             }
+        } else if (os.contains("Linux")) {
+            return new File(userHome + "/.local/share/");
         }
 
-        return new File(userHome + File.separator + ".local" + File.separator + "share");
+        return new File(userHome + "/");
     }
 
     public static File getHomeDirectory() {
@@ -62,5 +61,4 @@ public class OSPathing {
             }
         }
     }
-
 }

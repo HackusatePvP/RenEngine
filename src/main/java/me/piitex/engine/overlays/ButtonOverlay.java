@@ -6,21 +6,26 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import me.piitex.engine.Element;
 import me.piitex.engine.loaders.FontLoader;
-import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ButtonOverlay extends Overlay implements Region {
     private final Button button;
     private final String id;
     private String text;
     private FontLoader font;
-    private final FontIcon icon;
+    private final Element graphic;
+    private final IconOverlay icon;
     private final LinkedList<ImageOverlay> images = new LinkedList<>();
     private Paint textFill;
-
+    private Pos alignment;
     private double width, height, prefHeight, prefWidth, maxWidth, maxHeight;
+
+    public static List<String> cssFiles = new ArrayList<>();
 
     /**
      * Private constructor used by the {@link ButtonBuilder}.
@@ -31,6 +36,7 @@ public class ButtonOverlay extends Overlay implements Region {
         this.text = builder.getText();
         this.icon = builder.getIcon();
         this.font = builder.getFont();
+        this.graphic = builder.getGraphic();
         this.textFill = builder.getTextFill();
         this.width = builder.getWidth();
         this.height = builder.getHeight();
@@ -39,6 +45,7 @@ public class ButtonOverlay extends Overlay implements Region {
         this.maxWidth = builder.getMaxWidth();
         this.maxHeight = builder.getMaxHeight();
         this.images.addAll(builder.getImages());
+        builder.getStyles().forEach(this::addStyle);
         setX(builder.getX());
         setY(builder.getY());
         this.button = new Button();
@@ -72,6 +79,15 @@ public class ButtonOverlay extends Overlay implements Region {
         button.setFont(font.getFont());
     }
 
+    public Pos getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(Pos alignment) {
+        this.alignment = alignment;
+        button.setAlignment(alignment);
+    }
+
     @Override
     public Node render() {
         button.setId(id);
@@ -101,8 +117,13 @@ public class ButtonOverlay extends Overlay implements Region {
                 }
             }
         }
+
         if (icon != null) {
-            button.setGraphic(icon);
+            Node graphic = icon.assemble();
+            button.setGraphic(graphic);
+        }
+        if (graphic != null) {
+            button.setGraphic(graphic.assemble());
         }
         if (text != null && !text.isEmpty()) {
             button.setText(text);
@@ -112,6 +133,9 @@ public class ButtonOverlay extends Overlay implements Region {
         }
         if (textFill != null) {
             button.setTextFill(textFill);
+        }
+        if (alignment != null) {
+            button.setAlignment(alignment);
         }
         if (height > 0) {
             button.setMaxHeight(height);
@@ -130,6 +154,11 @@ public class ButtonOverlay extends Overlay implements Region {
 
         button.setTranslateX(getX());
         button.setTranslateY(getY());
+
+        for (String file : cssFiles) {
+            button.getStylesheets().add(file);
+        }
+
         return button;
     }
 
@@ -197,6 +226,13 @@ public class ButtonOverlay extends Overlay implements Region {
     public void setMaxHeight(double h) {
         this.maxHeight = h;
         button.setMaxHeight(h);
+    }
+
+    @Override
+    public void setMaxSize(double w, double h) {
+        this.maxWidth = w;
+        this.maxHeight = h;
+        button.setMaxSize(w, h);
     }
 
     public LinkedList<ImageOverlay> getImages() {

@@ -3,6 +3,8 @@ package me.piitex.engine.loaders;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +17,8 @@ public class FontLoader {
     private Font font;
     private FontWeight weight;
     private FontPosture posture;
+
+    private static final Logger logger = LoggerFactory.getLogger(FontLoader.class);
 
     public FontLoader(FontLoader font, double size) {
         this.name = font.getName();
@@ -50,40 +54,10 @@ public class FontLoader {
         this.font = Font.font(font.getFamily(), weight, posture, size);
     }
 
-    public FontLoader(String name, double size) {
-        this.name = name;
-        File directory = new File(System.getProperty("user.dir") + "/game/fonts/");
-        File file = new File(directory, name);
-        this.size = size;
-        try {
-            this.font = Font.loadFont(new FileInputStream(file), size);
-        } catch (FileNotFoundException e) {
-            URL resource = FontLoader.class.getClassLoader().getResource(name);
-            if (resource != null) {
-                this.font = Font.loadFont(resource.toExternalForm(), size);
-            }
-        }
-    }
-
-    public FontLoader(String name) {
-        File directory = new File(System.getProperty("user.dir") + "/game/fonts/");
-        File file = new File(directory, name);
-        this.name = name;
-        try {
-            this.font = Font.loadFont(new FileInputStream(file), 24);
-        } catch (FileNotFoundException e) {
-            URL resource = FontLoader.class.getClassLoader().getResource(name);
-            if (resource != null) {
-                this.font = Font.loadFont(resource.toExternalForm(), size);
-            }
-        }
-        this.size = 24;
-    }
-
-    public FontLoader(File file, FontPosture posture, FontWeight weight) {
+    public FontLoader(File file, double size) {
         this.name = file.getName();
         try {
-            this.font = Font.loadFont(new FileInputStream(file), 24);
+            this.font = Font.loadFont(new FileInputStream(file), size);
         } catch (FileNotFoundException e) {
             URL resource = FontLoader.class.getClassLoader().getResource(name);
             if (resource != null) {
