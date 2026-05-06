@@ -1,5 +1,7 @@
 package me.piitex.engine;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -217,6 +219,10 @@ public class Renderer extends Element {
      */
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+
+        if (Platform.isFxApplicationThread() && getNode() instanceof Pane pane) {
+            pane.setBackground(new Background(new BackgroundFill(getBackgroundColor(), CornerRadii.EMPTY, Insets.EMPTY)));
+        }
     }
 
     /**
@@ -236,6 +242,10 @@ public class Renderer extends Element {
      */
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+
+        if (Platform.isFxApplicationThread() && getNode() instanceof Pane pane) {
+            pane.setBorder(new Border(new BorderStroke(borderColor, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        }
     }
 
     /**
