@@ -82,63 +82,56 @@ public class FileDownloader {
 
             requestProperties.forEach(connection::setRequestProperty);
 
-            // GitHub decided to change their entire storage api and switch to Azure
-            // This completely breaks this api
-            // Not the best fix, but it works.
-            // Another reason why we call it Microslop
-            if (fileUrl.contains("github.com")) {
-                // Disable automatic redirects to handle them manually
-                if (connection instanceof HttpURLConnection) {
-                    ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
-                }
+            // Disable automatic redirects to handle them manually for ALL domains
+            if (connection instanceof HttpURLConnection) {
+                ((HttpURLConnection) connection).setInstanceFollowRedirects(false);
+            }
 
-                int redirects = 0;
-                while (connection instanceof HttpURLConnection) {
-                    HttpURLConnection httpConn = (HttpURLConnection) connection;
-                    int status = httpConn.getResponseCode();
+            int redirects = 0;
+            while (connection instanceof HttpURLConnection) {
+                HttpURLConnection httpConn = (HttpURLConnection) connection;
+                int status = httpConn.getResponseCode();
 
-                    if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                            status == HttpURLConnection.HTTP_MOVED_PERM ||
-                            status == HttpURLConnection.HTTP_SEE_OTHER ||
-                            status == 307 || status == 308) {
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                        status == HttpURLConnection.HTTP_MOVED_PERM ||
+                        status == HttpURLConnection.HTTP_SEE_OTHER ||
+                        status == 307 || status == 308) {
 
-                        String redirectUrl = httpConn.getHeaderField("Location");
-                        httpConn.disconnect();
+                    String redirectUrl = httpConn.getHeaderField("Location");
+                    httpConn.disconnect();
 
-                        // Standard JDK URI parsing can mangle the Azure SAS token's '+' and '%20' characters.
-                        // While new URL(String) is deprecated in modern Java, it is required here
-                        // to preserve the exact cryptographic string provided by GitHub.
-                        @SuppressWarnings("deprecation")
-                        URL newUrl = new URL(redirectUrl);
-                        url = newUrl; // Update the outer scope url variable
+                    @SuppressWarnings("deprecation")
+                    URL newUrl = new URL(redirectUrl);
+                    url = newUrl; // Update the outer scope url variable
 
-                        connection = url.openConnection();
-                        connection.setConnectTimeout(5000);
+                    connection = url.openConnection();
+                    connection.setConnectTimeout(5000);
 
-                        if (connection instanceof HttpURLConnection) {
-                            HttpURLConnection newHttpConn = (HttpURLConnection) connection;
-                            newHttpConn.setInstanceFollowRedirects(false);
+                    if (connection instanceof HttpURLConnection) {
+                        HttpURLConnection newHttpConn = (HttpURLConnection) connection;
+                        newHttpConn.setInstanceFollowRedirects(false);
 
-                            // Override System JDK defaults and carry over the required Accept header
-                            newHttpConn.setRequestProperty("User-Agent", "Mozilla/5.0");
-                            if (requestProperties.containsKey("Accept")) {
-                                newHttpConn.setRequestProperty("Accept", requestProperties.get("Accept"));
-                            }
+                        // Override System JDK defaults and carry over the required Accept header
+                        newHttpConn.setRequestProperty("User-Agent", "Mozilla/5.0");
+                        if (requestProperties.containsKey("Accept")) {
+                            newHttpConn.setRequestProperty("Accept", requestProperties.get("Accept"));
                         }
-
-                        redirects++;
-                        if (redirects > 5) {
-                            throw new IOException("Too many redirects");
-                        }
-                    } else {
-                        break;
                     }
+
+                    redirects++;
+                    if (redirects > 5) {
+                        throw new IOException("Too many redirects");
+                    }
+                } else {
+                    break;
                 }
             }
 
             // Connection is now finalized on the actual binary file
             long fileSize = connection.getContentLengthLong();
-            String fileName = url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
+
+            // Use getPath() instead of getFile() to strip out "?download=true"
+            String fileName = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
 
             info = new DownloadInfo(fileName, outputFile, fileSize, fileUrl);
             activeDownloads.put(fileUrl, info);
