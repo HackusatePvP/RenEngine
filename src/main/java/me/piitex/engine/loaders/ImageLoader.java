@@ -70,8 +70,8 @@ public class ImageLoader {
             return imageCache.get(file.getPath());
         }
 
-        try {
-            Image image = new Image(new FileInputStream(file), width, height, false, false);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            Image image = new Image(fis, width, height, false, false);
             if (useCache) {
                 imageCache.put(file.getPath(), image);
                 imageSizeCache.put(file.getPath(), width + height);
@@ -79,6 +79,9 @@ public class ImageLoader {
             return image;
         } catch (FileNotFoundException e) {
             logger.error("Could not find image '{}'", file.getAbsolutePath(), e);
+            return null;
+        } catch (Exception e) {
+            logger.error("Error loading image '{}'", file.getAbsolutePath(), e);
             return null;
         }
     }
@@ -101,5 +104,10 @@ public class ImageLoader {
         }
 
         return SwingFXUtils.toFXImage(img, new WritableImage(width, height));
+    }
+
+    public static void clearCache() {
+        imageCache.clear();
+        imageSizeCache.clear();
     }
 }
