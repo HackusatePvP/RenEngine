@@ -189,10 +189,10 @@ public class Window {
             System.setProperty("prism.subpixeltext", "false");
         }
 
-        handleWindowScaling(stage);
-
         scene = new Scene(root);
         stage.setScene(scene);
+
+        handleWindowScaling();
 
         if (backgroundColor != null) {
             updateBackground(backgroundColor);
@@ -885,19 +885,18 @@ public class Window {
      * Listens to the core JavaFX Stage dimensions to maintain structural integrity.
      * If the scaling config is set to true, this dynamically applies affine transforms directly to the root pane
      * to stretch the application content smoothly. Otherwise, it delegates resolution changes to a custom event dispatcher.
-     * @param stage The primary JavaFX Stage generating width/height property changes.
      */
-    private void handleWindowScaling(Stage stage) {
-        // This scales the application to the desired width and height that it is running at.
-        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+    private void handleWindowScaling() {
+        scene.heightProperty().addListener((observable, oldValue, newValue) -> {
             this.height = newValue.doubleValue();
 
             double scaleWidth = getWidthScale();
             double scaleHeight = getHeightScale();
 
             if (scale) {
-                Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
-                root.getTransforms().setAll(scale);
+                // Renamed to 'scaleTransform' to prevent shadowing the 'this.scale' boolean
+                Scale scaleTransform = new Scale(scaleWidth, scaleHeight, 0, 0);
+                root.getTransforms().setAll(scaleTransform);
             } else {
                 if (getWindowResize() != null) {
                     WindowResizeEvent event = new WindowResizeEvent(this, oldValue, newValue);
@@ -905,15 +904,16 @@ public class Window {
                 }
             }
         });
-        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+
+        scene.widthProperty().addListener((observable, oldValue, newValue) -> {
             this.width = newValue.doubleValue();
 
             double scaleWidth = getWidthScale();
             double scaleHeight = getHeightScale();
 
             if (scale) {
-                Scale scale = new Scale(scaleWidth, scaleHeight, 0, 0);
-                root.getTransforms().setAll(scale);
+                Scale scaleTransform = new Scale(scaleWidth, scaleHeight, 0, 0);
+                root.getTransforms().setAll(scaleTransform);
             } else {
                 if (getWindowResize() != null) {
                     WindowResizeEvent event = new WindowResizeEvent(this, oldValue, newValue);
