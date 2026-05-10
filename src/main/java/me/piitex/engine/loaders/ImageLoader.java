@@ -19,6 +19,8 @@ import java.util.Map;
 public class ImageLoader {
     private final File file;
     private double width, height;
+    private boolean preserveRatio = false;
+    private boolean smoothing = false;
 
     public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
     private static final Map<String, Double> imageSizeCache = new LimitedHashMap<>(50);
@@ -64,6 +66,13 @@ public class ImageLoader {
         this.height = height;
     }
 
+    public void setPreserveRatio(boolean preserveRatio) {
+        this.preserveRatio = preserveRatio;
+    }
+
+    public void setSmoothing(boolean smoothing) {
+        this.smoothing = smoothing;
+    }
 
     public Image build() {
         if (useCache && imageCache.containsKey(file.getPath()) && (width + height == imageSizeCache.get(file.getPath()))) {
@@ -71,7 +80,7 @@ public class ImageLoader {
         }
 
         try (FileInputStream fis = new FileInputStream(file)) {
-            Image image = new Image(fis, width, height, false, false);
+            Image image = new Image(fis, width, height, preserveRatio, smoothing);
             if (useCache) {
                 imageCache.put(file.getPath(), image);
                 imageSizeCache.put(file.getPath(), width + height);
