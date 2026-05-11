@@ -345,6 +345,8 @@ public class Renderer extends Element {
     }
 
     /**
+     * Adds the {@link Element} to this renderer (eg, {@link Container}, or {@link Layout}).
+     * <p>
      * Calculates the next available logical index (or uses its configured intrinsic index),
      * maps the element, and immediately compiles it for the screen.
      * <p>
@@ -377,6 +379,10 @@ public class Renderer extends Element {
      * @param element The {@link Element} component to append and render.
      */
     public void addElement(Element element) {
+        if (element == this) {
+            throw new UnsupportedOperationException("Cannot add parent as element!");
+        }
+
         int index = element.getIndex();
         if (index == 0) {
             index = elements.size();
@@ -407,6 +413,10 @@ public class Renderer extends Element {
      * @param index   The mandatory z-index layout order integer.
      */
     public void addElement(Element element, int index) {
+        if (element == this) {
+            throw new UnsupportedOperationException("Cannot add parent as element!");
+        }
+
         Element current = elements.get(index);
         if (current != null && current != element) {
             int i = index + 1;
@@ -443,6 +453,9 @@ public class Renderer extends Element {
      */
     public void addElements(Element... elements) {
         for (Element element : elements) {
+            if (element == this) {
+                throw new UnsupportedOperationException("Cannot add parent as element!");
+            }
             addElement(element);
         }
     }
@@ -469,6 +482,9 @@ public class Renderer extends Element {
      */
     public void addElements(LinkedList<Element> elements) {
         for (Element element : elements) {
+            if (element == this) {
+                throw new UnsupportedOperationException("Cannot add parent as element!");
+            }
             addElement(element);
         }
     }
@@ -491,12 +507,7 @@ public class Renderer extends Element {
      */
     public void removeElement(Element element) {
         elements.remove(element.getIndex());
-        if (element instanceof Overlay overlay) {
-            removeFromView(overlay.getNode());
-        }
-        if (element instanceof Renderer renderer) {
-            removeFromView(renderer.getNode());
-        }
+        removeFromView(element.getNode());
     }
 
     /**
@@ -623,7 +634,7 @@ public class Renderer extends Element {
                 logger.debug("Node already exists in renderer. Shuffling '{}' forward.", node.getClass().toString());
             }
         } else {
-            logger.error("Invalid renderer type!", new RuntimeException());
+            logger.error("Invalid renderer type \"{}\"", getNode().toString(), new RuntimeException());
         }
     }
 
