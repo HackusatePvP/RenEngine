@@ -795,6 +795,7 @@ public class Window {
 
         int index = containers.isEmpty() ? 1 : containers.lastKey() + 1;
         container.setIndex(index);
+        container.assemble();
         addContainer(container);
     }
 
