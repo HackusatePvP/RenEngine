@@ -4,7 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import me.piitex.engine.loaders.ImageLoader;
+import me.piitex.engine.loaders.image.GameImageLoader;
+import me.piitex.engine.loaders.image.ImageLoader;
 
 public class ImageOverlay extends Overlay {
     private final ImageView imageView;
@@ -43,7 +44,7 @@ public class ImageOverlay extends Overlay {
     }
 
     public ImageOverlay(String imagePath) {
-        ImageLoader loader = new ImageLoader(imagePath);
+        ImageLoader loader = new GameImageLoader(imagePath);
         this.image = loader.build();
         this.fileName = loader.getFile().getName();
         this.path = loader.getFile().getAbsolutePath();
