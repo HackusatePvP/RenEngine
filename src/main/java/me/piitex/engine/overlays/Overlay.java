@@ -197,33 +197,6 @@ public abstract class Overlay extends Element {
     }
 
     /**
-     * Disables all JavaFX style sheets including defaults. The JavaFX {@link Node} will need to be assembled first for this method to be effective.
-     */
-    public void removeStyles() {
-        if (getNode() != null) {
-            getNode().getStyleClass().clear();
-        } else {
-            logger.error("Node must be assembled to remove styles!", new UnsupportedOperationException());
-        }
-    }
-
-    public void setBorder(Border border) {
-        if (getNode() instanceof Region region) {
-            region.setBorder(border);
-        } else {
-            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
-        }
-    }
-
-    public void setBackground(Background background) {
-        if (getNode() instanceof Region region) {
-            region.setBackground(background);
-        } else {
-            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
-        }
-    }
-
-    /**
      * Converts the logical engine overlay instructions exclusively into a raw {@link Node} which is used for the native JavaFX API.
      * Subclasses define their specific node implementations here (e.g., ImageView, Text, TextField).
      *

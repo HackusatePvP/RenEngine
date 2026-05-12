@@ -3,6 +3,9 @@ package me.piitex.engine;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.Region;
 import me.piitex.engine.containers.Container;
 import me.piitex.engine.exceptions.NodeNotDefinedException;
 import me.piitex.engine.hanlders.events.*;
@@ -14,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 /**
@@ -118,7 +122,7 @@ public abstract class Element {
      *
      * @param node The JavaFX node to associate with this engine element.
      */
-    public void setNode(Node node) {
+    public void setNode(@Nonnull Node node) {
         this.node = node;
     }
 
@@ -129,6 +133,33 @@ public abstract class Element {
      */
     public Cursor getCursor() {
         return cursor;
+    }
+
+    /**
+     * Disables all JavaFX style sheets including defaults. The JavaFX {@link Node} will need to be assembled first for this method to be effective.
+     */
+    public void removeStyles() {
+        if (getNode() != null) {
+            getNode().getStyleClass().clear();
+        } else {
+            logger.error("Node must be assembled to remove styles!", new UnsupportedOperationException());
+        }
+    }
+
+    public void setBorder(Border border) {
+        if (getNode() instanceof Region region) {
+            region.setBorder(border);
+        } else {
+            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
+        }
+    }
+
+    public void setBackground(Background background) {
+        if (getNode() instanceof Region region) {
+            region.setBackground(background);
+        } else {
+            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
+        }
     }
 
     /**
