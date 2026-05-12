@@ -3,7 +3,7 @@ package me.piitex.engine;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
-import me.piitex.engine.loaders.ImageLoader;
+import me.piitex.engine.loaders.image.ImageLoader;
 
 /**
  * A builder class for constructing Window objects with various configuration options.

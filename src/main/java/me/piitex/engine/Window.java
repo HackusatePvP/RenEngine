@@ -19,7 +19,7 @@ import me.piitex.engine.containers.EmptyContainer;
 import me.piitex.engine.hanlders.IWindowResize;
 import me.piitex.engine.hanlders.events.WindowResizeEvent;
 import me.piitex.engine.layouts.Layout;
-import me.piitex.engine.loaders.ImageLoader;
+import me.piitex.engine.loaders.image.ImageLoader;
 import me.piitex.engine.overlays.*;
 import me.piitex.os.OSUtil;
 import org.slf4j.Logger;
