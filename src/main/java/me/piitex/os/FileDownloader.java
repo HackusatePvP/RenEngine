@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.HashMap;
@@ -135,6 +132,7 @@ public class FileDownloader {
 
             info = new DownloadInfo(fileName, outputFile, fileSize, fileUrl);
             activeDownloads.put(fileUrl, info);
+            activeConnections.put(fileUrl, connection);
             handleStart(info);
 
             // Ensure the parent directories exist before writing
@@ -243,7 +241,8 @@ public class FileDownloader {
                 if (connection instanceof HttpURLConnection) {
                     ((HttpURLConnection) connection).disconnect();
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -255,8 +254,14 @@ public class FileDownloader {
         return false;
     }
 
-    public long getRemoteFileSize(String fileUrl) throws IOException {
-        URL url = new URL(fileUrl);
+    public void cancelAllDownloads() {
+        for (DownloadInfo info : activeDownloads.values()) {
+            cancelDownload(info.getDownloadUrl());
+        }
+    }
+
+    public long getRemoteFileSize(String fileUrl) throws IOException, URISyntaxException {
+        URL url = new URI(fileUrl).toURL();
         URLConnection connection = url.openConnection();
         connection.setConnectTimeout(5000);
         if (connection instanceof HttpURLConnection) {
