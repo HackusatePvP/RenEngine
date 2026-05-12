@@ -7,12 +7,17 @@ import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.Region;
 import javafx.util.Duration;
 import me.piitex.engine.containers.Container;
 import me.piitex.engine.Element;
 import me.piitex.engine.Window;
 import me.piitex.engine.hanlders.events.*;
 import me.piitex.engine.overlays.events.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,6 +66,7 @@ public abstract class Overlay extends Element {
     private String tooltip;
     private IOverlaySubmit iOverlaySubmit;
     private Cursor cursor;
+    private static final Logger logger = LoggerFactory.getLogger(Overlay.class);
 
 
     // Specific style sheet files
@@ -191,6 +197,33 @@ public abstract class Overlay extends Element {
     }
 
     /**
+     * Disables all JavaFX style sheets including defaults. The JavaFX {@link Node} will need to be assembled first for this method to be effective.
+     */
+    public void removeStyles() {
+        if (getNode() != null) {
+            getNode().getStyleClass().clear();
+        } else {
+            logger.error("Node must be assembled to remove styles!", new UnsupportedOperationException());
+        }
+    }
+
+    public void setBorder(Border border) {
+        if (getNode() instanceof Region region) {
+            region.setBorder(border);
+        } else {
+            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
+        }
+    }
+
+    public void setBackground(Background background) {
+        if (getNode() instanceof Region region) {
+            region.setBackground(background);
+        } else {
+            logger.error("Node must be an implementation of Region.", new UnsupportedOperationException());
+        }
+    }
+
+    /**
      * Converts the logical engine overlay instructions exclusively into a raw {@link Node} which is used for the native JavaFX API.
      * Subclasses define their specific node implementations here (e.g., ImageView, Text, TextField).
      *
@@ -220,7 +253,6 @@ public abstract class Overlay extends Element {
         } else {
             setInputControls(node);
         }
-
         return node;
     }
 
