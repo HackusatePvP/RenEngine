@@ -13,6 +13,7 @@ public class TextFieldOverlay extends Overlay implements Region {
     private final String defaultInput;
     private FontLoader fontLoader;
     private String hintText = "";
+    private Pos textAlignment = Pos.TOP_LEFT;
 
     private IInputSetEvent iInputSetEvent;
 
@@ -72,6 +73,11 @@ public class TextFieldOverlay extends Overlay implements Region {
         textField.setEditable(editable);
     }
 
+    public void setTextAlignment(Pos pos) {
+        this.textAlignment = pos;
+        textField.setAlignment(pos);
+    }
+
     @Override
     public Node render() {
         textField.setTranslateX(getX());
@@ -88,7 +94,9 @@ public class TextFieldOverlay extends Overlay implements Region {
         if (getMaxWidth() > 0 || getMaxHeight() > 0) {
             textField.setMaxSize(getMaxWidth(), getMaxHeight());
         }
-        textField.setAlignment(Pos.TOP_LEFT);
+        if (textAlignment != null) {
+            textField.setAlignment(textAlignment);
+        }
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
