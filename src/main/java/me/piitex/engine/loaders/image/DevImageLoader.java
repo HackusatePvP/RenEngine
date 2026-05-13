@@ -35,4 +35,8 @@ public class DevImageLoader extends ImageLoader {
     public static void setTestingDirectory(File testingDirectory) {
         DevImageLoader.testingDirectory = testingDirectory;
     }
+
+    public static File getTestingDirectory() {
+        return testingDirectory;
+    }
 }

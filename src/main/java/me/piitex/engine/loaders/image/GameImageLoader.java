@@ -3,7 +3,7 @@ package me.piitex.engine.loaders.image;
 import java.io.File;
 
 /**
- * Uses running game path for easy image loading.
+ * Uses running game path for easy image loading. Meant to be for games that have built in assets.
  */
 public class GameImageLoader extends ImageLoader {
 
@@ -14,5 +14,9 @@ public class GameImageLoader extends ImageLoader {
     public GameImageLoader(String name) {
         File directory = new File(System.getProperty("user.dir") + "/game/images/");
         super(new File(directory, name));
+    }
+
+    public static File getGameImageDirectory() {
+        return new File(System.getProperty("user.dir") + "/game/images/");
     }
 }
