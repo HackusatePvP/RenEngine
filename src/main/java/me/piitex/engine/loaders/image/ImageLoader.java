@@ -13,6 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
+/**
+ * Loads an image from a file path and assembles the JavaFX {@link Image} using {@link #build()}.
+ * The image will be added to a global cache on the first load.
+ * Cached images provide better performance as they skip IO operations.
+ */
 public abstract class ImageLoader {
     private final File file;
     private double width, height;
@@ -20,7 +25,7 @@ public abstract class ImageLoader {
     private boolean smoothing = false;
 
     public static final Map<String, Image> imageCache = new LimitedHashMap<>(50);
-    private static final Map<String, Double> imageSizeCache = new LimitedHashMap<>(50);
+    private static final Map<String, Long> imageSizeCache = new LimitedHashMap<>(50);
     private static final Logger logger = LoggerFactory.getLogger(ImageLoader.class);
 
     public static boolean useCache = true;
@@ -58,7 +63,7 @@ public abstract class ImageLoader {
     }
 
     public Image build() {
-        if (useCache && imageCache.containsKey(file.getPath()) && (width + height == imageSizeCache.get(file.getPath()))) {
+        if (useCache && imageCache.containsKey(file.getPath()) && (file.length() == imageSizeCache.get(file.getPath()))) {
             return imageCache.get(file.getPath());
         }
 
@@ -66,7 +71,7 @@ public abstract class ImageLoader {
             Image image = new Image(fis, width, height, preserveRatio, smoothing);
             if (useCache) {
                 imageCache.put(file.getPath(), image);
-                imageSizeCache.put(file.getPath(), width + height);
+                imageSizeCache.put(file.getPath(), file.length());
             }
             return image;
         } catch (FileNotFoundException e) {
