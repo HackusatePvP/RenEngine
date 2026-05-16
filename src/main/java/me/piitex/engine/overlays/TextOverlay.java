@@ -72,6 +72,10 @@ public class TextOverlay extends Overlay {
         this.fontSmoothingType = fontSmoothingType;
     }
 
+    public String getText() {
+        return textNode.getText();
+    }
+
     @Override
     public Node render() {
         // If text is set, render a Text node.
