@@ -54,6 +54,11 @@ public abstract class ImageLoader {
         this.height = height;
     }
 
+    public void setSize(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public void setPreserveRatio(boolean preserveRatio) {
         this.preserveRatio = preserveRatio;
     }
