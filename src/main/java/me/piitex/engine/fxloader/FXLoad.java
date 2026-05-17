@@ -32,10 +32,10 @@ public abstract class FXLoad extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        initialization(primaryStage);
+        initialization();
     }
 
     public abstract void preInitialization();
 
-    public abstract void initialization(Stage stage);
+    public abstract void initialization();
 }
