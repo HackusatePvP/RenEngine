@@ -178,6 +178,20 @@ public class TextFieldOverlay extends Overlay implements Region {
         textField.setMaxSize(w, h);
     }
 
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        textField.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        textField.setPrefSize(w, h);
+    }
+
     public IInputSetEvent getiInputSetEvent() {
         return iInputSetEvent;
     }

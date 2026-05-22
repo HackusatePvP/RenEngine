@@ -163,4 +163,18 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         this.maxHeight = h;
         spinner.setMaxSize(w, h);
     }
+
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        spinner.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        spinner.setMinSize(w, h);
+    }
 }

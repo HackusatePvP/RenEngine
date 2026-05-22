@@ -13,11 +13,9 @@ import me.piitex.engine.overlays.events.ITextAreaSubmit;
 public class TextAreaOverlay extends Overlay implements Region {
     private final TextArea textArea;
     private double width, height, prefWidth, prefHeight, maxWidth, maxHeight;
-    private double scaleWidth, scaleHeight;
     private final String defaultInput;
     private FontLoader fontLoader;
     private String hintText = "";
-    private String currentText;
 
     private IInputSetEvent iInputSetEvent;
     private ITextAreaSubmit iTextAreaSubmit;
@@ -59,7 +57,6 @@ public class TextAreaOverlay extends Overlay implements Region {
     }
 
     public void setCurrentText(String currentText) {
-        this.currentText = currentText;
         textArea.setText(currentText);
     }
 
@@ -88,7 +85,6 @@ public class TextAreaOverlay extends Overlay implements Region {
         textArea.setPromptText(hintText);
         textArea.setWrapText(true);
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            currentText = newValue;
             if (getiInputSetEvent() != null) {
                 iInputSetEvent.onInputSet(new InputSetEvent(this, newValue));
             }
@@ -182,6 +178,20 @@ public class TextAreaOverlay extends Overlay implements Region {
         this.maxWidth = w;
         this.maxHeight = h;
         textArea.setMaxSize(w, h);
+    }
+
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        textArea.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        textArea.setMinSize(w, h);
     }
 
     public IInputSetEvent getiInputSetEvent() {

@@ -483,4 +483,18 @@ public class RichTextAreaOverlay extends Overlay implements Region {
         this.maxHeight = h;
         textArea.setMaxSize(w, h);
     }
+
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        textArea.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        textArea.setMinSize(w, h);
+    }
 }

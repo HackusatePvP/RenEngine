@@ -125,6 +125,16 @@ public class BoxOverlay extends Overlay implements Region {
         rectangle.setHeight(h);
     }
 
+    @Override
+    public void setPrefSize(double w, double h) {
+        setMaxSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        setMaxSize(w, h);
+    }
+
     public Rectangle getRectangle() {
         return rectangle;
     }

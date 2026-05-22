@@ -12,7 +12,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
  * for warnings or notifications.
  */
 public class MessageOverlay extends Overlay implements Region { // Now implements Region
-
     private final Message atlantafxMessage;
     private String title;
     private String description;
@@ -223,5 +222,19 @@ public class MessageOverlay extends Overlay implements Region { // Now implement
         this.maxWidth = w;
         this.maxHeight = h;
         atlantafxMessage.setMaxSize(w, h);
+    }
+
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        atlantafxMessage.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        atlantafxMessage.setMinSize(w, h);
     }
 }

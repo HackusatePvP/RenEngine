@@ -97,6 +97,20 @@ public class SeparatorOverlay extends Overlay implements Region {
     }
 
     @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        separator.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        separator.setMinSize(w, h);
+    }
+
+    @Override
     public Node render() {
         separator.getStyleClass().addAll(getStyles());
         separator.setTranslateX(getX());

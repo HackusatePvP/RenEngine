@@ -31,7 +31,7 @@ public class ButtonOverlay extends Overlay implements Region {
      * Private constructor used by the {@link ButtonBuilder}.
      * @param builder The builder instance with all the properties set.
      */
-    protected ButtonOverlay(ButtonBuilder builder) {
+    public ButtonOverlay(ButtonBuilder builder) {
         this.id = builder.getId();
         this.text = builder.getText();
         this.icon = builder.getIcon();
@@ -233,6 +233,20 @@ public class ButtonOverlay extends Overlay implements Region {
         this.maxWidth = w;
         this.maxHeight = h;
         button.setMaxSize(w, h);
+    }
+
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        button.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        button.setMinSize(w, h);
     }
 
     public LinkedList<ImageOverlay> getImages() {

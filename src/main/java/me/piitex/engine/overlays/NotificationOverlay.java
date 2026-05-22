@@ -144,4 +144,18 @@ public class NotificationOverlay extends Overlay implements Region {
         notification.setMaxSize(w, h);
     }
 
+    @Override
+    public void setPrefSize(double w, double h) {
+        this.prefWidth = w;
+        this.prefHeight = h;
+        notification.setPrefSize(w, h);
+    }
+
+    @Override
+    public void setSize(double w, double h) {
+        this.width = w;
+        this.height = h;
+        notification.setMinSize(w, h);
+    }
+
 }
