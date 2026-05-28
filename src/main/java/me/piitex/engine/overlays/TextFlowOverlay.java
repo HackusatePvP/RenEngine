@@ -108,17 +108,27 @@ public class TextFlowOverlay extends Overlay implements Region {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(String text, boolean bbcode) {
         this.text = text;
         textFlow.getChildren().clear();
-        try {
-            VBox format = BBCodeParser.createLayout(text);
-            format.setMaxWidth(getMaxWidth());
-            format.setMinWidth(getWidth());
-            textFlow.getChildren().add(format);
-        } catch (Exception ignored) {
-            textFlow.getChildren().add(new Text(text));
+
+        if (bbcode) {
+            try {
+                VBox format = BBCodeParser.createLayout(text);
+                format.setMaxWidth(getMaxWidth());
+                format.setMinWidth(getWidth());
+                textFlow.getChildren().add(format);
+            } catch (Exception ignored) {
+                textFlow.getChildren().add(new Text(text));
+            }
+        } else {
+            TextOverlay textOverlay = new TextOverlay(text);
+            textFlow.getChildren().add(textOverlay.assemble());
         }
+    }
+
+    public void setText(String text) {
+        setText(text, true);
     }
 
     public TextAlignment getTextAlignment() {
