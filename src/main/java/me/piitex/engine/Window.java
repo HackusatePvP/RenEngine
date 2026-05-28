@@ -82,6 +82,7 @@ public class Window {
     private final StageStyle stageStyle;
     private double initialWidth, initialHeight;
     private double width, height;
+    private double adjustedWidth, adjustedHeight;
     private boolean fullscreen, maximized ;
     private Color backgroundColor;
     private Stage stage;
@@ -168,21 +169,29 @@ public class Window {
 
         if (OSUtil.getOS().toLowerCase().contains("linux")) {
             stage.setHeight(height + LINUX_WINDOW_HEIGHT);
+            this.adjustedHeight = height - LINUX_WINDOW_HEIGHT;
         } else if (OSUtil.getOS().toLowerCase().contains("window")) {
             stage.setHeight(height + WIN_WINDOW_HEIGHT);
+            this.adjustedHeight = height - WIN_WINDOW_HEIGHT;
         } else if (OSUtil.getOS().toLowerCase().contains("mac")) {
             stage.setHeight(height + MAC_WINDOW_HEIGHT);
+            this.adjustedHeight = height - MAC_WINDOW_HEIGHT;
         } else {
             stage.setHeight(height);
         }
+        this.adjustedWidth = width;
+
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
         root.setPrefSize(width, height);
+        root.setMaxSize(width, height);
+        logger.info("Window Size: '{}', '{}'", width, height);
 
         if (scale) {
             Scale scale = new Scale(getWidthScale(), getHeightScale(), 0, 0);
             root.getTransforms().setAll(scale);
         }
+
         if (!antialiasing) {
             logger.warn("Forced disabled anti-aliasing.");
             System.setProperty("prism.lcdtext", "false");
@@ -282,12 +291,28 @@ public class Window {
     }
 
     /**
+     * Retrieves the adjusted width of the scene which accounts for the window title bar.
+     * @return Width in pixels.
+     */
+    public double getAdjustedWidth() {
+        return adjustedWidth;
+    }
+
+    /**
+     * Retrieves the adjusted height of the scene which accounts for the window title bar.
+     * @return Height in pixels.
+     */
+    public double getAdjustedHeight() {
+        return adjustedHeight;
+    }
+
+    /**
      * Calculates the horizontal scale factor by dividing the current width by the initial width.
      * Useful for dynamic resizing and responsive UI adjustments.
      * @return The horizontal scaling multiplier.
      */
     public double getWidthScale() {
-        return width / initialWidth;
+        return stage.getWidth() / initialWidth;
     }
 
     /**
@@ -296,7 +321,7 @@ public class Window {
      * @return The vertical scaling multiplier.
      */
     public double getHeightScale() {
-        return height / initialHeight;
+        return stage.getHeight() / initialHeight;
     }
 
     /**
@@ -568,8 +593,7 @@ public class Window {
      * Builds and displays all active nodes on the screen. This function translates the engine's API
      * into JavaFX nodes and updates the stage and scene. Focus is requested if the window is configured for it.
      * <p>
-     * Calling this excessively can cause visual flicker. It must be called after adding,
-     * modifying, or removing {@link Overlay} or {@link Container} objects to update the display state.
+     * Calling this excessively can cause visual flicker. Do not call this function after every element change. Only use when necessary to force a display update.
      * </p>
      */
     public void render() {
@@ -583,7 +607,6 @@ public class Window {
     /**
      * Translates the engine's container definitions into JavaFX nodes without immediately showing
      * the stage, provided there is at least one active container.
-     * For most use cases, {@link #render()} is recommended.
      */
     public void build() {
         if (!containers.isEmpty()) {
