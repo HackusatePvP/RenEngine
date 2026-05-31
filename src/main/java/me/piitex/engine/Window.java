@@ -168,14 +168,14 @@ public class Window {
         // With the top control bar enabled, the height will be off.
 
         if (OSUtil.getOS().toLowerCase().contains("linux")) {
-            stage.setHeight(height + LINUX_WINDOW_HEIGHT);
-            this.adjustedHeight = height - LINUX_WINDOW_HEIGHT;
+            stage.setHeight(height);
+            this.drawHeight = height - LINUX_WINDOW_HEIGHT;
         } else if (OSUtil.getOS().toLowerCase().contains("window")) {
-            stage.setHeight(height + WIN_WINDOW_HEIGHT);
-            this.adjustedHeight = height - WIN_WINDOW_HEIGHT;
+            stage.setHeight(height);
+            this.drawHeight = height - WIN_WINDOW_HEIGHT;
         } else if (OSUtil.getOS().toLowerCase().contains("mac")) {
-            stage.setHeight(height + MAC_WINDOW_HEIGHT);
-            this.adjustedHeight = height - MAC_WINDOW_HEIGHT;
+            stage.setHeight(height);
+            this.drawHeight = height - MAC_WINDOW_HEIGHT;
         } else {
             stage.setHeight(height);
         }
