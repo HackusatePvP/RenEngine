@@ -27,6 +27,10 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         setNode(spinner);
     }
 
+    public Spinner<Number> getSpinner() {
+        return spinner;
+    }
+
     public Number getMin() {
         return min;
     }
@@ -64,7 +68,6 @@ public class SpinnerNumberOverlay extends Overlay implements Region {
         spinner.setTranslateX(getX());
         spinner.setTranslateY(getY());
         spinner.getStyleClass().addAll(getStyles());
-        //DoubleStringConverter.createFor(spinner);
         spinner.setEditable(true);
 
         if (getWidth() > 0) {
