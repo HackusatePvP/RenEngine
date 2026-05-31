@@ -82,7 +82,7 @@ public class Window {
     private final StageStyle stageStyle;
     private double initialWidth, initialHeight;
     private double width, height;
-    private double adjustedWidth, adjustedHeight;
+    private double drawWidth, drawHeight;
     private boolean fullscreen, maximized ;
     private Color backgroundColor;
     private Stage stage;
@@ -179,13 +179,14 @@ public class Window {
         } else {
             stage.setHeight(height);
         }
-        this.adjustedWidth = width;
+        this.drawWidth = width;
 
         stage.setMaximized(maximized);
         stage.setFullScreen(fullscreen);
         root.setPrefSize(width, height);
         root.setMaxSize(width, height);
         logger.info("Window Size: '{}', '{}'", width, height);
+        logger.info("Draw Size ({}, {})", drawWidth, drawHeight);
 
         if (scale) {
             Scale scale = new Scale(getWidthScale(), getHeightScale(), 0, 0);
@@ -294,16 +295,16 @@ public class Window {
      * Retrieves the adjusted width of the scene which accounts for the window title bar.
      * @return Width in pixels.
      */
-    public double getAdjustedWidth() {
-        return adjustedWidth;
+    public double getDrawWidth() {
+        return drawWidth;
     }
 
     /**
      * Retrieves the adjusted height of the scene which accounts for the window title bar.
      * @return Height in pixels.
      */
-    public double getAdjustedHeight() {
-        return adjustedHeight;
+    public double getDrawHeight() {
+        return drawHeight;
     }
 
     /**
