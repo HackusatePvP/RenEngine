@@ -59,17 +59,14 @@ public class App extends FXLoad {
 
     /**
      * Initializes the GUI components.
-     * @param stage Initial JavaFX {@link javafx.stage.Stage}.
      */
     @Override
-    public void initialization(Stage stage) {
+    public void initialization() {
         // Loads Atlanta css.
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
-        Window window = new WindowBuilder("App").setIcon(new ImageLoader(new File(App.getAppDirectory(), "logo.png"))).setDimensions(1920, 1080).build();
-
         // Always store the window as a static singleton. This makes accessing and modifying the window easier.
-        App.window = window;
+        window = new WindowBuilder("App").setIcon(new ImageLoader(new File(App.getAppDirectory(), "logo.png"))).setDimensions(1920, 1080).build();
 
         // Handle closing the window.
         Stage stage = window.getStage();
@@ -108,6 +105,12 @@ import me.piitex.engine.overlays.TextOverlay;
 public class HomeView extends EmptyContainer {
 
     public HomeView() {
+        // Important: The window will have a title bar which is accounted within window.getHeight();
+        // This can cause clipping issues if your container takes up the complete window space.
+        // Draw width and height create the fully drawable space which excludes the title bar.
+        // TLDR; Use draw width and height if you need to fill the full window.
+        super(App.window.getDrawWidth(), App.window.getDrawHeight());
+        
         // Build your first view
         TextOverlay text = new TextOverlay("Example text");
         text.setX(20);
