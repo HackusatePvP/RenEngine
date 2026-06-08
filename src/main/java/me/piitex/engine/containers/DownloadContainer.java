@@ -1,5 +1,6 @@
 package me.piitex.engine.containers;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import me.piitex.engine.layouts.VerticalLayout;
@@ -10,6 +11,9 @@ import me.piitex.os.DownloadListener;
 import me.piitex.os.FileDownloader;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class DownloadContainer extends EmptyContainer {
@@ -20,12 +24,16 @@ public class DownloadContainer extends EmptyContainer {
     private DownloadInfo downloadInfo;
 
     private VerticalLayout main;
-    private TextOverlay message, downloadText;
+    private TextOverlay message, downloadText, downloadSpeed;
     private ProgressBarOverlay downloadProgress;
 
     private Consumer<DownloadInfo> downloadComplete;
     private Consumer<DownloadInfo> downloadError;
     private Consumer<DownloadInfo> downloadCancelled;
+
+    private final AtomicLong lastDownloadBytes = new AtomicLong();
+    private final AtomicLong lastDownloadTime = new AtomicLong();
+    private final AtomicReference<Double> smoothedSpeedRef = new AtomicReference<>();
 
 
     public DownloadContainer(double width, double height, String label, String url, File output) {
@@ -88,6 +96,9 @@ public class DownloadContainer extends EmptyContainer {
 
         downloadText = new TextOverlay("0/0");
         main.addElement(downloadText);
+
+        downloadSpeed = new TextOverlay("0 MB/s");
+        main.addElement(downloadSpeed);
     }
 
     public void startDownload() {
@@ -101,6 +112,8 @@ public class DownloadContainer extends EmptyContainer {
     }
 
     private void hookDownloadListeners() {
+        smoothedSpeedRef.set(0d);
+
         downloader.addDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(DownloadInfo info) {
@@ -113,7 +126,6 @@ public class DownloadContainer extends EmptyContainer {
             public void onDownloadProgress(DownloadInfo info) {
                 Platform.runLater(() -> {
                     downloadProgress.getProgressBar().progressProperty().set(info.getDownloadProgress());
-
                     if (info.getTotalFileSize() < 900000) { // Use Kb
                         downloadText.setText(info.getDownloadedBytes() / 1024 + "/" + info.getTotalFileSize() / 1024 + "KiB");
                     } else if (info.getTotalFileSize() < 900000000) { // Use MB
@@ -122,7 +134,32 @@ public class DownloadContainer extends EmptyContainer {
                         downloadText.setText(info.getDownloadedBytes() / 1000000000 + "/" + info.getTotalFileSize() / 1000000000 + "GB");
                     }
 
+                    long currentTime = System.currentTimeMillis();
 
+                    long bytesDownloadedSinceLastUpdate = info.getDownloadedBytes() - lastDownloadBytes.get();
+                    long timeElapsedSinceLastUpdate = currentTime - lastDownloadTime.get();
+
+                    double instantaneousBytesPerSecond = 0.0;
+                    if (timeElapsedSinceLastUpdate > 0 && bytesDownloadedSinceLastUpdate > 0) {
+                        instantaneousBytesPerSecond = (double) bytesDownloadedSinceLastUpdate / (timeElapsedSinceLastUpdate / 1000.0);
+                    }
+
+                    final double SMOOTHING_FACTOR = 0.15; // 0.15 is responsive but stable
+
+                    double previousSmoothedSpeed = smoothedSpeedRef.get();
+                    double newSmoothedSpeed = (instantaneousBytesPerSecond * SMOOTHING_FACTOR) +
+                            (previousSmoothedSpeed * (1.0 - SMOOTHING_FACTOR));
+
+                    // Update the reference for the next calculation
+                    smoothedSpeedRef.set(newSmoothedSpeed);
+
+                    // Update the 'last' values for the next calculation
+                    lastDownloadBytes.set(info.getDownloadedBytes());
+                    lastDownloadTime.set(currentTime);
+
+                    double speed = (newSmoothedSpeed / (1024 * 1024));
+                    String speedText = String.format("%.2f", speed);
+                    downloadSpeed.setText(speedText + " Mb/s");
                 });
             }
 
